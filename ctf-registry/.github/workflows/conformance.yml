@@ -1,0 +1,33 @@
+name: conformance test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+
+      - name: setup go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
+
+      - name: run server
+        run: go run main.go &
+
+      - name: run OCI Distribution Spec conformance tests
+        uses: opencontainers/distribution-spec@main
+        env:
+          OCI_ROOT_URL: "http://localhost:8080"
+          OCI_NAMESPACE: "myrepo"
+          OCI_TEST_PULL: 1
+          OCI_TEST_PUSH: 1
+          OCI_TEST_CONTENT_DISCOVERY: 1
+          OCI_TEST_CONTENT_MANAGEMENT: 1
+          OCI_CROSSMOUNT_NAMESPACE: "otherrepo"
+          OCI_AUTOMATIC_CROSSMOUNT: 0
