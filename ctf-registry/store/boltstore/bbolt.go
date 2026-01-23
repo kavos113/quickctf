@@ -1,4 +1,4 @@
-package store
+package boltstore
 
 import (
 	"bytes"
@@ -19,12 +19,13 @@ type Storage struct {
 }
 
 var (
-	bucketNameTag       = []byte("tag")
-	bucketNameReference = []byte("reference")
-	bucketNameSession   = []byte("session")
+	bucketNameTag        = []byte("tag")
+	bucketNameReference  = []byte("reference")
+	bucketNameSession    = []byte("session")
+	bucketNameRepository = []byte("repository")
 )
 
-func NewStorage() *Storage {
+func NewStore() *Storage {
 	_db, err := bolt.Open("minicr.db", 0600, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -42,6 +43,11 @@ func NewStorage() *Storage {
 		}
 
 		_, err = tx.CreateBucketIfNotExists(bucketNameSession)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.CreateBucketIfNotExists(bucketNameRepository)
 		if err != nil {
 			return err
 		}
@@ -188,4 +194,33 @@ func (s Storage) GetReferences(repoName string, d digest.Digest, artifactType st
 		}
 	}
 	return filtered, err
+}
+
+func (s Storage) AddBlob(repoName string, d digest.Digest) error {
+	err := s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucketNameRepository)
+		key := []byte(fmt.Sprintf("%s@%s", repoName, d.String()))
+		return b.Put(key, []byte{1})
+	})
+	if err != nil {
+		return fmt.Errorf("failed to add blob: %w", storage.ErrStorageFail)
+	}
+	return nil
+}
+
+func (s Storage) DeleteBlob(repoName string, d digest.Digest) error {
+	return s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucketNameRepository)
+		key := []byte(fmt.Sprintf("%s@%s", repoName, d.String()))
+		v := b.Get(key)
+		if v == nil {
+			return storage.ErrNotFound
+		}
+		
+		err := b.Delete(key)
+		if err != nil {
+			return fmt.Errorf("failed to delete blob: %w", storage.ErrStorageFail)
+		}
+		return nil
+	})
 }

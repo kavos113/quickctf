@@ -6,7 +6,7 @@ import (
 
 	"github.com/kavos113/quickctf/ctf-registry/handler"
 	"github.com/kavos113/quickctf/ctf-registry/storage/filesystem"
-	"github.com/kavos113/quickctf/ctf-registry/store"
+	"github.com/kavos113/quickctf/ctf-registry/store/boltstore"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -32,7 +32,7 @@ func main() {
 	}))
 
 	fs := filesystem.NewStorage()
-	ss := store.NewStorage()
+	ss := boltstore.NewStore()
 
 	bh := handler.NewBlobHandler(fs)
 	buh := handler.NewBlobUploadHandler(fs)

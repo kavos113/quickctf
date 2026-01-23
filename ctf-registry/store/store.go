@@ -17,4 +17,5 @@ type Store interface {
 	GetReferences(repoName string, d digest.Digest, artifactType string) ([]manifest.Descriptor, error)
 
 	AddBlob(repoName string, d digest.Digest) error
+	DeleteBlob(repoName string, d digest.Digest) error
 }
