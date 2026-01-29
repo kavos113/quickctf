@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package api.builder.v1;
+
+service BuilderService {
+  rpc BuildImage(BuildImageRequest) returns (stream BuildImageResponse);
+}
+
+message BuildImageRequest {
+  string image_tag = 1;
+  bytes source_tar = 2;
+}
+
+message BuildImageResponse {
+  oneof response {
+    string log_line = 1;
+    BuildResult result = 2;
+  }
+}
+
+message BuildResult {
+  string image_id = 1;
+  string status = 2;
+  string error_message = 3;
+}
