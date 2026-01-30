@@ -77,11 +77,18 @@ func main() {
 	// リポジトリ初期化
 	repo := repository.NewMySQLInstanceRepository(db)
 
+	// スキーマファイルのパス
+	schemaPath := os.Getenv("SCHEMA_PATH")
+	if schemaPath == "" {
+		schemaPath = "../migration/ctf_manager_schema.sql"
+	}
+
 	// テーブルスキーマ初期化
-	if err := repo.InitSchema(ctx); err != nil {
+	if err := repo.InitSchemaFromFile(ctx, schemaPath); err != nil {
 		log.Fatalf("failed to initialize schema: %v", err)
 	}
 
+	log.Printf("Schema initialized from: %s", schemaPath)
 	log.Printf("Manager service starting on port %s", port)
 	log.Printf("Connected runners: %v", runnerURLs)
 

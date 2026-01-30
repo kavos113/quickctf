@@ -3,6 +3,9 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/kavos113/quickctf/ctf-manager/domain"
@@ -265,24 +268,25 @@ func (r *MySQLInstanceRepository) FindExpired(ctx context.Context) ([]*domain.In
 	return instances, nil
 }
 
-func (r *MySQLInstanceRepository) InitSchema(ctx context.Context) error {
-	query := `
-		CREATE TABLE IF NOT EXISTS instances (
-			instance_id VARCHAR(255) PRIMARY KEY,
-			image_tag VARCHAR(255) NOT NULL,
-			runner_url VARCHAR(255) NOT NULL,
-			host VARCHAR(255) NOT NULL,
-			port INT NOT NULL,
-			state VARCHAR(50) NOT NULL,
-			ttl_seconds BIGINT NOT NULL,
-			created_at TIMESTAMP NOT NULL,
-			updated_at TIMESTAMP NOT NULL,
-			INDEX idx_runner_url (runner_url),
-			INDEX idx_state (state),
-			INDEX idx_created_at (created_at)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-	`
+// InitSchemaFromFile はSQLファイルからテーブルスキーマを初期化
+func (r *MySQLInstanceRepository) InitSchemaFromFile(ctx context.Context, schemaPath string) error {
+	schemaSQL, err := os.ReadFile(schemaPath)
+	if err != nil {
+		return fmt.Errorf("failed to read schema file: %w", err)
+	}
 	
-	_, err := r.db.ExecContext(ctx, query)
-	return err
+	// セミコロンで分割して複数のステートメントを実行
+	statements := strings.Split(string(schemaSQL), ";")
+	for _, stmt := range statements {
+		stmt = strings.TrimSpace(stmt)
+		if stmt == "" || strings.HasPrefix(stmt, "--") {
+			continue
+		}
+		
+		if _, err := r.db.ExecContext(ctx, stmt); err != nil {
+			return fmt.Errorf("failed to execute statement: %w", err)
+		}
+	}
+	
+	return nil
 }

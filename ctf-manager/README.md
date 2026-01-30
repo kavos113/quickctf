@@ -9,3 +9,4 @@
 | `DB_USER` | MySQLユーザー名 | `root` |
 | `DB_PASSWORD` | MySQLパスワード | `password` |
 | `DB_NAME` | データベース名 | `ctf_manager_db` |
+| `SCHEMA_PATH` | スキーマファイルのパス | `../migration/ctf_manager_schema.sql` |
