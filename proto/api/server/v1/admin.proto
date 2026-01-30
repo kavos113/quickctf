@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package api.server.v1;
+
+import "api/server/v1/model.proto";
+
+service AdminService {
+  rpc CreateChallenge(CreateChallengeRequest) returns (CreateChallengeResponse);
+  rpc UpdateChallenge(UpdateChallengeRequest) returns (UpdateChallengeResponse);
+  rpc UploadChallengeImage(UploadChallengeImageRequest) returns (UploadChallengeImageResponse);
+  rpc DeleteChallenge(DeleteChallengeRequest) returns (DeleteChallengeResponse);
+  rpc ListChallenges(ListChallengesRequest) returns (ListChallengesResponse);
+}
+
+message CreateChallengeRequest {
+  Challenge challenge = 1;
+}
+
+message CreateChallengeResponse {
+  string challenge_id = 1;
+  string error_message = 2;
+}
+
+message UpdateChallengeRequest {
+  string challenge_id = 1;
+  Challenge challenge = 2;
+}
+
+message UpdateChallengeResponse {
+  string error_message = 1;
+}
+
+message UploadChallengeImageRequest {
+  string challenge_id = 1;
+  bytes image_data = 2;
+}
+
+message UploadChallengeImageResponse {
+  string error_message = 1;
+}
+
+message DeleteChallengeRequest {
+  string challenge_id = 1;
+}
+
+message DeleteChallengeResponse {
+  string error_message = 1;
+}
+
+message ListChallengesRequest {}
+
+message ListChallengesResponse {
+  repeated Challenge challenges = 1;
+  string error_message = 2;
+}

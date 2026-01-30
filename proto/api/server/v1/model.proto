@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package api.server.v1;
+
+message Challenge {
+  string name = 1;
+  string description = 2;
+  string flag = 3;
+  int32 points = 4;
+  string genre = 5;
+}
+
+message Submission {
+  string challenge_id = 1;
+  string user_id = 2;
+  string submitted_flag = 3;
+  int64 timestamp = 4;
+}

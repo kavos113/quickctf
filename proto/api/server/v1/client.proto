@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package api.server.v1;
+
+import "api/server/v1/model.proto";
+
+service ClientChallengeService {
+  rpc GetChallenges(GetChallengesRequest) returns (GetChallengesResponse);
+  rpc SubmitFlag(SubmitFlagRequest) returns (SubmitFlagResponse);
+
+  rpc StartInstance(StartInstanceRequest) returns (StartInstanceResponse);
+  rpc StopInstance(StopInstanceRequest) returns (StopInstanceResponse);
+  rpc GetInstanceStatus(GetInstanceStatusRequest) returns (GetInstanceStatusResponse);
+}
+
+message GetChallengesRequest {}
+
+message GetChallengesResponse {
+  repeated Challenge challenges = 1;
+  string error_message = 2;
+}
+
+message SubmitFlagRequest {
+  Submission submission = 1;
+}
+
+message SubmitFlagResponse {
+  bool correct = 1;
+  int32 points_awarded = 2;
+  string error_message = 3;
+}
+
+message StartInstanceRequest {
+  string challenge_id = 1;
+  string user_id = 2;
+}
+
+message StartInstanceResponse {
+  string error_message = 1;
+}
+
+message StopInstanceRequest {
+  string challenge_id = 1;
+  string user_id = 2;
+}
+
+message StopInstanceResponse {
+  string error_message = 1;
+}
+
+message GetInstanceStatusRequest {
+  string challenge_id = 1;
+  string user_id = 2;
+}
+
+message GetInstanceStatusResponse {
+  string status = 1;
+  string error_message = 2;
+}
+
+service UserAuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Register(RegusterReqyest) returns (RegisterResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string token = 1;
+  string error_message = 2;
+}
+
+message RegusterReqyest {
+  string username = 1;
+  string password = 2;
+}
+
+message RegisterResponse {
+  string user_id = 1;
+  string error_message = 2;
+}
+
+message LogoutRequest {
+  string token = 1;
+}
+
+message LogoutResponse {
+  string error_message = 2;
+}
