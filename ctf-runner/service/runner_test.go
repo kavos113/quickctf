@@ -47,7 +47,6 @@ func TestRunnerService_StartInstance(t *testing.T) {
 	req := &pb.StartInstanceRequest{
 		ImageTag:   "test:latest",
 		InstanceId: "test-instance-1",
-		TtlSeconds: 300,
 	}
 
 	resp, err := client.StartInstance(ctx, req)
