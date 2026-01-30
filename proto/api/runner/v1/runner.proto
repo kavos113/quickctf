@@ -13,7 +13,6 @@ service RunnerService {
 message StartInstanceRequest {
   string image_tag = 1;
   string instance_id = 2;
-  int64 ttl_seconds = 3;
 }
 
 message StartInstanceResponse {

@@ -22,7 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Instance はインスタンスのDBモデル
 // @table instances
 type Instance struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -37,8 +36,7 @@ type Instance struct {
 	Host string `protobuf:"bytes,4,opt,name=host,proto3" json:"host,omitempty"`
 	Port int32  `protobuf:"varint,5,opt,name=port,proto3" json:"port,omitempty"`
 	// @size 50
-	State string `protobuf:"bytes,6,opt,name=state,proto3" json:"state,omitempty"`
-	// TTL (秒)
+	State         string                 `protobuf:"bytes,6,opt,name=state,proto3" json:"state,omitempty"`
 	TtlSeconds    int64                  `protobuf:"varint,7,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`

@@ -77,7 +77,6 @@ type StartInstanceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ImageTag      string                 `protobuf:"bytes,1,opt,name=image_tag,json=imageTag,proto3" json:"image_tag,omitempty"`
 	InstanceId    string                 `protobuf:"bytes,2,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
-	TtlSeconds    int64                  `protobuf:"varint,3,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -124,13 +123,6 @@ func (x *StartInstanceRequest) GetInstanceId() string {
 		return x.InstanceId
 	}
 	return ""
-}
-
-func (x *StartInstanceRequest) GetTtlSeconds() int64 {
-	if x != nil {
-		return x.TtlSeconds
-	}
-	return 0
 }
 
 type StartInstanceResponse struct {
@@ -625,13 +617,11 @@ var File_api_runner_v1_runner_proto protoreflect.FileDescriptor
 
 const file_api_runner_v1_runner_proto_rawDesc = "" +
 	"\n" +
-	"\x1aapi/runner/v1/runner.proto\x12\rapi.runner.v1\"u\n" +
+	"\x1aapi/runner/v1/runner.proto\x12\rapi.runner.v1\"T\n" +
 	"\x14StartInstanceRequest\x12\x1b\n" +
 	"\timage_tag\x18\x01 \x01(\tR\bimageTag\x12\x1f\n" +
 	"\vinstance_id\x18\x02 \x01(\tR\n" +
-	"instanceId\x12\x1f\n" +
-	"\vttl_seconds\x18\x03 \x01(\x03R\n" +
-	"ttlSeconds\"\x9c\x01\n" +
+	"instanceId\"\x9c\x01\n" +
 	"\x15StartInstanceResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12#\n" +
 	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\x12F\n" +

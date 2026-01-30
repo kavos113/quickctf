@@ -134,11 +134,9 @@ func (s *RunnerService) DestroyInstance(ctx context.Context, req *pb.DestroyInst
 }
 
 func (s *RunnerService) GetInstanceStatus(ctx context.Context, req *pb.GetInstanceStatusRequest) (*pb.GetInstanceStatusResponse, error) {
-	// コンテナの状態を確認（コンテナ名=インスタンスID）
 	inspectOptions := client.ContainerInspectOptions{}
 	containerJSON, err := s.dockerClient.ContainerInspect(ctx, req.InstanceId, inspectOptions)
 	if err != nil {
-		// コンテナが存在しない場合はDESTROYED
 		return &pb.GetInstanceStatusResponse{
 			State: pb.GetInstanceStatusResponse_STATE_DESTROYED,
 		}, nil
@@ -165,7 +163,6 @@ func (s *RunnerService) GetInstanceStatus(ctx context.Context, req *pb.GetInstan
 func (s *RunnerService) StreamInstanceLogs(req *pb.StreamInstanceLogsRequest, stream pb.RunnerService_StreamInstanceLogsServer) error {
 	ctx := stream.Context()
 
-	// コンテナのログをストリーミング（コンテナ名=インスタンスID）
 	logOptions := client.ContainerLogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
@@ -179,7 +176,6 @@ func (s *RunnerService) StreamInstanceLogs(req *pb.StreamInstanceLogsRequest, st
 	}
 	defer logReader.Close()
 
-	// ログを読み取って送信
 	buf := make([]byte, 8192)
 	for {
 		n, err := logReader.Read(buf)
@@ -213,7 +209,6 @@ func (s *RunnerService) pullImage(ctx context.Context, imageName string) error {
 	}
 	defer reader.Close()
 
-	// pullの完了を待つ
 	decoder := json.NewDecoder(reader)
 	for {
 		var message struct {

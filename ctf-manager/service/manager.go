@@ -116,7 +116,6 @@ func (s *ManagerService) StartInstance(ctx context.Context, req *managerPb.Start
 	runnerReq := &runnerPb.StartInstanceRequest{
 		ImageTag:   req.ImageTag,
 		InstanceId: req.InstanceId,
-		TtlSeconds: req.TtlSeconds,
 	}
 
 	resp, err := runner.Client.StartInstance(ctx, runnerReq)
