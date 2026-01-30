@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,6 +25,13 @@ func NewUserAuthUsecase(userRepo domain.UserRepository, sessionRepo domain.Sessi
 }
 
 func (u *UserAuthUsecase) Register(ctx context.Context, username, password string) (string, error) {
+	if username == "" {
+		return "", fmt.Errorf("username is required")
+	}
+	if password == "" {
+		return "", fmt.Errorf("password is required")
+	}
+
 	_, err := u.userRepo.FindByUsername(ctx, username)
 	if err == nil {
 		return "", domain.ErrUserAlreadyExists
@@ -76,7 +84,7 @@ func (u *UserAuthUsecase) Login(ctx context.Context, username, password string) 
 		UserID:    user.UserID,
 		Token:     token,
 		IsAdmin:   false,
-		ExpiresAt: time.Now().Add(24 * time.Hour), 
+		ExpiresAt: time.Now().Add(24 * time.Hour),
 		CreatedAt: time.Now(),
 	}
 

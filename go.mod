@@ -10,6 +10,7 @@ tool (
 
 require (
 	connectrpc.com/connect v1.19.1 // indirect
+	golang.org/x/net v0.43.0 // indirect
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
