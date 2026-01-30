@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
+	"github.com/kavos113/quickctf/ctf-manager/domain"
 	managerPb "github.com/kavos113/quickctf/gen/go/api/manager/v1"
 	runnerPb "github.com/kavos113/quickctf/gen/go/api/runner/v1"
 )
@@ -17,7 +18,7 @@ import (
 type ManagerService struct {
 	managerPb.UnimplementedRunnerServiceServer
 	runners    []*RunnerClient
-	instances  map[string]*InstanceInfo
+	repo       domain.InstanceRepository
 	mu         sync.RWMutex
 	nextRunner int
 }
@@ -29,17 +30,7 @@ type RunnerClient struct {
 	Active     bool
 }
 
-type InstanceInfo struct {
-	InstanceID     string
-	ImageTag       string
-	RunnerURL      string
-	ConnectionInfo *managerPb.ConnectionInfo
-	State          managerPb.GetInstanceStatusResponse_State
-	TTL            time.Duration
-	CreatedAt      time.Time
-}
-
-func NewManagerService(runnerURLs []string) (*ManagerService, error) {
+func NewManagerService(runnerURLs []string, repo domain.InstanceRepository) (*ManagerService, error) {
 	runners := make([]*RunnerClient, 0, len(runnerURLs))
 
 	for _, url := range runnerURLs {
@@ -64,8 +55,8 @@ func NewManagerService(runnerURLs []string) (*ManagerService, error) {
 	}
 
 	return &ManagerService{
-		runners:   runners,
-		instances: make(map[string]*InstanceInfo),
+		runners: runners,
+		repo:    repo,
 	}, nil
 }
 
@@ -99,17 +90,20 @@ func (s *ManagerService) getRunnerByURL(url string) *RunnerClient {
 }
 
 func (s *ManagerService) StartInstance(ctx context.Context, req *managerPb.StartInstanceRequest) (*managerPb.StartInstanceResponse, error) {
-	s.mu.Lock()
-
 	// 既に同じインスタンスIDが存在する場合はエラー
-	if _, exists := s.instances[req.InstanceId]; exists {
-		s.mu.Unlock()
+	_, err := s.repo.FindByID(ctx, req.InstanceId)
+	if err == nil {
 		return &managerPb.StartInstanceResponse{
 			Status:       "failed",
 			ErrorMessage: fmt.Sprintf("instance %s already exists", req.InstanceId),
 		}, nil
 	}
-	s.mu.Unlock()
+	if err != domain.ErrInstanceNotFound {
+		return &managerPb.StartInstanceResponse{
+			Status:       "failed",
+			ErrorMessage: fmt.Sprintf("failed to check instance: %v", err),
+		}, nil
+	}
 
 	// 利用可能なrunnerを選択
 	runner := s.selectRunner()
@@ -137,22 +131,25 @@ func (s *ManagerService) StartInstance(ctx context.Context, req *managerPb.Start
 
 	// 成功した場合、インスタンス情報を保存
 	if resp.Status == "success" {
-		s.mu.Lock()
-		s.instances[req.InstanceId] = &InstanceInfo{
+		now := time.Now()
+		instance := &domain.Instance{
 			InstanceID: req.InstanceId,
 			ImageTag:   req.ImageTag,
 			RunnerURL:  runner.URL,
-			ConnectionInfo: &managerPb.ConnectionInfo{
-				Host: resp.ConnectionInfo.Host,
-				Port: resp.ConnectionInfo.Port,
-			},
-			State:     managerPb.GetInstanceStatusResponse_STATE_RUNNING,
-			TTL:       time.Duration(req.TtlSeconds) * time.Second,
-			CreatedAt: time.Now(),
+			Host:       resp.ConnectionInfo.Host,
+			Port:       resp.ConnectionInfo.Port,
+			State:      domain.StateRunning,
+			TTL:        time.Duration(req.TtlSeconds) * time.Second,
+			CreatedAt:  now,
+			UpdatedAt:  now,
 		}
-		s.mu.Unlock()
 
-		log.Printf("Instance %s started on runner %s", req.InstanceId, runner.URL)
+		if err := s.repo.Create(ctx, instance); err != nil {
+			log.Printf("Failed to save instance %s: %v", req.InstanceId, err)
+			// DBへの保存に失敗してもrunnerで起動しているので、失敗として扱わない
+		} else {
+			log.Printf("Instance %s started on runner %s", req.InstanceId, runner.URL)
+		}
 	}
 
 	// ConnectionInfoを変換
@@ -172,14 +169,17 @@ func (s *ManagerService) StartInstance(ctx context.Context, req *managerPb.Start
 }
 
 func (s *ManagerService) StopInstance(ctx context.Context, req *managerPb.StopInstanceRequest) (*managerPb.StopInstanceResponse, error) {
-	s.mu.RLock()
-	instance, exists := s.instances[req.InstanceId]
-	s.mu.RUnlock()
-
-	if !exists {
+	instance, err := s.repo.FindByID(ctx, req.InstanceId)
+	if err == domain.ErrInstanceNotFound {
 		return &managerPb.StopInstanceResponse{
 			Status:       "failed",
 			ErrorMessage: fmt.Sprintf("instance %s not found", req.InstanceId),
+		}, nil
+	}
+	if err != nil {
+		return &managerPb.StopInstanceResponse{
+			Status:       "failed",
+			ErrorMessage: fmt.Sprintf("failed to get instance: %v", err),
 		}, nil
 	}
 
@@ -206,13 +206,12 @@ func (s *ManagerService) StopInstance(ctx context.Context, req *managerPb.StopIn
 
 	// 状態を更新
 	if resp.Status == "success" {
-		s.mu.Lock()
-		if inst, ok := s.instances[req.InstanceId]; ok {
-			inst.State = managerPb.GetInstanceStatusResponse_STATE_STOPPED
+		instance.UpdateState(domain.StateStopped)
+		if err := s.repo.Update(ctx, instance); err != nil {
+			log.Printf("Failed to update instance %s state: %v", req.InstanceId, err)
+		} else {
+			log.Printf("Instance %s stopped on runner %s", req.InstanceId, runner.URL)
 		}
-		s.mu.Unlock()
-
-		log.Printf("Instance %s stopped on runner %s", req.InstanceId, runner.URL)
 	}
 
 	return &managerPb.StopInstanceResponse{
@@ -222,14 +221,17 @@ func (s *ManagerService) StopInstance(ctx context.Context, req *managerPb.StopIn
 }
 
 func (s *ManagerService) DestroyInstance(ctx context.Context, req *managerPb.DestroyInstanceRequest) (*managerPb.DestroyInstanceResponse, error) {
-	s.mu.RLock()
-	instance, exists := s.instances[req.InstanceId]
-	s.mu.RUnlock()
-
-	if !exists {
+	instance, err := s.repo.FindByID(ctx, req.InstanceId)
+	if err == domain.ErrInstanceNotFound {
 		return &managerPb.DestroyInstanceResponse{
 			Status:       "failed",
 			ErrorMessage: fmt.Sprintf("instance %s not found", req.InstanceId),
+		}, nil
+	}
+	if err != nil {
+		return &managerPb.DestroyInstanceResponse{
+			Status:       "failed",
+			ErrorMessage: fmt.Sprintf("failed to get instance: %v", err),
 		}, nil
 	}
 
@@ -256,11 +258,11 @@ func (s *ManagerService) DestroyInstance(ctx context.Context, req *managerPb.Des
 
 	// 成功した場合、インスタンス情報を削除
 	if resp.Status == "success" {
-		s.mu.Lock()
-		delete(s.instances, req.InstanceId)
-		s.mu.Unlock()
-
-		log.Printf("Instance %s destroyed on runner %s", req.InstanceId, runner.URL)
+		if err := s.repo.Delete(ctx, req.InstanceId); err != nil {
+			log.Printf("Failed to delete instance %s from DB: %v", req.InstanceId, err)
+		} else {
+			log.Printf("Instance %s destroyed on runner %s", req.InstanceId, runner.URL)
+		}
 	}
 
 	return &managerPb.DestroyInstanceResponse{
@@ -270,13 +272,16 @@ func (s *ManagerService) DestroyInstance(ctx context.Context, req *managerPb.Des
 }
 
 func (s *ManagerService) GetInstanceStatus(ctx context.Context, req *managerPb.GetInstanceStatusRequest) (*managerPb.GetInstanceStatusResponse, error) {
-	s.mu.RLock()
-	instance, exists := s.instances[req.InstanceId]
-	s.mu.RUnlock()
-
-	if !exists {
+	instance, err := s.repo.FindByID(ctx, req.InstanceId)
+	if err == domain.ErrInstanceNotFound {
 		return &managerPb.GetInstanceStatusResponse{
 			State: managerPb.GetInstanceStatusResponse_STATE_DESTROYED,
+		}, nil
+	}
+	if err != nil {
+		return &managerPb.GetInstanceStatusResponse{
+			State:        managerPb.GetInstanceStatusResponse_STATE_UNSPECIFIED,
+			ErrorMessage: fmt.Sprintf("failed to get instance: %v", err),
 		}, nil
 	}
 
@@ -302,11 +307,13 @@ func (s *ManagerService) GetInstanceStatus(ctx context.Context, req *managerPb.G
 	}
 
 	// 状態を更新
-	s.mu.Lock()
-	if inst, ok := s.instances[req.InstanceId]; ok {
-		inst.State = managerPb.GetInstanceStatusResponse_State(resp.State)
+	newState := domain.FromProtoState(managerPb.GetInstanceStatusResponse_State(resp.State))
+	if newState != instance.State {
+		instance.UpdateState(newState)
+		if err := s.repo.Update(ctx, instance); err != nil {
+			log.Printf("Failed to update instance %s state: %v", req.InstanceId, err)
+		}
 	}
-	s.mu.Unlock()
 
 	return &managerPb.GetInstanceStatusResponse{
 		State:        managerPb.GetInstanceStatusResponse_State(resp.State),
@@ -315,12 +322,13 @@ func (s *ManagerService) GetInstanceStatus(ctx context.Context, req *managerPb.G
 }
 
 func (s *ManagerService) StreamInstanceLogs(req *managerPb.StreamInstanceLogsRequest, stream managerPb.RunnerService_StreamInstanceLogsServer) error {
-	s.mu.RLock()
-	instance, exists := s.instances[req.InstanceId]
-	s.mu.RUnlock()
-
-	if !exists {
+	ctx := stream.Context()
+	instance, err := s.repo.FindByID(ctx, req.InstanceId)
+	if err == domain.ErrInstanceNotFound {
 		return fmt.Errorf("instance %s not found", req.InstanceId)
+	}
+	if err != nil {
+		return fmt.Errorf("failed to get instance: %v", err)
 	}
 
 	runner := s.getRunnerByURL(instance.RunnerURL)
@@ -329,7 +337,6 @@ func (s *ManagerService) StreamInstanceLogs(req *managerPb.StreamInstanceLogsReq
 	}
 
 	// runnerにリクエストを転送
-	ctx := stream.Context()
 	runnerReq := &runnerPb.StreamInstanceLogsRequest{
 		InstanceId: req.InstanceId,
 	}
@@ -361,15 +368,23 @@ func (s *ManagerService) Cleanup() {
 	ctx := context.Background()
 
 	// 全てのインスタンスを削除
-	for instanceID, instance := range s.instances {
-		log.Printf("Cleaning up instance %s", instanceID)
+	instances, err := s.repo.FindAll(ctx)
+	if err != nil {
+		log.Printf("Failed to get instances: %v", err)
+		return
+	}
+
+	for _, instance := range instances {
+		log.Printf("Cleaning up instance %s", instance.InstanceID)
 
 		if runner := s.getRunnerByURL(instance.RunnerURL); runner != nil {
 			req := &runnerPb.DestroyInstanceRequest{
-				InstanceId: instanceID,
+				InstanceId: instance.InstanceID,
 			}
 			runner.Client.DestroyInstance(ctx, req)
 		}
+
+		s.repo.Delete(ctx, instance.InstanceID)
 	}
 
 	// runner接続を閉じる

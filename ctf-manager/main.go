@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"net"
@@ -8,10 +10,13 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/kavos113/quickctf/ctf-manager/repository"
 	"github.com/kavos113/quickctf/ctf-manager/service"
 	pb "github.com/kavos113/quickctf/gen/go/api/manager/v1"
 )
@@ -28,6 +33,55 @@ func main() {
 	}
 	runnerURLs := strings.Split(runnersEnv, ",")
 
+	// データベース接続設定
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "localhost"
+	}
+	dbPort := os.Getenv("DB_PORT")
+	if dbPort == "" {
+		dbPort = "3306"
+	}
+	dbUser := os.Getenv("DB_USER")
+	if dbUser == "" {
+		dbUser = "root"
+	}
+	dbPassword := os.Getenv("DB_PASSWORD")
+	if dbPassword == "" {
+		dbPassword = "password"
+	}
+	dbName := os.Getenv("DB_NAME")
+	if dbName == "" {
+		dbName = "ctf_manager_db"
+	}
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPassword, dbHost, dbPort, dbName)
+
+	// データベース接続
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	// 接続確認
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := db.PingContext(ctx); err != nil {
+		log.Fatalf("failed to ping database: %v", err)
+	}
+
+	log.Printf("Connected to database: %s", dbName)
+
+	// リポジトリ初期化
+	repo := repository.NewMySQLInstanceRepository(db)
+
+	// テーブルスキーマ初期化
+	if err := repo.InitSchema(ctx); err != nil {
+		log.Fatalf("failed to initialize schema: %v", err)
+	}
+
 	log.Printf("Manager service starting on port %s", port)
 	log.Printf("Connected runners: %v", runnerURLs)
 
@@ -38,7 +92,7 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 
-	managerService, err := service.NewManagerService(runnerURLs)
+	managerService, err := service.NewManagerService(runnerURLs, repo)
 	if err != nil {
 		log.Fatalf("failed to create manager service: %v", err)
 	}

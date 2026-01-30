@@ -4,3 +4,8 @@
 |--------|------|------------|
 | `MANAGER_PORT` | gRPCサーバーのポート番号 | `50050` |
 | `RUNNER_URLS` | Runner URLsのカンマ区切りリスト | `localhost:50052` |
+| `DB_HOST` | MySQLホスト | `localhost` |
+| `DB_PORT` | MySQLポート | `3306` |
+| `DB_USER` | MySQLユーザー名 | `root` |
+| `DB_PASSWORD` | MySQLパスワード | `password` |
+| `DB_NAME` | データベース名 | `ctf_manager_db` |

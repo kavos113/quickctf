@@ -68,8 +68,11 @@ func init() {
 	managerLis = bufconn.Listen(bufSize)
 	managerServer := grpc.NewServer()
 
+	// モックリポジトリを使用
+	mockRepo := newMockInstanceRepository()
+
 	// テスト用のrunner URLを設定（bufconn経由）
-	managerService, err := NewManagerService([]string{"bufnet"})
+	managerService, err := NewManagerService([]string{"bufnet"}, mockRepo)
 	if err != nil {
 		log.Fatalf("Failed to create manager service: %v", err)
 	}

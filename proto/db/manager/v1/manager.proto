@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package db.manager.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/kavos113/quickctf/gen/go/db/manager/v1";
+
+// @table instances
+message Instance {
+  // @pk
+  // @size 255
+  string instance_id = 1;
+
+  // @size 255
+  string image_tag = 2;
+
+  // @size 255
+  string runner_url = 3;
+
+  // @size 255
+  string host = 4;
+
+  int32 port = 5;
+
+  // @size 50
+  string state = 6;
+
+  int64 ttl_seconds = 7;
+
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
