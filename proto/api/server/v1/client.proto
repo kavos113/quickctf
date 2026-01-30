@@ -32,7 +32,6 @@ message SubmitFlagResponse {
 
 message StartInstanceRequest {
   string challenge_id = 1;
-  string user_id = 2;
 }
 
 message StartInstanceResponse {
@@ -41,7 +40,6 @@ message StartInstanceResponse {
 
 message StopInstanceRequest {
   string challenge_id = 1;
-  string user_id = 2;
 }
 
 message StopInstanceResponse {
@@ -50,7 +48,6 @@ message StopInstanceResponse {
 
 message GetInstanceStatusRequest {
   string challenge_id = 1;
-  string user_id = 2;
 }
 
 message GetInstanceStatusResponse {
@@ -60,7 +57,7 @@ message GetInstanceStatusResponse {
 
 service UserAuthService {
   rpc Login(LoginRequest) returns (LoginResponse);
-  rpc Register(RegusterReqyest) returns (RegisterResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
 }
 
@@ -74,7 +71,7 @@ message LoginResponse {
   string error_message = 2;
 }
 
-message RegusterReqyest {
+message RegisterRequest {
   string username = 1;
   string password = 2;
 }
@@ -89,5 +86,5 @@ message LogoutRequest {
 }
 
 message LogoutResponse {
-  string error_message = 2;
+  string error_message = 1;
 }

@@ -237,7 +237,7 @@ func (UnimplementedClientChallengeServiceHandler) GetInstanceStatus(context.Cont
 // UserAuthServiceClient is a client for the api.server.v1.UserAuthService service.
 type UserAuthServiceClient interface {
 	Login(context.Context, *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error)
-	Register(context.Context, *connect.Request[v1.RegusterReqyest]) (*connect.Response[v1.RegisterResponse], error)
+	Register(context.Context, *connect.Request[v1.RegisterRequest]) (*connect.Response[v1.RegisterResponse], error)
 	Logout(context.Context, *connect.Request[v1.LogoutRequest]) (*connect.Response[v1.LogoutResponse], error)
 }
 
@@ -258,7 +258,7 @@ func NewUserAuthServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(userAuthServiceMethods.ByName("Login")),
 			connect.WithClientOptions(opts...),
 		),
-		register: connect.NewClient[v1.RegusterReqyest, v1.RegisterResponse](
+		register: connect.NewClient[v1.RegisterRequest, v1.RegisterResponse](
 			httpClient,
 			baseURL+UserAuthServiceRegisterProcedure,
 			connect.WithSchema(userAuthServiceMethods.ByName("Register")),
@@ -276,7 +276,7 @@ func NewUserAuthServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 // userAuthServiceClient implements UserAuthServiceClient.
 type userAuthServiceClient struct {
 	login    *connect.Client[v1.LoginRequest, v1.LoginResponse]
-	register *connect.Client[v1.RegusterReqyest, v1.RegisterResponse]
+	register *connect.Client[v1.RegisterRequest, v1.RegisterResponse]
 	logout   *connect.Client[v1.LogoutRequest, v1.LogoutResponse]
 }
 
@@ -286,7 +286,7 @@ func (c *userAuthServiceClient) Login(ctx context.Context, req *connect.Request[
 }
 
 // Register calls api.server.v1.UserAuthService.Register.
-func (c *userAuthServiceClient) Register(ctx context.Context, req *connect.Request[v1.RegusterReqyest]) (*connect.Response[v1.RegisterResponse], error) {
+func (c *userAuthServiceClient) Register(ctx context.Context, req *connect.Request[v1.RegisterRequest]) (*connect.Response[v1.RegisterResponse], error) {
 	return c.register.CallUnary(ctx, req)
 }
 
@@ -298,7 +298,7 @@ func (c *userAuthServiceClient) Logout(ctx context.Context, req *connect.Request
 // UserAuthServiceHandler is an implementation of the api.server.v1.UserAuthService service.
 type UserAuthServiceHandler interface {
 	Login(context.Context, *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error)
-	Register(context.Context, *connect.Request[v1.RegusterReqyest]) (*connect.Response[v1.RegisterResponse], error)
+	Register(context.Context, *connect.Request[v1.RegisterRequest]) (*connect.Response[v1.RegisterResponse], error)
 	Logout(context.Context, *connect.Request[v1.LogoutRequest]) (*connect.Response[v1.LogoutResponse], error)
 }
 
@@ -348,7 +348,7 @@ func (UnimplementedUserAuthServiceHandler) Login(context.Context, *connect.Reque
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.UserAuthService.Login is not implemented"))
 }
 
-func (UnimplementedUserAuthServiceHandler) Register(context.Context, *connect.Request[v1.RegusterReqyest]) (*connect.Response[v1.RegisterResponse], error) {
+func (UnimplementedUserAuthServiceHandler) Register(context.Context, *connect.Request[v1.RegisterRequest]) (*connect.Response[v1.RegisterResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.UserAuthService.Register is not implemented"))
 }
 

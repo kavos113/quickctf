@@ -53,3 +53,16 @@ message ListChallengesResponse {
   repeated Challenge challenges = 1;
   string error_message = 2;
 }
+
+service AdminAuthService {
+  rpc AdminLogin(AdminLoginRequest) returns (AdminLoginResponse);
+  rpc AdminLogout(AdminLogoutRequest) returns (AdminLogoutResponse);
+}
+
+message AdminLoginRequest {
+  string password = 1;
+}
+
+message AdminLoginResponse {}
+message AdminLogoutRequest {}
+message AdminLogoutResponse {}

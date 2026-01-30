@@ -216,7 +216,6 @@ func (x *SubmitFlagResponse) GetErrorMessage() string {
 type StartInstanceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ChallengeId   string                 `protobuf:"bytes,1,opt,name=challenge_id,json=challengeId,proto3" json:"challenge_id,omitempty"`
-	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -254,13 +253,6 @@ func (*StartInstanceRequest) Descriptor() ([]byte, []int) {
 func (x *StartInstanceRequest) GetChallengeId() string {
 	if x != nil {
 		return x.ChallengeId
-	}
-	return ""
-}
-
-func (x *StartInstanceRequest) GetUserId() string {
-	if x != nil {
-		return x.UserId
 	}
 	return ""
 }
@@ -312,7 +304,6 @@ func (x *StartInstanceResponse) GetErrorMessage() string {
 type StopInstanceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ChallengeId   string                 `protobuf:"bytes,1,opt,name=challenge_id,json=challengeId,proto3" json:"challenge_id,omitempty"`
-	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -350,13 +341,6 @@ func (*StopInstanceRequest) Descriptor() ([]byte, []int) {
 func (x *StopInstanceRequest) GetChallengeId() string {
 	if x != nil {
 		return x.ChallengeId
-	}
-	return ""
-}
-
-func (x *StopInstanceRequest) GetUserId() string {
-	if x != nil {
-		return x.UserId
 	}
 	return ""
 }
@@ -408,7 +392,6 @@ func (x *StopInstanceResponse) GetErrorMessage() string {
 type GetInstanceStatusRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ChallengeId   string                 `protobuf:"bytes,1,opt,name=challenge_id,json=challengeId,proto3" json:"challenge_id,omitempty"`
-	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -446,13 +429,6 @@ func (*GetInstanceStatusRequest) Descriptor() ([]byte, []int) {
 func (x *GetInstanceStatusRequest) GetChallengeId() string {
 	if x != nil {
 		return x.ChallengeId
-	}
-	return ""
-}
-
-func (x *GetInstanceStatusRequest) GetUserId() string {
-	if x != nil {
-		return x.UserId
 	}
 	return ""
 }
@@ -613,7 +589,7 @@ func (x *LoginResponse) GetErrorMessage() string {
 	return ""
 }
 
-type RegusterReqyest struct {
+type RegisterRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
@@ -621,20 +597,20 @@ type RegusterReqyest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RegusterReqyest) Reset() {
-	*x = RegusterReqyest{}
+func (x *RegisterRequest) Reset() {
+	*x = RegisterRequest{}
 	mi := &file_api_server_v1_client_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RegusterReqyest) String() string {
+func (x *RegisterRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RegusterReqyest) ProtoMessage() {}
+func (*RegisterRequest) ProtoMessage() {}
 
-func (x *RegusterReqyest) ProtoReflect() protoreflect.Message {
+func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_api_server_v1_client_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -646,19 +622,19 @@ func (x *RegusterReqyest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RegusterReqyest.ProtoReflect.Descriptor instead.
-func (*RegusterReqyest) Descriptor() ([]byte, []int) {
+// Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
+func (*RegisterRequest) Descriptor() ([]byte, []int) {
 	return file_api_server_v1_client_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *RegusterReqyest) GetUsername() string {
+func (x *RegisterRequest) GetUsername() string {
 	if x != nil {
 		return x.Username
 	}
 	return ""
 }
 
-func (x *RegusterReqyest) GetPassword() string {
+func (x *RegisterRequest) GetPassword() string {
 	if x != nil {
 		return x.Password
 	}
@@ -763,7 +739,7 @@ func (x *LogoutRequest) GetToken() string {
 
 type LogoutResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ErrorMessage  string                 `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	ErrorMessage  string                 `protobuf:"bytes,1,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -823,20 +799,17 @@ const file_api_server_v1_client_proto_rawDesc = "" +
 	"\x12SubmitFlagResponse\x12\x18\n" +
 	"\acorrect\x18\x01 \x01(\bR\acorrect\x12%\n" +
 	"\x0epoints_awarded\x18\x02 \x01(\x05R\rpointsAwarded\x12#\n" +
-	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"R\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"9\n" +
 	"\x14StartInstanceRequest\x12!\n" +
-	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId\"<\n" +
+	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\"<\n" +
 	"\x15StartInstanceResponse\x12#\n" +
-	"\rerror_message\x18\x01 \x01(\tR\ferrorMessage\"Q\n" +
+	"\rerror_message\x18\x01 \x01(\tR\ferrorMessage\"8\n" +
 	"\x13StopInstanceRequest\x12!\n" +
-	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId\";\n" +
+	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\";\n" +
 	"\x14StopInstanceResponse\x12#\n" +
-	"\rerror_message\x18\x01 \x01(\tR\ferrorMessage\"V\n" +
+	"\rerror_message\x18\x01 \x01(\tR\ferrorMessage\"=\n" +
 	"\x18GetInstanceStatusRequest\x12!\n" +
-	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId\"X\n" +
+	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\"X\n" +
 	"\x19GetInstanceStatusResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12#\n" +
 	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"F\n" +
@@ -846,7 +819,7 @@ const file_api_server_v1_client_proto_rawDesc = "" +
 	"\rLoginResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12#\n" +
 	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"I\n" +
-	"\x0fRegusterReqyest\x12\x1a\n" +
+	"\x0fRegisterRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"P\n" +
 	"\x10RegisterResponse\x12\x17\n" +
@@ -855,7 +828,7 @@ const file_api_server_v1_client_proto_rawDesc = "" +
 	"\rLogoutRequest\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\"5\n" +
 	"\x0eLogoutResponse\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage2\xe4\x03\n" +
+	"\rerror_message\x18\x01 \x01(\tR\ferrorMessage2\xe4\x03\n" +
 	"\x16ClientChallengeService\x12Z\n" +
 	"\rGetChallenges\x12#.api.server.v1.GetChallengesRequest\x1a$.api.server.v1.GetChallengesResponse\x12Q\n" +
 	"\n" +
@@ -865,7 +838,7 @@ const file_api_server_v1_client_proto_rawDesc = "" +
 	"\x11GetInstanceStatus\x12'.api.server.v1.GetInstanceStatusRequest\x1a(.api.server.v1.GetInstanceStatusResponse2\xe9\x01\n" +
 	"\x0fUserAuthService\x12B\n" +
 	"\x05Login\x12\x1b.api.server.v1.LoginRequest\x1a\x1c.api.server.v1.LoginResponse\x12K\n" +
-	"\bRegister\x12\x1e.api.server.v1.RegusterReqyest\x1a\x1f.api.server.v1.RegisterResponse\x12E\n" +
+	"\bRegister\x12\x1e.api.server.v1.RegisterRequest\x1a\x1f.api.server.v1.RegisterResponse\x12E\n" +
 	"\x06Logout\x12\x1c.api.server.v1.LogoutRequest\x1a\x1d.api.server.v1.LogoutResponseB\xaf\x01\n" +
 	"\x11com.api.server.v1B\vClientProtoP\x01Z7github.com/kavos113/quickctf/gen/api/server/v1;serverv1\xa2\x02\x03ASX\xaa\x02\rApi.Server.V1\xca\x02\rApi\\Server\\V1\xe2\x02\x19Api\\Server\\V1\\GPBMetadata\xea\x02\x0fApi::Server::V1b\x06proto3"
 
@@ -895,7 +868,7 @@ var file_api_server_v1_client_proto_goTypes = []any{
 	(*GetInstanceStatusResponse)(nil), // 9: api.server.v1.GetInstanceStatusResponse
 	(*LoginRequest)(nil),              // 10: api.server.v1.LoginRequest
 	(*LoginResponse)(nil),             // 11: api.server.v1.LoginResponse
-	(*RegusterReqyest)(nil),           // 12: api.server.v1.RegusterReqyest
+	(*RegisterRequest)(nil),           // 12: api.server.v1.RegisterRequest
 	(*RegisterResponse)(nil),          // 13: api.server.v1.RegisterResponse
 	(*LogoutRequest)(nil),             // 14: api.server.v1.LogoutRequest
 	(*LogoutResponse)(nil),            // 15: api.server.v1.LogoutResponse
@@ -911,7 +884,7 @@ var file_api_server_v1_client_proto_depIdxs = []int32{
 	6,  // 5: api.server.v1.ClientChallengeService.StopInstance:input_type -> api.server.v1.StopInstanceRequest
 	8,  // 6: api.server.v1.ClientChallengeService.GetInstanceStatus:input_type -> api.server.v1.GetInstanceStatusRequest
 	10, // 7: api.server.v1.UserAuthService.Login:input_type -> api.server.v1.LoginRequest
-	12, // 8: api.server.v1.UserAuthService.Register:input_type -> api.server.v1.RegusterReqyest
+	12, // 8: api.server.v1.UserAuthService.Register:input_type -> api.server.v1.RegisterRequest
 	14, // 9: api.server.v1.UserAuthService.Logout:input_type -> api.server.v1.LogoutRequest
 	1,  // 10: api.server.v1.ClientChallengeService.GetChallenges:output_type -> api.server.v1.GetChallengesResponse
 	3,  // 11: api.server.v1.ClientChallengeService.SubmitFlag:output_type -> api.server.v1.SubmitFlagResponse

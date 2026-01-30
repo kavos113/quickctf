@@ -271,3 +271,143 @@ var AdminService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "api/server/v1/admin.proto",
 }
+
+const (
+	AdminAuthService_AdminLogin_FullMethodName  = "/api.server.v1.AdminAuthService/AdminLogin"
+	AdminAuthService_AdminLogout_FullMethodName = "/api.server.v1.AdminAuthService/AdminLogout"
+)
+
+// AdminAuthServiceClient is the client API for AdminAuthService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type AdminAuthServiceClient interface {
+	AdminLogin(ctx context.Context, in *AdminLoginRequest, opts ...grpc.CallOption) (*AdminLoginResponse, error)
+	AdminLogout(ctx context.Context, in *AdminLogoutRequest, opts ...grpc.CallOption) (*AdminLogoutResponse, error)
+}
+
+type adminAuthServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAdminAuthServiceClient(cc grpc.ClientConnInterface) AdminAuthServiceClient {
+	return &adminAuthServiceClient{cc}
+}
+
+func (c *adminAuthServiceClient) AdminLogin(ctx context.Context, in *AdminLoginRequest, opts ...grpc.CallOption) (*AdminLoginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminLoginResponse)
+	err := c.cc.Invoke(ctx, AdminAuthService_AdminLogin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminAuthServiceClient) AdminLogout(ctx context.Context, in *AdminLogoutRequest, opts ...grpc.CallOption) (*AdminLogoutResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminLogoutResponse)
+	err := c.cc.Invoke(ctx, AdminAuthService_AdminLogout_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AdminAuthServiceServer is the server API for AdminAuthService service.
+// All implementations must embed UnimplementedAdminAuthServiceServer
+// for forward compatibility.
+type AdminAuthServiceServer interface {
+	AdminLogin(context.Context, *AdminLoginRequest) (*AdminLoginResponse, error)
+	AdminLogout(context.Context, *AdminLogoutRequest) (*AdminLogoutResponse, error)
+	mustEmbedUnimplementedAdminAuthServiceServer()
+}
+
+// UnimplementedAdminAuthServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAdminAuthServiceServer struct{}
+
+func (UnimplementedAdminAuthServiceServer) AdminLogin(context.Context, *AdminLoginRequest) (*AdminLoginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminLogin not implemented")
+}
+func (UnimplementedAdminAuthServiceServer) AdminLogout(context.Context, *AdminLogoutRequest) (*AdminLogoutResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminLogout not implemented")
+}
+func (UnimplementedAdminAuthServiceServer) mustEmbedUnimplementedAdminAuthServiceServer() {}
+func (UnimplementedAdminAuthServiceServer) testEmbeddedByValue()                          {}
+
+// UnsafeAdminAuthServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminAuthServiceServer will
+// result in compilation errors.
+type UnsafeAdminAuthServiceServer interface {
+	mustEmbedUnimplementedAdminAuthServiceServer()
+}
+
+func RegisterAdminAuthServiceServer(s grpc.ServiceRegistrar, srv AdminAuthServiceServer) {
+	// If the following call panics, it indicates UnimplementedAdminAuthServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&AdminAuthService_ServiceDesc, srv)
+}
+
+func _AdminAuthService_AdminLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminAuthServiceServer).AdminLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminAuthService_AdminLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminAuthServiceServer).AdminLogin(ctx, req.(*AdminLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminAuthService_AdminLogout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminLogoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminAuthServiceServer).AdminLogout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminAuthService_AdminLogout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminAuthServiceServer).AdminLogout(ctx, req.(*AdminLogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AdminAuthService_ServiceDesc is the grpc.ServiceDesc for AdminAuthService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AdminAuthService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.server.v1.AdminAuthService",
+	HandlerType: (*AdminAuthServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AdminLogin",
+			Handler:    _AdminAuthService_AdminLogin_Handler,
+		},
+		{
+			MethodName: "AdminLogout",
+			Handler:    _AdminAuthService_AdminLogout_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api/server/v1/admin.proto",
+}

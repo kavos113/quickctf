@@ -23,6 +23,8 @@ const _ = connect.IsAtLeastVersion1_13_0
 const (
 	// AdminServiceName is the fully-qualified name of the AdminService service.
 	AdminServiceName = "api.server.v1.AdminService"
+	// AdminAuthServiceName is the fully-qualified name of the AdminAuthService service.
+	AdminAuthServiceName = "api.server.v1.AdminAuthService"
 )
 
 // These constants are the fully-qualified names of the RPCs defined in this package. They're
@@ -48,6 +50,12 @@ const (
 	// AdminServiceListChallengesProcedure is the fully-qualified name of the AdminService's
 	// ListChallenges RPC.
 	AdminServiceListChallengesProcedure = "/api.server.v1.AdminService/ListChallenges"
+	// AdminAuthServiceAdminLoginProcedure is the fully-qualified name of the AdminAuthService's
+	// AdminLogin RPC.
+	AdminAuthServiceAdminLoginProcedure = "/api.server.v1.AdminAuthService/AdminLogin"
+	// AdminAuthServiceAdminLogoutProcedure is the fully-qualified name of the AdminAuthService's
+	// AdminLogout RPC.
+	AdminAuthServiceAdminLogoutProcedure = "/api.server.v1.AdminAuthService/AdminLogout"
 )
 
 // AdminServiceClient is a client for the api.server.v1.AdminService service.
@@ -222,4 +230,100 @@ func (UnimplementedAdminServiceHandler) DeleteChallenge(context.Context, *connec
 
 func (UnimplementedAdminServiceHandler) ListChallenges(context.Context, *connect.Request[v1.ListChallengesRequest]) (*connect.Response[v1.ListChallengesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminService.ListChallenges is not implemented"))
+}
+
+// AdminAuthServiceClient is a client for the api.server.v1.AdminAuthService service.
+type AdminAuthServiceClient interface {
+	AdminLogin(context.Context, *connect.Request[v1.AdminLoginRequest]) (*connect.Response[v1.AdminLoginResponse], error)
+	AdminLogout(context.Context, *connect.Request[v1.AdminLogoutRequest]) (*connect.Response[v1.AdminLogoutResponse], error)
+}
+
+// NewAdminAuthServiceClient constructs a client for the api.server.v1.AdminAuthService service. By
+// default, it uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses,
+// and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the
+// connect.WithGRPC() or connect.WithGRPCWeb() options.
+//
+// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
+// http://api.acme.com or https://acme.com/grpc).
+func NewAdminAuthServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) AdminAuthServiceClient {
+	baseURL = strings.TrimRight(baseURL, "/")
+	adminAuthServiceMethods := v1.File_api_server_v1_admin_proto.Services().ByName("AdminAuthService").Methods()
+	return &adminAuthServiceClient{
+		adminLogin: connect.NewClient[v1.AdminLoginRequest, v1.AdminLoginResponse](
+			httpClient,
+			baseURL+AdminAuthServiceAdminLoginProcedure,
+			connect.WithSchema(adminAuthServiceMethods.ByName("AdminLogin")),
+			connect.WithClientOptions(opts...),
+		),
+		adminLogout: connect.NewClient[v1.AdminLogoutRequest, v1.AdminLogoutResponse](
+			httpClient,
+			baseURL+AdminAuthServiceAdminLogoutProcedure,
+			connect.WithSchema(adminAuthServiceMethods.ByName("AdminLogout")),
+			connect.WithClientOptions(opts...),
+		),
+	}
+}
+
+// adminAuthServiceClient implements AdminAuthServiceClient.
+type adminAuthServiceClient struct {
+	adminLogin  *connect.Client[v1.AdminLoginRequest, v1.AdminLoginResponse]
+	adminLogout *connect.Client[v1.AdminLogoutRequest, v1.AdminLogoutResponse]
+}
+
+// AdminLogin calls api.server.v1.AdminAuthService.AdminLogin.
+func (c *adminAuthServiceClient) AdminLogin(ctx context.Context, req *connect.Request[v1.AdminLoginRequest]) (*connect.Response[v1.AdminLoginResponse], error) {
+	return c.adminLogin.CallUnary(ctx, req)
+}
+
+// AdminLogout calls api.server.v1.AdminAuthService.AdminLogout.
+func (c *adminAuthServiceClient) AdminLogout(ctx context.Context, req *connect.Request[v1.AdminLogoutRequest]) (*connect.Response[v1.AdminLogoutResponse], error) {
+	return c.adminLogout.CallUnary(ctx, req)
+}
+
+// AdminAuthServiceHandler is an implementation of the api.server.v1.AdminAuthService service.
+type AdminAuthServiceHandler interface {
+	AdminLogin(context.Context, *connect.Request[v1.AdminLoginRequest]) (*connect.Response[v1.AdminLoginResponse], error)
+	AdminLogout(context.Context, *connect.Request[v1.AdminLogoutRequest]) (*connect.Response[v1.AdminLogoutResponse], error)
+}
+
+// NewAdminAuthServiceHandler builds an HTTP handler from the service implementation. It returns the
+// path on which to mount the handler and the handler itself.
+//
+// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
+// and JSON codecs. They also support gzip compression.
+func NewAdminAuthServiceHandler(svc AdminAuthServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	adminAuthServiceMethods := v1.File_api_server_v1_admin_proto.Services().ByName("AdminAuthService").Methods()
+	adminAuthServiceAdminLoginHandler := connect.NewUnaryHandler(
+		AdminAuthServiceAdminLoginProcedure,
+		svc.AdminLogin,
+		connect.WithSchema(adminAuthServiceMethods.ByName("AdminLogin")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminAuthServiceAdminLogoutHandler := connect.NewUnaryHandler(
+		AdminAuthServiceAdminLogoutProcedure,
+		svc.AdminLogout,
+		connect.WithSchema(adminAuthServiceMethods.ByName("AdminLogout")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/api.server.v1.AdminAuthService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case AdminAuthServiceAdminLoginProcedure:
+			adminAuthServiceAdminLoginHandler.ServeHTTP(w, r)
+		case AdminAuthServiceAdminLogoutProcedure:
+			adminAuthServiceAdminLogoutHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
+}
+
+// UnimplementedAdminAuthServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedAdminAuthServiceHandler struct{}
+
+func (UnimplementedAdminAuthServiceHandler) AdminLogin(context.Context, *connect.Request[v1.AdminLoginRequest]) (*connect.Response[v1.AdminLoginResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminAuthService.AdminLogin is not implemented"))
+}
+
+func (UnimplementedAdminAuthServiceHandler) AdminLogout(context.Context, *connect.Request[v1.AdminLogoutRequest]) (*connect.Response[v1.AdminLogoutResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminAuthService.AdminLogout is not implemented"))
 }

@@ -284,7 +284,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserAuthServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	Register(ctx context.Context, in *RegusterReqyest, opts ...grpc.CallOption) (*RegisterResponse, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 }
 
@@ -306,7 +306,7 @@ func (c *userAuthServiceClient) Login(ctx context.Context, in *LoginRequest, opt
 	return out, nil
 }
 
-func (c *userAuthServiceClient) Register(ctx context.Context, in *RegusterReqyest, opts ...grpc.CallOption) (*RegisterResponse, error) {
+func (c *userAuthServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RegisterResponse)
 	err := c.cc.Invoke(ctx, UserAuthService_Register_FullMethodName, in, out, cOpts...)
@@ -331,7 +331,7 @@ func (c *userAuthServiceClient) Logout(ctx context.Context, in *LogoutRequest, o
 // for forward compatibility.
 type UserAuthServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	Register(context.Context, *RegusterReqyest) (*RegisterResponse, error)
+	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	mustEmbedUnimplementedUserAuthServiceServer()
 }
@@ -346,7 +346,7 @@ type UnimplementedUserAuthServiceServer struct{}
 func (UnimplementedUserAuthServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedUserAuthServiceServer) Register(context.Context, *RegusterReqyest) (*RegisterResponse, error) {
+func (UnimplementedUserAuthServiceServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedUserAuthServiceServer) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
@@ -392,7 +392,7 @@ func _UserAuthService_Login_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _UserAuthService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegusterReqyest)
+	in := new(RegisterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -404,7 +404,7 @@ func _UserAuthService_Register_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: UserAuthService_Register_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAuthServiceServer).Register(ctx, req.(*RegusterReqyest))
+		return srv.(UserAuthServiceServer).Register(ctx, req.(*RegisterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
