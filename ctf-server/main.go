@@ -42,6 +42,7 @@ func main() {
 	userRepo := repository.NewMySQLUserRepository(db)
 	sessionRepo := repository.NewMySQLSessionRepository(db)
 	challengeRepo := repository.NewMySQLChallengeRepository(db)
+	submissionRepo := repository.NewMySQLSubmissionRepository(db)
 
 	builderClient, err := client.NewBuilderClient()
 	if err != nil {
@@ -52,10 +53,12 @@ func main() {
 	userAuthUsecase := usecase.NewUserAuthUsecase(userRepo, sessionRepo)
 	adminAuthUsecase := usecase.NewAdminAuthUsecase(sessionRepo)
 	adminServiceUsecase := usecase.NewAdminServiceUsecase(challengeRepo, sessionRepo, builderClient)
+	clientChallengeUsecase := usecase.NewClientChallengeUsecase(challengeRepo, submissionRepo)
 
 	userAuthService := service.NewUserAuthService(userAuthUsecase)
 	adminAuthService := service.NewAdminAuthService(adminAuthUsecase)
 	adminService := service.NewAdminService(adminServiceUsecase)
+	clientChallengeService := service.NewClientChallengeService(clientChallengeUsecase)
 
 	authInterceptor := middleware.NewAuthInterceptor(sessionRepo)
 
@@ -73,6 +76,7 @@ func main() {
 	pb.RegisterUserAuthServiceServer(grpcServer, userAuthService)
 	pb.RegisterAdminAuthServiceServer(grpcServer, adminAuthService)
 	pb.RegisterAdminServiceServer(grpcServer, adminService)
+	pb.RegisterClientChallengeServiceServer(grpcServer, clientChallengeService)
 
 	reflection.Register(grpcServer)
 
