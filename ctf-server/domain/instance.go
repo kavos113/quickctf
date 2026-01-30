@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"errors"
 	"time"
 )
@@ -30,3 +31,11 @@ const (
 	InstanceStatusDestroyed InstanceStatus = "destroyed"
 	InstanceStatusUnknown   InstanceStatus = "unknown"
 )
+
+type InstanceRepository interface {
+	Create(ctx context.Context, instance *Instance) error
+	FindByID(ctx context.Context, instanceID string) (*Instance, error)
+	FindByUserAndChallenge(ctx context.Context, userID, challengeID string) (*Instance, error)
+	Update(ctx context.Context, instance *Instance) error
+	Delete(ctx context.Context, instanceID string) error
+}
