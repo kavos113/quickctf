@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -313,20 +312,7 @@ func (s *RunnerService) StreamInstanceLogs(req *pb.StreamInstanceLogsRequest, st
 }
 
 func (s *RunnerService) pullImage(ctx context.Context, imageName string) error {
-	// 認証情報を作成（匿名アクセスの場合）
-	authConfig := struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}{}
-	authJSON, err := json.Marshal(authConfig)
-	if err != nil {
-		return fmt.Errorf("failed to marshal auth config: %w", err)
-	}
-	encodedAuth := base64.URLEncoding.EncodeToString(authJSON)
-
-	pullOptions := client.ImagePullOptions{
-		RegistryAuth: encodedAuth,
-	}
+	pullOptions := client.ImagePullOptions{}
 
 	reader, err := s.dockerClient.ImagePull(ctx, imageName, pullOptions)
 	if err != nil {
@@ -368,7 +354,7 @@ func (s *RunnerService) Cleanup() {
 		if instanceInfo.StopTimer != nil {
 			instanceInfo.StopTimer.Stop()
 		}
-		
+
 		removeOptions := client.ContainerRemoveOptions{
 			Force: true,
 		}
