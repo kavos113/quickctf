@@ -17,3 +17,11 @@ type SessionRepository interface {
 	Delete(ctx context.Context, token string) error
 	DeleteByUserID(ctx context.Context, userID string) error
 }
+
+type ChallengeRepository interface {
+	Create(ctx context.Context, challenge *Challenge) error
+	FindByID(ctx context.Context, challengeID string) (*Challenge, error)
+	FindAll(ctx context.Context) ([]*Challenge, error)
+	Update(ctx context.Context, challenge *Challenge) error
+	Delete(ctx context.Context, challengeID string) error
+}

@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/kavos113/quickctf/ctf-server/infrastructure/middleware"
 	"github.com/kavos113/quickctf/ctf-server/infrastructure/repository"
 	"github.com/kavos113/quickctf/ctf-server/interface/service"
 	"github.com/kavos113/quickctf/ctf-server/usecase"
@@ -39,12 +40,17 @@ func main() {
 
 	userRepo := repository.NewMySQLUserRepository(db)
 	sessionRepo := repository.NewMySQLSessionRepository(db)
+	challengeRepo := repository.NewMySQLChallengeRepository(db)
 
 	userAuthUsecase := usecase.NewUserAuthUsecase(userRepo, sessionRepo)
 	adminAuthUsecase := usecase.NewAdminAuthUsecase(sessionRepo)
+	adminServiceUsecase := usecase.NewAdminServiceUsecase(challengeRepo, sessionRepo)
 
 	userAuthService := service.NewUserAuthService(userAuthUsecase)
 	adminAuthService := service.NewAdminAuthService(adminAuthUsecase)
+	adminService := service.NewAdminService(adminServiceUsecase)
+
+	authInterceptor := middleware.NewAuthInterceptor(sessionRepo)
 
 	log.Printf("CTF server starting on port %s", port)
 
@@ -53,10 +59,13 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(authInterceptor.Unary()),
+	)
 
 	pb.RegisterUserAuthServiceServer(grpcServer, userAuthService)
 	pb.RegisterAdminAuthServiceServer(grpcServer, adminAuthService)
+	pb.RegisterAdminServiceServer(grpcServer, adminService)
 
 	reflection.Register(grpcServer)
 

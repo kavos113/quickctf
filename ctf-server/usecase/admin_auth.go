@@ -82,3 +82,31 @@ func (u *AdminAuthUsecase) DeactivateAdmin(ctx context.Context, token string) er
 	session.IsAdmin = false
 	return u.sessionRepo.Update(ctx, session)
 }
+
+// ActivateAdminWithSession はセッションを使って管理者権限を付与する（インターセプター用）
+func (u *AdminAuthUsecase) ActivateAdminWithSession(ctx context.Context, session *domain.Session, activationCode string) error {
+	if activationCode != u.activationCode {
+		return domain.ErrInvalidActivationCode
+	}
+
+	if session.IsAdmin {
+		return nil
+	}
+
+	session.IsAdmin = true
+	if err := u.sessionRepo.Update(ctx, session); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeactivateAdminWithSession はセッションを使って管理者権限を解除する（インターセプター用）
+func (u *AdminAuthUsecase) DeactivateAdminWithSession(ctx context.Context, session *domain.Session) error {
+	if !session.IsAdmin {
+		return nil
+	}
+
+	session.IsAdmin = false
+	return u.sessionRepo.Update(ctx, session)
+}

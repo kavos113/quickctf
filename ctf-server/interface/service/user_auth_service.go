@@ -67,14 +67,24 @@ func (s *UserAuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.
 }
 
 func (s *UserAuthService) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
-	if err := s.usecase.Logout(ctx, req.Token); err != nil {
+	// コンテキストからセッションを取得
+	session, err := getSessionFromContext(ctx)
+	if err != nil {
+		log.Printf("Failed to get session from context: %v", err)
+		return &pb.LogoutResponse{
+			ErrorMessage: "logout failed",
+		}, nil
+	}
+
+	// トークンでログアウト
+	if err := s.usecase.Logout(ctx, session.Token); err != nil {
 		log.Printf("Logout failed: %v", err)
 		return &pb.LogoutResponse{
 			ErrorMessage: "logout failed",
 		}, nil
 	}
 
-	log.Printf("User logged out")
+	log.Printf("User logged out: %s", session.UserID)
 	return &pb.LogoutResponse{
 		ErrorMessage: "",
 	}, nil

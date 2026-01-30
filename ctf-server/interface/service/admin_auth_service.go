@@ -23,26 +23,40 @@ func NewAdminAuthService(usecase *usecase.AdminAuthUsecase) *AdminAuthService {
 
 // AdminLogin はアクティベーションコードでadmin権限を付与
 func (s *AdminAuthService) AdminLogin(ctx context.Context, req *pb.AdminLoginRequest) (*pb.AdminLoginResponse, error) {
-	// メタデータからトークンを取得する必要があるが、簡易実装のため
-	// passwordフィールドを"token:code"形式で受け取る
-	// TODO: gRPC metadataからトークンを取得する実装に変更
-	
-	// 仮実装：passwordを"token:activationCode"として解析
-	// 本来はmetadataからtokenを取得し、passwordにactivationCodeを入れる
-	log.Printf("Admin activation requested")
-	
-	// 実際の実装では、metadataからトークンを取得し、
-	// req.Passwordをactivation codeとして使う
-	// ここではプレースホルダーとして空の応答を返す
-	
+	// コンテキストからセッションを取得
+	session, err := getSessionFromContext(ctx)
+	if err != nil {
+		log.Printf("Failed to get session from context: %v", err)
+		return &pb.AdminLoginResponse{}, nil
+	}
+
+	// アクティベーションコードで管理者権限を付与
+	err = s.usecase.ActivateAdminWithSession(ctx, session, req.Password)
+	if err != nil {
+		log.Printf("Failed to activate admin: %v", err)
+		return &pb.AdminLoginResponse{}, nil
+	}
+
+	log.Printf("Admin activated for user: %s", session.UserID)
 	return &pb.AdminLoginResponse{}, nil
 }
 
 // AdminLogout はadmin権限を解除
 func (s *AdminAuthService) AdminLogout(ctx context.Context, req *pb.AdminLogoutRequest) (*pb.AdminLogoutResponse, error) {
-	// メタデータからトークンを取得してadmin権限を解除
-	// TODO: 実装が必要
-	
-	log.Printf("Admin deactivation requested")
+	// コンテキストからセッションを取得
+	session, err := getSessionFromContext(ctx)
+	if err != nil {
+		log.Printf("Failed to get session from context: %v", err)
+		return &pb.AdminLogoutResponse{}, nil
+	}
+
+	// admin権限を解除
+	err = s.usecase.DeactivateAdminWithSession(ctx, session)
+	if err != nil {
+		log.Printf("Failed to deactivate admin: %v", err)
+		return &pb.AdminLogoutResponse{}, nil
+	}
+
+	log.Printf("Admin deactivated for user: %s", session.UserID)
 	return &pb.AdminLogoutResponse{}, nil
 }
