@@ -105,7 +105,6 @@ func (s *ManagerService) StartInstance(ctx context.Context, req *managerPb.Start
 		}, nil
 	}
 
-	// 利用可能なrunnerを選択
 	runner := s.selectRunner()
 	if runner == nil {
 		return &managerPb.StartInstanceResponse{
@@ -114,7 +113,6 @@ func (s *ManagerService) StartInstance(ctx context.Context, req *managerPb.Start
 		}, nil
 	}
 
-	// runnerにリクエストを転送
 	runnerReq := &runnerPb.StartInstanceRequest{
 		ImageTag:   req.ImageTag,
 		InstanceId: req.InstanceId,
@@ -129,7 +127,6 @@ func (s *ManagerService) StartInstance(ctx context.Context, req *managerPb.Start
 		}, nil
 	}
 
-	// 成功した場合、インスタンス情報を保存
 	if resp.Status == "success" {
 		now := time.Now()
 		instance := &domain.Instance{
@@ -152,7 +149,6 @@ func (s *ManagerService) StartInstance(ctx context.Context, req *managerPb.Start
 		}
 	}
 
-	// ConnectionInfoを変換
 	var connInfo *managerPb.ConnectionInfo
 	if resp.ConnectionInfo != nil {
 		connInfo = &managerPb.ConnectionInfo{
@@ -191,7 +187,6 @@ func (s *ManagerService) StopInstance(ctx context.Context, req *managerPb.StopIn
 		}, nil
 	}
 
-	// runnerにリクエストを転送
 	runnerReq := &runnerPb.StopInstanceRequest{
 		InstanceId: req.InstanceId,
 	}
@@ -204,7 +199,6 @@ func (s *ManagerService) StopInstance(ctx context.Context, req *managerPb.StopIn
 		}, nil
 	}
 
-	// 状態を更新
 	if resp.Status == "success" {
 		instance.UpdateState(domain.StateStopped)
 		if err := s.repo.Update(ctx, instance); err != nil {
@@ -243,7 +237,6 @@ func (s *ManagerService) DestroyInstance(ctx context.Context, req *managerPb.Des
 		}, nil
 	}
 
-	// runnerにリクエストを転送
 	runnerReq := &runnerPb.DestroyInstanceRequest{
 		InstanceId: req.InstanceId,
 	}
@@ -256,7 +249,6 @@ func (s *ManagerService) DestroyInstance(ctx context.Context, req *managerPb.Des
 		}, nil
 	}
 
-	// 成功した場合、インスタンス情報を削除
 	if resp.Status == "success" {
 		if err := s.repo.Delete(ctx, req.InstanceId); err != nil {
 			log.Printf("Failed to delete instance %s from DB: %v", req.InstanceId, err)
@@ -293,7 +285,6 @@ func (s *ManagerService) GetInstanceStatus(ctx context.Context, req *managerPb.G
 		}, nil
 	}
 
-	// runnerにリクエストを転送
 	runnerReq := &runnerPb.GetInstanceStatusRequest{
 		InstanceId: req.InstanceId,
 	}
@@ -306,7 +297,6 @@ func (s *ManagerService) GetInstanceStatus(ctx context.Context, req *managerPb.G
 		}, nil
 	}
 
-	// 状態を更新
 	newState := domain.FromProtoState(managerPb.GetInstanceStatusResponse_State(resp.State))
 	if newState != instance.State {
 		instance.UpdateState(newState)
@@ -336,7 +326,6 @@ func (s *ManagerService) StreamInstanceLogs(req *managerPb.StreamInstanceLogsReq
 		return fmt.Errorf("runner %s not found", instance.RunnerURL)
 	}
 
-	// runnerにリクエストを転送
 	runnerReq := &runnerPb.StreamInstanceLogsRequest{
 		InstanceId: req.InstanceId,
 	}
