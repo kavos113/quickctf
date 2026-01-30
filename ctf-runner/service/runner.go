@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"sync"
-	"time"
 
 	pb "github.com/kavos113/quickctf/gen/go/api/runner/v1"
 	"github.com/moby/moby/api/types/container"
@@ -19,16 +17,6 @@ type RunnerService struct {
 	pb.UnimplementedRunnerServiceServer
 	dockerClient *client.Client
 	registryURL  string
-	instances    map[string]*InstanceInfo
-	mu           sync.RWMutex
-}
-
-type InstanceInfo struct {
-	ContainerID string
-	ImageTag    string
-	Port        int32
-	TTL         time.Duration
-	StopTimer   *time.Timer
 }
 
 func NewRunnerService(registryURL string) *RunnerService {
@@ -40,23 +28,10 @@ func NewRunnerService(registryURL string) *RunnerService {
 	return &RunnerService{
 		dockerClient: cli,
 		registryURL:  registryURL,
-		instances:    make(map[string]*InstanceInfo),
 	}
 }
 
 func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstanceRequest) (*pb.StartInstanceResponse, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	// 既に同じインスタンスIDが存在する場合はエラー
-	if _, exists := s.instances[req.InstanceId]; exists {
-		return &pb.StartInstanceResponse{
-			Status:       "failed",
-			ErrorMessage: fmt.Sprintf("instance %s already exists", req.InstanceId),
-		}, nil
-	}
-
-	// registryからイメージをpull
 	fullImageName := fmt.Sprintf("%s/%s", s.registryURL, req.ImageTag)
 	if err := s.pullImage(ctx, fullImageName); err != nil {
 		return &pb.StartInstanceResponse{
@@ -65,7 +40,6 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 		}, nil
 	}
 
-	// コンテナを作成
 	containerConfig := &container.Config{
 		Image: fullImageName,
 	}
@@ -92,7 +66,6 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 		}, nil
 	}
 
-	// コンテナを起動
 	startOptions := client.ContainerStartOptions{}
 	if _, err := s.dockerClient.ContainerStart(ctx, resp.ID, startOptions); err != nil {
 		return &pb.StartInstanceResponse{
@@ -101,7 +74,6 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 		}, nil
 	}
 
-	// コンテナ情報を取得してポート番号を取得
 	inspectOptions := client.ContainerInspectOptions{}
 	containerJSON, err := s.dockerClient.ContainerInspect(ctx, resp.ID, inspectOptions)
 	if err != nil {
@@ -112,32 +84,12 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 	}
 
 	var hostPort int32
-	// ポート情報の取得
 	if containerJSON.Container.NetworkSettings != nil {
 		port, _ := network.ParsePort("80/tcp")
 		if bindings, ok := containerJSON.Container.NetworkSettings.Ports[port]; ok && len(bindings) > 0 {
 			fmt.Sscanf(bindings[0].HostPort, "%d", &hostPort)
 		}
 	}
-
-	// インスタンス情報を保存
-	ttl := time.Duration(req.TtlSeconds) * time.Second
-	instanceInfo := &InstanceInfo{
-		ContainerID: resp.ID,
-		ImageTag:    req.ImageTag,
-		Port:        hostPort,
-		TTL:         ttl,
-	}
-
-	// TTLが設定されている場合、タイマーを設定
-	if req.TtlSeconds > 0 {
-		instanceInfo.StopTimer = time.AfterFunc(ttl, func() {
-			log.Printf("TTL expired for instance %s, stopping container", req.InstanceId)
-			s.stopInstanceInternal(context.Background(), req.InstanceId)
-		})
-	}
-
-	s.instances[req.InstanceId] = instanceInfo
 
 	return &pb.StartInstanceResponse{
 		Status: "success",
@@ -149,73 +101,32 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 }
 
 func (s *RunnerService) StopInstance(ctx context.Context, req *pb.StopInstanceRequest) (*pb.StopInstanceResponse, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	return s.stopInstanceInternal(ctx, req.InstanceId), nil
-}
-
-func (s *RunnerService) stopInstanceInternal(ctx context.Context, instanceID string) *pb.StopInstanceResponse {
-	instanceInfo, exists := s.instances[instanceID]
-	if !exists {
-		return &pb.StopInstanceResponse{
-			Status:       "failed",
-			ErrorMessage: fmt.Sprintf("instance %s not found", instanceID),
-		}
-	}
-
-	// タイマーをキャンセル
-	if instanceInfo.StopTimer != nil {
-		instanceInfo.StopTimer.Stop()
-	}
-
-	// コンテナを停止
 	timeout := 10
 	stopOptions := client.ContainerStopOptions{
 		Timeout: &timeout,
 	}
-	if _, err := s.dockerClient.ContainerStop(ctx, instanceInfo.ContainerID, stopOptions); err != nil {
+	if _, err := s.dockerClient.ContainerStop(ctx, req.InstanceId, stopOptions); err != nil {
 		return &pb.StopInstanceResponse{
 			Status:       "failed",
 			ErrorMessage: fmt.Sprintf("failed to stop container: %v", err),
-		}
+		}, nil
 	}
 
 	return &pb.StopInstanceResponse{
 		Status: "success",
-	}
+	}, nil
 }
 
 func (s *RunnerService) DestroyInstance(ctx context.Context, req *pb.DestroyInstanceRequest) (*pb.DestroyInstanceResponse, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	instanceInfo, exists := s.instances[req.InstanceId]
-	if !exists {
-		return &pb.DestroyInstanceResponse{
-			Status:       "failed",
-			ErrorMessage: fmt.Sprintf("instance %s not found", req.InstanceId),
-		}, nil
-	}
-
-	// タイマーをキャンセル
-	if instanceInfo.StopTimer != nil {
-		instanceInfo.StopTimer.Stop()
-	}
-
-	// コンテナを削除
 	removeOptions := client.ContainerRemoveOptions{
 		Force: true,
 	}
-	if _, err := s.dockerClient.ContainerRemove(ctx, instanceInfo.ContainerID, removeOptions); err != nil {
+	if _, err := s.dockerClient.ContainerRemove(ctx, req.InstanceId, removeOptions); err != nil {
 		return &pb.DestroyInstanceResponse{
 			Status:       "failed",
 			ErrorMessage: fmt.Sprintf("failed to remove container: %v", err),
 		}, nil
 	}
-
-	// インスタンス情報を削除
-	delete(s.instances, req.InstanceId)
 
 	return &pb.DestroyInstanceResponse{
 		Status: "success",
@@ -223,23 +134,13 @@ func (s *RunnerService) DestroyInstance(ctx context.Context, req *pb.DestroyInst
 }
 
 func (s *RunnerService) GetInstanceStatus(ctx context.Context, req *pb.GetInstanceStatusRequest) (*pb.GetInstanceStatusResponse, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-
-	instanceInfo, exists := s.instances[req.InstanceId]
-	if !exists {
+	// コンテナの状態を確認（コンテナ名=インスタンスID）
+	inspectOptions := client.ContainerInspectOptions{}
+	containerJSON, err := s.dockerClient.ContainerInspect(ctx, req.InstanceId, inspectOptions)
+	if err != nil {
+		// コンテナが存在しない場合はDESTROYED
 		return &pb.GetInstanceStatusResponse{
 			State: pb.GetInstanceStatusResponse_STATE_DESTROYED,
-		}, nil
-	}
-
-	// コンテナの状態を確認
-	inspectOptions := client.ContainerInspectOptions{}
-	containerJSON, err := s.dockerClient.ContainerInspect(ctx, instanceInfo.ContainerID, inspectOptions)
-	if err != nil {
-		return &pb.GetInstanceStatusResponse{
-			State:        pb.GetInstanceStatusResponse_STATE_UNSPECIFIED,
-			ErrorMessage: fmt.Sprintf("failed to inspect container: %v", err),
 		}, nil
 	}
 
@@ -262,17 +163,9 @@ func (s *RunnerService) GetInstanceStatus(ctx context.Context, req *pb.GetInstan
 }
 
 func (s *RunnerService) StreamInstanceLogs(req *pb.StreamInstanceLogsRequest, stream pb.RunnerService_StreamInstanceLogsServer) error {
-	s.mu.RLock()
-	instanceInfo, exists := s.instances[req.InstanceId]
-	s.mu.RUnlock()
-
-	if !exists {
-		return fmt.Errorf("instance %s not found", req.InstanceId)
-	}
-
 	ctx := stream.Context()
 
-	// コンテナのログをストリーミング
+	// コンテナのログをストリーミング（コンテナ名=インスタンスID）
 	logOptions := client.ContainerLogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
@@ -280,7 +173,7 @@ func (s *RunnerService) StreamInstanceLogs(req *pb.StreamInstanceLogsRequest, st
 		Timestamps: false,
 	}
 
-	logReader, err := s.dockerClient.ContainerLogs(ctx, instanceInfo.ContainerID, logOptions)
+	logReader, err := s.dockerClient.ContainerLogs(ctx, req.InstanceId, logOptions)
 	if err != nil {
 		return fmt.Errorf("failed to get container logs: %v", err)
 	}
@@ -345,19 +238,5 @@ func (s *RunnerService) pullImage(ctx context.Context, imageName string) error {
 }
 
 func (s *RunnerService) Cleanup() {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	ctx := context.Background()
-	for instanceID, instanceInfo := range s.instances {
-		log.Printf("Cleaning up instance %s", instanceID)
-		if instanceInfo.StopTimer != nil {
-			instanceInfo.StopTimer.Stop()
-		}
-
-		removeOptions := client.ContainerRemoveOptions{
-			Force: true,
-		}
-		s.dockerClient.ContainerRemove(ctx, instanceInfo.ContainerID, removeOptions)
-	}
+	log.Println("Runner cleanup called")
 }
