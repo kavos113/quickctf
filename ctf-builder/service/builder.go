@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 
 	pb "github.com/kavos113/quickctf/gen/go/api/builder/v1"
 	"github.com/moby/moby/client"
@@ -15,6 +16,7 @@ import (
 type BuilderService struct {
 	pb.UnimplementedBuilderServiceServer
 	dockerClient *client.Client
+	registryURL  string
 }
 
 func NewBuilderService() *BuilderService {
@@ -23,8 +25,14 @@ func NewBuilderService() *BuilderService {
 		log.Fatalf("failed to create docker client: %v", err)
 	}
 
+	registryURL := os.Getenv("CTF_REGISTRY_URL")
+	if registryURL == "" {
+		registryURL = "localhost:5000"
+	}
+
 	return &BuilderService{
 		dockerClient: cli,
+		registryURL:  registryURL,
 	}
 }
 
@@ -33,9 +41,9 @@ func (s *BuilderService) BuildImage(req *pb.BuildImageRequest, stream pb.Builder
 
 	// source_tarからイメージをビルド
 	buildOptions := client.ImageBuildOptions{
-		Tags:       []string{req.ImageTag},
-		Dockerfile: "Dockerfile",
-		Remove:     true,
+		Tags:        []string{req.ImageTag},
+		Dockerfile:  "Dockerfile",
+		Remove:      true,
 		ForceRemove: true,
 	}
 
@@ -93,16 +101,38 @@ func (s *BuilderService) BuildImage(req *pb.BuildImageRequest, stream pb.Builder
 		}
 	}
 
-	// ビルド結果を送信
-	status := "success"
+	// ビルドエラーがある場合は結果を送信して終了
 	if buildError != "" {
-		status = "failed"
+		result := &pb.BuildResult{
+			ImageId:      imageID,
+			Status:       "failed",
+			ErrorMessage: buildError,
+		}
+		return stream.Send(&pb.BuildImageResponse{
+			Response: &pb.BuildImageResponse_Result{
+				Result: result,
+			},
+		})
 	}
 
+	// イメージをregistryにpush
+	if err := stream.Send(&pb.BuildImageResponse{
+		Response: &pb.BuildImageResponse_LogLine{
+			LogLine: fmt.Sprintf("Pushing image to registry %s...\n", s.registryURL),
+		},
+	}); err != nil {
+		return err
+	}
+
+	if err := s.pushImage(ctx, req.ImageTag, stream); err != nil {
+		return s.sendError(stream, fmt.Sprintf("failed to push image: %v", err))
+	}
+
+	// 成功結果を送信
 	result := &pb.BuildResult{
 		ImageId:      imageID,
-		Status:       status,
-		ErrorMessage: buildError,
+		Status:       "success",
+		ErrorMessage: "",
 	}
 
 	return stream.Send(&pb.BuildImageResponse{
@@ -110,6 +140,65 @@ func (s *BuilderService) BuildImage(req *pb.BuildImageRequest, stream pb.Builder
 			Result: result,
 		},
 	})
+}
+
+func (s *BuilderService) pushImage(ctx context.Context, imageTag string, stream pb.BuilderService_BuildImageServer) error {
+	// registryのURLを含むタグを作成
+	registryTag := fmt.Sprintf("%s/%s", s.registryURL, imageTag)
+
+	// イメージにregistryタグを付ける
+	tagOptions := client.ImageTagOptions{
+		Source: imageTag,
+		Target: registryTag,
+	}
+	if _, err := s.dockerClient.ImageTag(ctx, tagOptions); err != nil {
+		return fmt.Errorf("failed to tag image: %w", err)
+	}
+
+	// イメージをpush
+	pushOptions := client.ImagePushOptions{}
+
+	pushResp, err := s.dockerClient.ImagePush(ctx, registryTag, pushOptions)
+	if err != nil {
+		return fmt.Errorf("failed to push image: %w", err)
+	}
+	defer pushResp.Close()
+
+	// pushログをストリーミング
+	decoder := json.NewDecoder(pushResp)
+	for {
+		var message struct {
+			Status   string `json:"status,omitempty"`
+			Progress string `json:"progress,omitempty"`
+			Error    string `json:"error,omitempty"`
+		}
+
+		if err := decoder.Decode(&message); err == io.EOF {
+			break
+		} else if err != nil {
+			return fmt.Errorf("failed to decode push output: %w", err)
+		}
+
+		if message.Error != "" {
+			return fmt.Errorf("push error: %s", message.Error)
+		}
+
+		if message.Status != "" {
+			logLine := message.Status
+			if message.Progress != "" {
+				logLine = fmt.Sprintf("%s %s", message.Status, message.Progress)
+			}
+			if err := stream.Send(&pb.BuildImageResponse{
+				Response: &pb.BuildImageResponse_LogLine{
+					LogLine: logLine + "\n",
+				},
+			}); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 func (s *BuilderService) sendError(stream pb.BuilderService_BuildImageServer, errorMsg string) error {

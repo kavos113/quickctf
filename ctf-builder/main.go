@@ -21,6 +21,13 @@ func main() {
 		port = "50051"
 	}
 
+	registryURL := os.Getenv("CTF_REGISTRY_URL")
+	if registryURL == "" {
+		registryURL = "localhost:5000"
+	}
+
+	log.Printf("CTF Registry URL: %s", registryURL)
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
