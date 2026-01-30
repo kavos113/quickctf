@@ -130,6 +130,6 @@ func (s *ClientChallengeService) GetInstanceStatus(ctx context.Context, req *pb.
 	}
 
 	return &pb.GetInstanceStatusResponse{
-		Status: status,
+		Status: string(status),
 	}, nil
 }

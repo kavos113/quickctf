@@ -45,3 +45,20 @@ CREATE TABLE IF NOT EXISTS submissions (
     INDEX idx_user_id (user_id),
     INDEX idx_challenge_id (challenge_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS instances (
+    id CHAR(36) PRIMARY KEY,
+    user_id CHAR(36) NOT NULL,
+    challenge_id CHAR(36) NOT NULL,
+    image_tag VARCHAR(255) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    host VARCHAR(255),
+    port INT,
+    started_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (challenge_id) REFERENCES challenges(id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_challenge_id (challenge_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

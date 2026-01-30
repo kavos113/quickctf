@@ -43,6 +43,7 @@ func main() {
 	sessionRepo := repository.NewMySQLSessionRepository(db)
 	challengeRepo := repository.NewMySQLChallengeRepository(db)
 	submissionRepo := repository.NewMySQLSubmissionRepository(db)
+	instanceRepo := repository.NewMySQLInstanceRepository(db)
 
 	builderClient, err := client.NewBuilderClient()
 	if err != nil {
@@ -50,10 +51,16 @@ func main() {
 	}
 	defer builderClient.Close()
 
+	managerClient, err := client.NewManagerClient()
+	if err != nil {
+		log.Fatalf("failed to create manager client: %v", err)
+	}
+	defer managerClient.Close()
+
 	userAuthUsecase := usecase.NewUserAuthUsecase(userRepo, sessionRepo)
 	adminAuthUsecase := usecase.NewAdminAuthUsecase(sessionRepo)
 	adminServiceUsecase := usecase.NewAdminServiceUsecase(challengeRepo, sessionRepo, builderClient)
-	clientChallengeUsecase := usecase.NewClientChallengeUsecase(challengeRepo, submissionRepo)
+	clientChallengeUsecase := usecase.NewClientChallengeUsecase(challengeRepo, submissionRepo, instanceRepo, managerClient)
 
 	userAuthService := service.NewUserAuthService(userAuthUsecase)
 	adminAuthService := service.NewAdminAuthService(adminAuthUsecase)

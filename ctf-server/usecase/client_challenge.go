@@ -2,24 +2,32 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/kavos113/quickctf/ctf-server/domain"
+	"github.com/kavos113/quickctf/ctf-server/infrastructure/client"
 )
 
 type ClientChallengeUsecase struct {
-	challengeRepo   domain.ChallengeRepository
-	submissionRepo  domain.SubmissionRepository
+	challengeRepo  domain.ChallengeRepository
+	submissionRepo domain.SubmissionRepository
+	instanceRepo   domain.InstanceRepository
+	managerClient  *client.ManagerClient
 }
 
 func NewClientChallengeUsecase(
 	challengeRepo domain.ChallengeRepository,
 	submissionRepo domain.SubmissionRepository,
+	instanceRepo domain.InstanceRepository,
+	managerClient *client.ManagerClient,
 ) *ClientChallengeUsecase {
 	return &ClientChallengeUsecase{
-		challengeRepo:   challengeRepo,
-		submissionRepo:  submissionRepo,
+		challengeRepo:  challengeRepo,
+		submissionRepo: submissionRepo,
+		instanceRepo:   instanceRepo,
+		managerClient:  managerClient,
 	}
 }
 
@@ -77,12 +85,41 @@ func (u *ClientChallengeUsecase) SubmitFlag(ctx context.Context, userID, challen
 }
 
 func (u *ClientChallengeUsecase) StartInstance(ctx context.Context, userID, challengeID string) error {
-	_, err := u.challengeRepo.FindByID(ctx, challengeID)
+	challenge, err := u.challengeRepo.FindByID(ctx, challengeID)
 	if err != nil {
 		return err
 	}
 
-	// TODO: ctf-managerを呼び出してインスタンスを起動
+	existingInstance, err := u.instanceRepo.FindByUserAndChallenge(ctx, userID, challengeID)
+	if err == nil && existingInstance.Status == "running" {
+		return fmt.Errorf("instance already running")
+	}
+
+	instanceID := fmt.Sprintf("%s-%s", userID[:8], uuid.New().String()[:8])
+	imageTag := fmt.Sprintf("ctf-%s:%s", challenge.Name, challenge.ChallengeID[:8])
+	ttlSeconds := int64(3600)
+
+	connInfo, err := u.managerClient.StartInstance(ctx, imageTag, instanceID, ttlSeconds)
+	if err != nil {
+		return fmt.Errorf("failed to start instance: %w", err)
+	}
+
+	instance := &domain.Instance{
+		InstanceID:  instanceID,
+		UserID:      userID,
+		ChallengeID: challengeID,
+		ImageTag:    imageTag,
+		Status:      "running",
+		Host:        connInfo.Host,
+		Port:        connInfo.Port,
+		StartedAt:   time.Now(),
+		ExpiresAt:   time.Now().Add(time.Duration(ttlSeconds) * time.Second),
+	}
+
+	if err := u.instanceRepo.Create(ctx, instance); err != nil {
+		return fmt.Errorf("failed to save instance: %w", err)
+	}
+
 	return nil
 }
 
@@ -92,16 +129,50 @@ func (u *ClientChallengeUsecase) StopInstance(ctx context.Context, userID, chall
 		return err
 	}
 
-	// TODO: ctf-managerを呼び出してインスタンスを停止
+	instance, err := u.instanceRepo.FindByUserAndChallenge(ctx, userID, challengeID)
+	if err != nil {
+		return fmt.Errorf("instance not found: %w", err)
+	}
+
+	if instance.Status == domain.InstanceStatusStopped || instance.Status == domain.InstanceStatusDestroyed {
+		return fmt.Errorf("instance already stopped")
+	}
+
+	if err := u.managerClient.StopInstance(ctx, instance.InstanceID); err != nil {
+		return fmt.Errorf("failed to stop instance: %w", err)
+	}
+
+	instance.Status = domain.InstanceStatusStopped
+	if err := u.instanceRepo.Update(ctx, instance); err != nil {
+		return fmt.Errorf("failed to update instance: %w", err)
+	}
+
 	return nil
 }
 
-func (u *ClientChallengeUsecase) GetInstanceStatus(ctx context.Context, userID, challengeID string) (string, error) {
+func (u *ClientChallengeUsecase) GetInstanceStatus(ctx context.Context, userID, challengeID string) (domain.InstanceStatus, error) {
 	_, err := u.challengeRepo.FindByID(ctx, challengeID)
 	if err != nil {
 		return "", err
 	}
 
-	// TODO: ctf-managerを呼び出してインスタンスの状態を取得
-	return "not_implemented", nil
+	instance, err := u.instanceRepo.FindByUserAndChallenge(ctx, userID, challengeID)
+	if err != nil {
+		if err == domain.ErrInstanceNotFound {
+			return "not_started", nil
+		}
+		return "", fmt.Errorf("failed to get instance: %w", err)
+	}
+
+	status, err := u.managerClient.GetInstanceStatus(ctx, instance.InstanceID)
+	if err != nil {
+		return instance.Status, nil
+	}
+
+	if status != instance.Status {
+		instance.Status = status
+		u.instanceRepo.Update(ctx, instance)
+	}
+
+	return status, nil
 }
