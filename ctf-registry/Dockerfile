@@ -1,0 +1,25 @@
+FROM golang:1.25-alpine AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o /ctf-registry
+
+FROM alpine:latest
+
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+COPY --from=builder /ctf-registry .
+
+RUN mkdir -p /data/blobs /data/uploads
+
+VOLUME ["/data"]
+
+EXPOSE 5000
+
+CMD ["./ctf-registry"]
