@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
+	pb "github.com/kavos113/quickctf/gen/go/api/runner/v1"
 	"github.com/moby/moby/api/types/container"
 	"github.com/moby/moby/api/types/network"
 	"github.com/moby/moby/client"
-	pb "github.com/kavos113/quickctf/gen/go/api/runner/v1"
 )
 
 type RunnerService struct {
