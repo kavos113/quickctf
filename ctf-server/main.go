@@ -1,0 +1,78 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"net"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+
+	"github.com/kavos113/quickctf/ctf-server/infrastructure/repository"
+	"github.com/kavos113/quickctf/ctf-server/interface/service"
+	"github.com/kavos113/quickctf/ctf-server/usecase"
+	pb "github.com/kavos113/quickctf/gen/go/api/server/v1"
+)
+
+func main() {
+	ctx := context.Background()
+
+	port := os.Getenv("SERVER_PORT")
+	if port == "" {
+		port = "50060"
+	}
+
+	dbConfig := repository.NewConfigFromEnv()
+	db, err := repository.Connect(dbConfig)
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	if err := repository.InitSchema(ctx, db, dbConfig.SchemaPath); err != nil {
+		log.Fatalf("failed to initialize schema: %v", err)
+	}
+
+	userRepo := repository.NewMySQLUserRepository(db)
+	sessionRepo := repository.NewMySQLSessionRepository(db)
+
+	userAuthUsecase := usecase.NewUserAuthUsecase(userRepo, sessionRepo)
+	adminAuthUsecase := usecase.NewAdminAuthUsecase(sessionRepo)
+
+	userAuthService := service.NewUserAuthService(userAuthUsecase)
+	adminAuthService := service.NewAdminAuthService(adminAuthUsecase)
+
+	log.Printf("CTF server starting on port %s", port)
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+
+	grpcServer := grpc.NewServer()
+
+	pb.RegisterUserAuthServiceServer(grpcServer, userAuthService)
+	pb.RegisterAdminAuthServiceServer(grpcServer, adminAuthService)
+
+	reflection.Register(grpcServer)
+
+	log.Printf("CTF server listening on port %s", port)
+
+	// Graceful shutdown
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		<-sigChan
+		log.Println("Shutting down gracefully...")
+		grpcServer.GracefulStop()
+	}()
+
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
+}
