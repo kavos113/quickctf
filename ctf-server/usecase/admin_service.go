@@ -2,18 +2,22 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/kavos113/quickctf/ctf-server/domain"
+	"github.com/kavos113/quickctf/ctf-server/infrastructure/client"
 )
 
 type AdminServiceUsecase struct {
 	challengeRepo domain.ChallengeRepository
+	builderClient *client.BuilderClient
 }
 
-func NewAdminServiceUsecase(challengeRepo domain.ChallengeRepository, sessionRepo domain.SessionRepository) *AdminServiceUsecase {
+func NewAdminServiceUsecase(challengeRepo domain.ChallengeRepository, sessionRepo domain.SessionRepository, builderClient *client.BuilderClient) *AdminServiceUsecase {
 	return &AdminServiceUsecase{
 		challengeRepo: challengeRepo,
+		builderClient: builderClient,
 	}
 }
 
@@ -50,4 +54,23 @@ func (u *AdminServiceUsecase) ListChallenges(ctx context.Context) ([]*domain.Cha
 	}
 
 	return challenges, nil
+}
+
+func (u *AdminServiceUsecase) UploadChallengeImage(ctx context.Context, challengeID string, imageTar []byte) error {
+	challenge, err := u.challengeRepo.FindByID(ctx, challengeID)
+	if err != nil {
+		return err
+	}
+
+	imageTag := fmt.Sprintf("ctf-%s:%s", challenge.Name, challengeID[:8])
+
+	imageID, err := u.builderClient.BuildImage(ctx, imageTag, imageTar)
+	if err != nil {
+		return fmt.Errorf("failed to build image: %w", err)
+	}
+
+	// TODO: imageIDをチャレンジに関連付けて保存（将来的にDBスキーマ拡張）
+	_ = imageID
+
+	return nil
 }

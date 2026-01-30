@@ -74,9 +74,21 @@ func (s *AdminService) UpdateChallenge(ctx context.Context, req *pb.UpdateChalle
 }
 
 func (s *AdminService) UploadChallengeImage(ctx context.Context, req *pb.UploadChallengeImageRequest) (*pb.UploadChallengeImageResponse, error) {
-	return &pb.UploadChallengeImageResponse{
-		ErrorMessage: "not implemented yet",
-	}, nil
+	_, err := requireAdminSession(ctx)
+	if err != nil {
+		return &pb.UploadChallengeImageResponse{
+			ErrorMessage: err.Error(),
+		}, nil
+	}
+
+	err = s.adminUsecase.UploadChallengeImage(ctx, req.ChallengeId, req.ImageData)
+	if err != nil {
+		return &pb.UploadChallengeImageResponse{
+			ErrorMessage: err.Error(),
+		}, nil
+	}
+
+	return &pb.UploadChallengeImageResponse{}, nil
 }
 
 func (s *AdminService) DeleteChallenge(ctx context.Context, req *pb.DeleteChallengeRequest) (*pb.DeleteChallengeResponse, error) {

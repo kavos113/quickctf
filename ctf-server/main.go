@@ -12,8 +12,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/kavos113/quickctf/ctf-server/infrastructure/middleware"
+	"github.com/kavos113/quickctf/ctf-server/infrastructure/client"
 	"github.com/kavos113/quickctf/ctf-server/infrastructure/repository"
+	"github.com/kavos113/quickctf/ctf-server/interface/middleware"
 	"github.com/kavos113/quickctf/ctf-server/interface/service"
 	"github.com/kavos113/quickctf/ctf-server/usecase"
 	pb "github.com/kavos113/quickctf/gen/go/api/server/v1"
@@ -42,9 +43,15 @@ func main() {
 	sessionRepo := repository.NewMySQLSessionRepository(db)
 	challengeRepo := repository.NewMySQLChallengeRepository(db)
 
+	builderClient, err := client.NewBuilderClient()
+	if err != nil {
+		log.Fatalf("failed to create builder client: %v", err)
+	}
+	defer builderClient.Close()
+
 	userAuthUsecase := usecase.NewUserAuthUsecase(userRepo, sessionRepo)
 	adminAuthUsecase := usecase.NewAdminAuthUsecase(sessionRepo)
-	adminServiceUsecase := usecase.NewAdminServiceUsecase(challengeRepo, sessionRepo)
+	adminServiceUsecase := usecase.NewAdminServiceUsecase(challengeRepo, sessionRepo, builderClient)
 
 	userAuthService := service.NewUserAuthService(userAuthUsecase)
 	adminAuthService := service.NewAdminAuthService(adminAuthUsecase)
