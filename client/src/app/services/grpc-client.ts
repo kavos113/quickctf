@@ -1,6 +1,7 @@
 import { Client, createClient, Interceptor } from '@connectrpc/connect';
 import { createConnectTransport } from '@connectrpc/connect-web';
 import { ClientChallengeService, UserAuthService } from '../../gen/api/server/v1/client_pb';
+import { AdminAuthService, AdminService } from '../../gen/api/server/v1/admin_pb';
 
 const AUTH_TOKEN_KEY = 'auth_token';
 
@@ -31,3 +32,10 @@ export const challengeClient: Client<typeof ClientChallengeService> = createClie
   ClientChallengeService,
   transport,
 );
+
+export const adminAuthClient: Client<typeof AdminAuthService> = createClient(
+  AdminAuthService,
+  transport,
+);
+
+export const adminClient: Client<typeof AdminService> = createClient(AdminService, transport);

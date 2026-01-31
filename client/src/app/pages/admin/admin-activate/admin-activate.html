@@ -1,0 +1,33 @@
+<div class="admin-activate-container">
+  <div class="admin-activate-card">
+    <h1>管理者アクティベーション</h1>
+    <p class="description">
+      管理者機能を有効にするには、アクティベーションコードを入力してください。
+    </p>
+
+    <form (ngSubmit)="onSubmit()">
+      @if (error()) {
+      <div class="error-message">{{ error() }}</div>
+      }
+
+      <div class="form-group">
+        <label for="activationCode">アクティベーションコード</label>
+        <input type="password" id="activationCode" name="activationCode" [(ngModel)]="activationCode"
+          placeholder="アクティベーションコードを入力" [disabled]="isLoading()" />
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="btn-secondary" (click)="goBack()" [disabled]="isLoading()">
+          戻る
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="isLoading()">
+          @if (isLoading()) {
+          <span>処理中...</span>
+          } @else {
+          <span>アクティベート</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Challenge } from '../../../gen/api/server/v1/model_pb';
+import { AdminService } from '../../services/admin.service';
 import { AuthService } from '../../services/auth.service';
 import { ChallengeService } from '../../services/challenge.service';
 import { ChallengeDetailComponent } from './challenge-detail/challenge-detail';
@@ -13,6 +14,7 @@ import { ChallengeDetailComponent } from './challenge-detail/challenge-detail';
 })
 export class ChallengesComponent implements OnInit {
   private readonly authService = inject(AuthService);
+  readonly adminService = inject(AdminService);
   readonly challengeService = inject(ChallengeService);
   private readonly router = inject(Router);
 
@@ -57,6 +59,14 @@ export class ChallengesComponent implements OnInit {
 
   closeChallenge(): void {
     this.selectedChallenge.set(null);
+  }
+
+  goToAdmin(): void {
+    if (this.adminService.isAdmin()) {
+      this.router.navigate(['/admin/challenges']);
+    } else {
+      this.router.navigate(['/admin/activate']);
+    }
   }
 
   async logout(): Promise<void> {

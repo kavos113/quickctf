@@ -1,0 +1,55 @@
+<div class="admin-challenges-container">
+  <header class="header">
+    <h1>問題管理</h1>
+    <div class="header-actions">
+      <button class="btn-secondary" (click)="goBack()">ユーザー画面へ</button>
+      <button class="btn-warning" (click)="deactivateAdmin()">管理者モード終了</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <button class="btn-primary" (click)="createChallenge()">
+      <span class="icon">+</span> 新規問題作成
+    </button>
+  </div>
+
+  @if (adminService.isLoading()) {
+  <div class="loading">読み込み中...</div>
+  } @else if (adminService.error()) {
+  <div class="error-message">{{ adminService.error() }}</div>
+  } @else {
+  <div class="challenges-table-container">
+    <table class="challenges-table">
+      <thead>
+        <tr>
+          <th>問題名</th>
+          <th>ジャンル</th>
+          <th>ポイント</th>
+          <th>フラグ</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (challenge of adminService.challenges(); track challenge.name) {
+        <tr>
+          <td class="challenge-name">{{ challenge.name }}</td>
+          <td>
+            <span class="genre-badge">{{ challenge.genre }}</span>
+          </td>
+          <td class="points">{{ challenge.points }} pts</td>
+          <td class="flag">{{ challenge.flag }}</td>
+          <td class="actions">
+            <button class="btn-edit" (click)="editChallenge(challenge)">編集</button>
+            <button class="btn-delete" (click)="deleteChallenge(challenge)">削除</button>
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="5" class="empty-message">問題がありません</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>
