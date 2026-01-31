@@ -9,11 +9,11 @@ import (
 	"github.com/kavos113/quickctf/ctf-server/domain"
 )
 
-type contextKey string
+type ContextKey string
 
 const (
-	sessionContextKey contextKey = "session"
-	userIDContextKey  contextKey = "user_id"
+	SessionContextKey ContextKey = "session"
+	UserIDContextKey  ContextKey = "user_id"
 )
 
 type AuthInterceptor struct {
@@ -65,8 +65,8 @@ func (i *AuthInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
 			return nil, connect.NewError(connect.CodeUnauthenticated, domain.ErrSessionExpired)
 		}
 
-		ctx = context.WithValue(ctx, sessionContextKey, session)
-		ctx = context.WithValue(ctx, userIDContextKey, session.UserID)
+		ctx = context.WithValue(ctx, SessionContextKey, session)
+		ctx = context.WithValue(ctx, UserIDContextKey, session.UserID)
 
 		return next(ctx, req)
 	}

@@ -5,11 +5,12 @@ import (
 	"testing"
 
 	"github.com/kavos113/quickctf/ctf-server/domain"
+	"github.com/kavos113/quickctf/ctf-server/interface/middleware"
 )
 
 func TestGetUserIDFromContext(t *testing.T) {
 	userID := "test-user-123"
-	ctx := context.WithValue(context.Background(), userIDContextKey, userID)
+	ctx := context.WithValue(context.Background(), middleware.UserIDContextKey, userID)
 
 	retrievedUserID, err := getUserIDFromContext(ctx)
 	if err != nil {
@@ -37,7 +38,7 @@ func TestGetSessionFromContext(t *testing.T) {
 		IsAdmin:   false,
 	}
 
-	ctx := context.WithValue(context.Background(), sessionContextKey, session)
+	ctx := context.WithValue(context.Background(), middleware.SessionContextKey, session)
 
 	retrievedSession, err := getSessionFromContext(ctx)
 	if err != nil {
@@ -68,9 +69,9 @@ func TestGetSessionFromContext_NoSession(t *testing.T) {
 
 func TestRequireAdminSession(t *testing.T) {
 	tests := []struct {
-		name      string
-		session   *domain.Session
-		wantErr   bool
+		name    string
+		session *domain.Session
+		wantErr bool
 	}{
 		{
 			name: "admin session",
@@ -96,7 +97,7 @@ func TestRequireAdminSession(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ctx := context.WithValue(context.Background(), sessionContextKey, tt.session)
+			ctx := context.WithValue(context.Background(), middleware.SessionContextKey, tt.session)
 
 			session, err := requireAdminSession(ctx)
 
@@ -130,4 +131,3 @@ func TestRequireAdminSession_NoSession(t *testing.T) {
 		t.Error("Expected error for context without session")
 	}
 }
-

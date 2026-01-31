@@ -5,17 +5,11 @@ import (
 	"errors"
 
 	"github.com/kavos113/quickctf/ctf-server/domain"
-)
-
-type contextKey string
-
-const (
-	sessionContextKey contextKey = "session"
-	userIDContextKey  contextKey = "user_id"
+	"github.com/kavos113/quickctf/ctf-server/interface/middleware"
 )
 
 func getSessionFromContext(ctx context.Context) (*domain.Session, error) {
-	session, ok := ctx.Value(sessionContextKey).(*domain.Session)
+	session, ok := ctx.Value(middleware.SessionContextKey).(*domain.Session)
 	if !ok {
 		return nil, errors.New("session not found in context")
 	}
@@ -23,7 +17,7 @@ func getSessionFromContext(ctx context.Context) (*domain.Session, error) {
 }
 
 func getUserIDFromContext(ctx context.Context) (string, error) {
-	userID, ok := ctx.Value(userIDContextKey).(string)
+	userID, ok := ctx.Value(middleware.UserIDContextKey).(string)
 	if !ok {
 		return "", errors.New("user_id not found in context")
 	}
