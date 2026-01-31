@@ -16,6 +16,7 @@ import (
 
 	"github.com/kavos113/quickctf/ctf-server/infrastructure/client"
 	"github.com/kavos113/quickctf/ctf-server/infrastructure/repository"
+	"github.com/kavos113/quickctf/ctf-server/infrastructure/storage"
 	"github.com/kavos113/quickctf/ctf-server/interface/middleware"
 	"github.com/kavos113/quickctf/ctf-server/interface/service"
 	"github.com/kavos113/quickctf/ctf-server/usecase"
@@ -43,6 +44,25 @@ func main() {
 	instanceRepo := repository.NewMySQLInstanceRepository(db)
 	attachmentRepo := repository.NewAttachmentRepository(db)
 
+	// Initialize storage
+	s3Config := storage.NewS3ConfigFromEnv()
+	s3Storage, err := storage.NewS3Storage(s3Config)
+	if err != nil {
+		log.Fatalf("failed to create S3 storage: %v", err)
+	}
+
+	attachmentStorage := storage.NewAttachmentStorage(s3Storage)
+	buildLogStorage := storage.NewBuildLogStorage(s3Storage)
+
+	// Ensure buckets exist
+	ctx := context.Background()
+	if err := attachmentStorage.EnsureBucket(ctx); err != nil {
+		log.Printf("Warning: failed to ensure attachment bucket: %v", err)
+	}
+	if err := buildLogStorage.EnsureBucket(ctx); err != nil {
+		log.Printf("Warning: failed to ensure build-logs bucket: %v", err)
+	}
+
 	builderClient, err := client.NewBuilderClient()
 	if err != nil {
 		log.Fatalf("failed to create builder client: %v", err)
@@ -55,15 +75,10 @@ func main() {
 	}
 	defer managerClient.Close()
 
-	storageClient, err := client.NewStorageClient()
-	if err != nil {
-		log.Fatalf("failed to create storage client: %v", err)
-	}
-
 	userAuthUsecase := usecase.NewUserAuthUsecase(userRepo, sessionRepo)
 	adminAuthUsecase := usecase.NewAdminAuthUsecase(sessionRepo)
-	adminServiceUsecase := usecase.NewAdminServiceUsecase(challengeRepo, attachmentRepo, sessionRepo, builderClient, storageClient)
-	clientChallengeUsecase := usecase.NewClientChallengeUsecase(challengeRepo, submissionRepo, instanceRepo, attachmentRepo, managerClient, storageClient)
+	adminServiceUsecase := usecase.NewAdminServiceUsecase(challengeRepo, attachmentRepo, sessionRepo, builderClient, attachmentStorage, buildLogStorage)
+	clientChallengeUsecase := usecase.NewClientChallengeUsecase(challengeRepo, submissionRepo, instanceRepo, attachmentRepo, managerClient, attachmentStorage)
 
 	userAuthService := service.NewUserAuthService(userAuthUsecase)
 	adminAuthService := service.NewAdminAuthService(adminAuthUsecase)

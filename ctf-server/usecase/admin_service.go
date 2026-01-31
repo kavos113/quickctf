@@ -8,13 +8,15 @@ import (
 	"github.com/google/uuid"
 	"github.com/kavos113/quickctf/ctf-server/domain"
 	"github.com/kavos113/quickctf/ctf-server/infrastructure/client"
+	"github.com/kavos113/quickctf/ctf-server/infrastructure/storage"
 )
 
 type AdminServiceUsecase struct {
-	challengeRepo  domain.ChallengeRepository
-	attachmentRepo domain.AttachmentRepository
-	builderClient  *client.BuilderClient
-	storageClient  *client.StorageClient
+	challengeRepo     domain.ChallengeRepository
+	attachmentRepo    domain.AttachmentRepository
+	builderClient     *client.BuilderClient
+	attachmentStorage *storage.AttachmentStorage
+	buildLogStorage   *storage.BuildLogStorage
 }
 
 func NewAdminServiceUsecase(
@@ -22,13 +24,15 @@ func NewAdminServiceUsecase(
 	attachmentRepo domain.AttachmentRepository,
 	sessionRepo domain.SessionRepository,
 	builderClient *client.BuilderClient,
-	storageClient *client.StorageClient,
+	attachmentStorage *storage.AttachmentStorage,
+	buildLogStorage *storage.BuildLogStorage,
 ) *AdminServiceUsecase {
 	return &AdminServiceUsecase{
-		challengeRepo:  challengeRepo,
-		attachmentRepo: attachmentRepo,
-		builderClient:  builderClient,
-		storageClient:  storageClient,
+		challengeRepo:     challengeRepo,
+		attachmentRepo:    attachmentRepo,
+		builderClient:     builderClient,
+		attachmentStorage: attachmentStorage,
+		buildLogStorage:   buildLogStorage,
 	}
 }
 
@@ -100,7 +104,7 @@ func (u *AdminServiceUsecase) GetBuildLog(ctx context.Context, jobID string) (st
 		return "", "", fmt.Errorf("build job not found")
 	}
 
-	logContent, err := u.builderClient.GetBuildLog(ctx, jobID)
+	logContent, err := u.buildLogStorage.GetLog(ctx, jobID)
 	if err != nil {
 		return "", result.Status, fmt.Errorf("failed to get build log: %w", err)
 	}
@@ -114,9 +118,9 @@ func (u *AdminServiceUsecase) UploadAttachment(ctx context.Context, challengeID 
 		return nil, err
 	}
 
-	s3Key, err := u.storageClient.UploadAttachment(ctx, challengeID, filename, data)
+	s3Key, err := u.attachmentStorage.Upload(ctx, challengeID, filename, data)
 	if err != nil {
-		return nil, fmt.Errorf("failed to upload attachment to S3: %w", err)
+		return nil, fmt.Errorf("failed to upload attachment: %w", err)
 	}
 
 	attachment := &domain.Attachment{
@@ -129,7 +133,7 @@ func (u *AdminServiceUsecase) UploadAttachment(ctx context.Context, challengeID 
 	}
 
 	if err := u.attachmentRepo.Create(ctx, attachment); err != nil {
-		_ = u.storageClient.DeleteAttachment(ctx, s3Key)
+		_ = u.attachmentStorage.Delete(ctx, s3Key)
 		return nil, fmt.Errorf("failed to save attachment record: %w", err)
 	}
 
@@ -146,8 +150,8 @@ func (u *AdminServiceUsecase) DeleteAttachment(ctx context.Context, challengeID,
 		return domain.ErrAttachmentNotFound
 	}
 
-	if err := u.storageClient.DeleteAttachment(ctx, attachment.S3Key); err != nil {
-		return fmt.Errorf("failed to delete attachment from S3: %w", err)
+	if err := u.attachmentStorage.Delete(ctx, attachment.S3Key); err != nil {
+		return fmt.Errorf("failed to delete attachment from storage: %w", err)
 	}
 
 	if err := u.attachmentRepo.Delete(ctx, attachmentID); err != nil {
@@ -163,7 +167,7 @@ func (u *AdminServiceUsecase) GetAttachmentURL(ctx context.Context, attachmentID
 		return "", err
 	}
 
-	url, err := u.storageClient.GetPresignedURL(ctx, attachment.S3Key)
+	url, err := u.attachmentStorage.GetPresignedURL(ctx, attachment.S3Key)
 	if err != nil {
 		return "", fmt.Errorf("failed to get presigned URL: %w", err)
 	}

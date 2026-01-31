@@ -1,20 +1,14 @@
 package client
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
@@ -59,8 +53,6 @@ const (
 
 type BuilderClient struct {
 	redisClient *redis.Client
-	s3Client    *s3.Client
-	s3Bucket    string
 }
 
 func NewBuilderClient() (*BuilderClient, error) {
@@ -84,48 +76,8 @@ func NewBuilderClient() (*BuilderClient, error) {
 		return nil, fmt.Errorf("failed to connect to redis: %w", err)
 	}
 
-	s3Endpoint := os.Getenv("S3_ENDPOINT")
-	if s3Endpoint == "" {
-		s3Endpoint = "http://localhost:9000"
-	}
-
-	s3AccessKey := os.Getenv("S3_ACCESS_KEY")
-	if s3AccessKey == "" {
-		s3AccessKey = "minioadmin"
-	}
-
-	s3SecretKey := os.Getenv("S3_SECRET_KEY")
-	if s3SecretKey == "" {
-		s3SecretKey = "minioadmin"
-	}
-
-	s3Bucket := os.Getenv("S3_BUCKET_NAME")
-	if s3Bucket == "" {
-		s3Bucket = "build-logs"
-	}
-
-	s3Region := os.Getenv("S3_REGION")
-	if s3Region == "" {
-		s3Region = "us-east-1"
-	}
-
-	cfg, err := config.LoadDefaultConfig(context.Background(),
-		config.WithRegion(s3Region),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(s3AccessKey, s3SecretKey, "")),
-	)
-	if err != nil {
-		log.Printf("Warning: Failed to load S3 config: %v", err)
-	}
-
-	s3Client := s3.NewFromConfig(cfg, func(o *s3.Options) {
-		o.BaseEndpoint = aws.String(s3Endpoint)
-		o.UsePathStyle = true
-	})
-
 	return &BuilderClient{
 		redisClient: client,
-		s3Client:    s3Client,
-		s3Bucket:    s3Bucket,
 	}, nil
 }
 
@@ -341,24 +293,4 @@ func (c *BuilderClient) ListBuildLogs(ctx context.Context, challengeID string) (
 	}
 
 	return logs, nil
-}
-
-func (c *BuilderClient) GetBuildLog(ctx context.Context, jobID string) (string, error) {
-	key := fmt.Sprintf("logs/%s.log", jobID)
-
-	resp, err := c.s3Client.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(c.s3Bucket),
-		Key:    aws.String(key),
-	})
-	if err != nil {
-		return "", fmt.Errorf("failed to get build log from S3: %w", err)
-	}
-	defer resp.Body.Close()
-
-	var buf bytes.Buffer
-	if _, err := io.Copy(&buf, resp.Body); err != nil {
-		return "", fmt.Errorf("failed to read build log: %w", err)
-	}
-
-	return buf.String(), nil
 }

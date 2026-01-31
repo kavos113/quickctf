@@ -8,15 +8,16 @@ import (
 	"github.com/google/uuid"
 	"github.com/kavos113/quickctf/ctf-server/domain"
 	"github.com/kavos113/quickctf/ctf-server/infrastructure/client"
+	"github.com/kavos113/quickctf/ctf-server/infrastructure/storage"
 )
 
 type ClientChallengeUsecase struct {
-	challengeRepo  domain.ChallengeRepository
-	submissionRepo domain.SubmissionRepository
-	instanceRepo   domain.InstanceRepository
-	attachmentRepo domain.AttachmentRepository
-	managerClient  *client.ManagerClient
-	storageClient  *client.StorageClient
+	challengeRepo     domain.ChallengeRepository
+	submissionRepo    domain.SubmissionRepository
+	instanceRepo      domain.InstanceRepository
+	attachmentRepo    domain.AttachmentRepository
+	managerClient     *client.ManagerClient
+	attachmentStorage *storage.AttachmentStorage
 }
 
 func NewClientChallengeUsecase(
@@ -25,15 +26,15 @@ func NewClientChallengeUsecase(
 	instanceRepo domain.InstanceRepository,
 	attachmentRepo domain.AttachmentRepository,
 	managerClient *client.ManagerClient,
-	storageClient *client.StorageClient,
+	attachmentStorage *storage.AttachmentStorage,
 ) *ClientChallengeUsecase {
 	return &ClientChallengeUsecase{
-		challengeRepo:  challengeRepo,
-		submissionRepo: submissionRepo,
-		instanceRepo:   instanceRepo,
-		attachmentRepo: attachmentRepo,
-		managerClient:  managerClient,
-		storageClient:  storageClient,
+		challengeRepo:     challengeRepo,
+		submissionRepo:    submissionRepo,
+		instanceRepo:      instanceRepo,
+		attachmentRepo:    attachmentRepo,
+		managerClient:     managerClient,
+		attachmentStorage: attachmentStorage,
 	}
 }
 
@@ -218,7 +219,7 @@ func (u *ClientChallengeUsecase) GetAttachmentURL(ctx context.Context, attachmen
 		return "", err
 	}
 
-	url, err := u.storageClient.GetPresignedURL(ctx, attachment.S3Key)
+	url, err := u.attachmentStorage.GetPresignedURL(ctx, attachment.S3Key)
 	if err != nil {
 		return "", fmt.Errorf("failed to get attachment URL: %w", err)
 	}
