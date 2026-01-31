@@ -145,7 +145,6 @@ func (s *S3Client) BuildLogExists(ctx context.Context, jobID string) (bool, erro
 		Key:    aws.String(key),
 	})
 	if err != nil {
-		// Check if error is "not found"
 		if strings.Contains(err.Error(), "NotFound") || strings.Contains(err.Error(), "404") {
 			return false, nil
 		}

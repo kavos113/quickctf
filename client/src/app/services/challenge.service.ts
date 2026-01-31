@@ -112,9 +112,13 @@ export class ChallengeService {
     }
   }
 
-  async getInstanceStatus(
-    challengeId: string,
-  ): Promise<{ success: boolean; status?: GetInstanceStatusResponse_Status; host?: string; port?: number; error?: string }> {
+  async getInstanceStatus(challengeId: string): Promise<{
+    success: boolean;
+    status?: GetInstanceStatusResponse_Status;
+    host?: string;
+    port?: number;
+    error?: string;
+  }> {
     try {
       const request = create(GetInstanceStatusRequestSchema, { challengeId });
       const response = await challengeClient.getInstanceStatus(request);

@@ -1,14 +1,20 @@
 package client
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
@@ -17,6 +23,8 @@ const (
 	BuildQueueKey   = "build:queue"
 	BuildResultKey  = "build:result:"
 	BuildLogChannel = "build:logs:"
+	BuildJobListKey = "build:jobs"      // List of all job IDs
+	BuildJobInfoKey = "build:job:info:" // + job_id -> BuildJobInfo
 )
 
 type BuildJob struct {
@@ -25,6 +33,13 @@ type BuildJob struct {
 	SourceTar   []byte    `json:"source_tar"`
 	CreatedAt   time.Time `json:"created_at"`
 	ChallengeID string    `json:"challenge_id"`
+}
+
+type BuildJobInfo struct {
+	JobID       string    `json:"job_id"`
+	ImageTag    string    `json:"image_tag"`
+	ChallengeID string    `json:"challenge_id"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 type BuildResult struct {
@@ -44,6 +59,8 @@ const (
 
 type BuilderClient struct {
 	redisClient *redis.Client
+	s3Client    *s3.Client
+	s3Bucket    string
 }
 
 func NewBuilderClient() (*BuilderClient, error) {
@@ -67,7 +84,50 @@ func NewBuilderClient() (*BuilderClient, error) {
 		return nil, fmt.Errorf("failed to connect to redis: %w", err)
 	}
 
-	return &BuilderClient{redisClient: client}, nil
+	// Setup S3 client
+	s3Endpoint := os.Getenv("S3_ENDPOINT")
+	if s3Endpoint == "" {
+		s3Endpoint = "http://localhost:9000"
+	}
+
+	s3AccessKey := os.Getenv("S3_ACCESS_KEY")
+	if s3AccessKey == "" {
+		s3AccessKey = "minioadmin"
+	}
+
+	s3SecretKey := os.Getenv("S3_SECRET_KEY")
+	if s3SecretKey == "" {
+		s3SecretKey = "minioadmin"
+	}
+
+	s3Bucket := os.Getenv("S3_BUCKET_NAME")
+	if s3Bucket == "" {
+		s3Bucket = "build-logs"
+	}
+
+	s3Region := os.Getenv("S3_REGION")
+	if s3Region == "" {
+		s3Region = "us-east-1"
+	}
+
+	cfg, err := config.LoadDefaultConfig(context.Background(),
+		config.WithRegion(s3Region),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(s3AccessKey, s3SecretKey, "")),
+	)
+	if err != nil {
+		log.Printf("Warning: Failed to load S3 config: %v", err)
+	}
+
+	s3Client := s3.NewFromConfig(cfg, func(o *s3.Options) {
+		o.BaseEndpoint = aws.String(s3Endpoint)
+		o.UsePathStyle = true
+	})
+
+	return &BuilderClient{
+		redisClient: client,
+		s3Client:    s3Client,
+		s3Bucket:    s3Bucket,
+	}, nil
 }
 
 func (c *BuilderClient) Close() error {
@@ -94,6 +154,28 @@ func (c *BuilderClient) EnqueueBuild(ctx context.Context, imageTag string, sourc
 		return "", fmt.Errorf("failed to enqueue job: %w", err)
 	}
 
+	jobInfo := &BuildJobInfo{
+		JobID:       jobID,
+		ImageTag:    imageTag,
+		ChallengeID: challengeID,
+		CreatedAt:   time.Now(),
+	}
+	jobInfoData, err := json.Marshal(jobInfo)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal job info: %w", err)
+	}
+
+	infoKey := BuildJobInfoKey + jobID
+	if err := c.redisClient.Set(ctx, infoKey, jobInfoData, 7*24*time.Hour).Err(); err != nil {
+		log.Printf("Warning: Failed to save job info: %v", err)
+	}
+
+	if err := c.redisClient.LPush(ctx, BuildJobListKey, jobID).Err(); err != nil {
+		log.Printf("Warning: Failed to add job to list: %v", err)
+	}
+
+	c.redisClient.LTrim(ctx, BuildJobListKey, 0, 99)
+
 	result := &BuildResult{
 		JobID:  jobID,
 		Status: BuildStatusPending,
@@ -104,7 +186,7 @@ func (c *BuilderClient) EnqueueBuild(ctx context.Context, imageTag string, sourc
 	}
 
 	key := BuildResultKey + jobID
-	if err := c.redisClient.Set(ctx, key, resultData, 24*time.Hour).Err(); err != nil {
+	if err := c.redisClient.Set(ctx, key, resultData, 7*24*time.Hour).Err(); err != nil {
 		return "", fmt.Errorf("failed to set initial status: %w", err)
 	}
 
@@ -208,4 +290,79 @@ func (c *BuilderClient) BuildImage(ctx context.Context, imageTag string, sourceT
 			}
 		}
 	}
+}
+
+type BuildLogSummary struct {
+	JobID       string
+	ChallengeID string
+	Status      string
+	CreatedAt   time.Time
+	CompletedAt time.Time
+}
+
+func (c *BuilderClient) ListBuildLogs(ctx context.Context, challengeID string) ([]BuildLogSummary, error) {
+	jobIDs, err := c.redisClient.LRange(ctx, BuildJobListKey, 0, 99).Result()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get job list: %w", err)
+	}
+
+	var logs []BuildLogSummary
+	for _, jobID := range jobIDs {
+		// Get job info
+		infoKey := BuildJobInfoKey + jobID
+		infoData, err := c.redisClient.Get(ctx, infoKey).Result()
+		if err == redis.Nil {
+			continue
+		}
+		if err != nil {
+			log.Printf("Warning: Failed to get job info for %s: %v", jobID, err)
+			continue
+		}
+
+		var jobInfo BuildJobInfo
+		if err := json.Unmarshal([]byte(infoData), &jobInfo); err != nil {
+			continue
+		}
+
+		// Filter by challengeID if provided
+		if challengeID != "" && jobInfo.ChallengeID != challengeID {
+			continue
+		}
+
+		// Get build result for status
+		result, err := c.GetBuildResult(ctx, jobID)
+		if err != nil || result == nil {
+			continue
+		}
+
+		logs = append(logs, BuildLogSummary{
+			JobID:       jobID,
+			ChallengeID: jobInfo.ChallengeID,
+			Status:      result.Status,
+			CreatedAt:   jobInfo.CreatedAt,
+			CompletedAt: result.CompletedAt,
+		})
+	}
+
+	return logs, nil
+}
+
+func (c *BuilderClient) GetBuildLog(ctx context.Context, jobID string) (string, error) {
+	key := fmt.Sprintf("logs/%s.log", jobID)
+
+	resp, err := c.s3Client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(c.s3Bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to get build log from S3: %w", err)
+	}
+	defer resp.Body.Close()
+
+	var buf bytes.Buffer
+	if _, err := io.Copy(&buf, resp.Body); err != nil {
+		return "", fmt.Errorf("failed to read build log: %w", err)
+	}
+
+	return buf.String(), nil
 }

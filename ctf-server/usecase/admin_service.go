@@ -71,3 +71,28 @@ func (u *AdminServiceUsecase) UploadChallengeImage(ctx context.Context, challeng
 
 	return nil
 }
+
+func (u *AdminServiceUsecase) GetChallenge(ctx context.Context, challengeID string) (*domain.Challenge, error) {
+	return u.challengeRepo.FindByID(ctx, challengeID)
+}
+
+func (u *AdminServiceUsecase) ListBuildLogs(ctx context.Context, challengeID string) ([]client.BuildLogSummary, error) {
+	return u.builderClient.ListBuildLogs(ctx, challengeID)
+}
+
+func (u *AdminServiceUsecase) GetBuildLog(ctx context.Context, jobID string) (string, string, error) {
+	result, err := u.builderClient.GetBuildResult(ctx, jobID)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to get build result: %w", err)
+	}
+	if result == nil {
+		return "", "", fmt.Errorf("build job not found")
+	}
+
+	logContent, err := u.builderClient.GetBuildLog(ctx, jobID)
+	if err != nil {
+		return "", result.Status, fmt.Errorf("failed to get build log: %w", err)
+	}
+
+	return logContent, result.Status, nil
+}

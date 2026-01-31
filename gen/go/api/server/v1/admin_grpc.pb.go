@@ -24,6 +24,9 @@ const (
 	AdminService_UploadChallengeImage_FullMethodName = "/api.server.v1.AdminService/UploadChallengeImage"
 	AdminService_DeleteChallenge_FullMethodName      = "/api.server.v1.AdminService/DeleteChallenge"
 	AdminService_ListChallenges_FullMethodName       = "/api.server.v1.AdminService/ListChallenges"
+	AdminService_GetChallenge_FullMethodName         = "/api.server.v1.AdminService/GetChallenge"
+	AdminService_ListBuildLogs_FullMethodName        = "/api.server.v1.AdminService/ListBuildLogs"
+	AdminService_GetBuildLog_FullMethodName          = "/api.server.v1.AdminService/GetBuildLog"
 )
 
 // AdminServiceClient is the client API for AdminService service.
@@ -35,6 +38,9 @@ type AdminServiceClient interface {
 	UploadChallengeImage(ctx context.Context, in *UploadChallengeImageRequest, opts ...grpc.CallOption) (*UploadChallengeImageResponse, error)
 	DeleteChallenge(ctx context.Context, in *DeleteChallengeRequest, opts ...grpc.CallOption) (*DeleteChallengeResponse, error)
 	ListChallenges(ctx context.Context, in *ListChallengesRequest, opts ...grpc.CallOption) (*ListChallengesResponse, error)
+	GetChallenge(ctx context.Context, in *GetChallengeRequest, opts ...grpc.CallOption) (*GetChallengeResponse, error)
+	ListBuildLogs(ctx context.Context, in *ListBuildLogsRequest, opts ...grpc.CallOption) (*ListBuildLogsResponse, error)
+	GetBuildLog(ctx context.Context, in *GetBuildLogRequest, opts ...grpc.CallOption) (*GetBuildLogResponse, error)
 }
 
 type adminServiceClient struct {
@@ -95,6 +101,36 @@ func (c *adminServiceClient) ListChallenges(ctx context.Context, in *ListChallen
 	return out, nil
 }
 
+func (c *adminServiceClient) GetChallenge(ctx context.Context, in *GetChallengeRequest, opts ...grpc.CallOption) (*GetChallengeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetChallengeResponse)
+	err := c.cc.Invoke(ctx, AdminService_GetChallenge_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminServiceClient) ListBuildLogs(ctx context.Context, in *ListBuildLogsRequest, opts ...grpc.CallOption) (*ListBuildLogsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListBuildLogsResponse)
+	err := c.cc.Invoke(ctx, AdminService_ListBuildLogs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminServiceClient) GetBuildLog(ctx context.Context, in *GetBuildLogRequest, opts ...grpc.CallOption) (*GetBuildLogResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBuildLogResponse)
+	err := c.cc.Invoke(ctx, AdminService_GetBuildLog_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServiceServer is the server API for AdminService service.
 // All implementations must embed UnimplementedAdminServiceServer
 // for forward compatibility.
@@ -104,6 +140,9 @@ type AdminServiceServer interface {
 	UploadChallengeImage(context.Context, *UploadChallengeImageRequest) (*UploadChallengeImageResponse, error)
 	DeleteChallenge(context.Context, *DeleteChallengeRequest) (*DeleteChallengeResponse, error)
 	ListChallenges(context.Context, *ListChallengesRequest) (*ListChallengesResponse, error)
+	GetChallenge(context.Context, *GetChallengeRequest) (*GetChallengeResponse, error)
+	ListBuildLogs(context.Context, *ListBuildLogsRequest) (*ListBuildLogsResponse, error)
+	GetBuildLog(context.Context, *GetBuildLogRequest) (*GetBuildLogResponse, error)
 	mustEmbedUnimplementedAdminServiceServer()
 }
 
@@ -128,6 +167,15 @@ func (UnimplementedAdminServiceServer) DeleteChallenge(context.Context, *DeleteC
 }
 func (UnimplementedAdminServiceServer) ListChallenges(context.Context, *ListChallengesRequest) (*ListChallengesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListChallenges not implemented")
+}
+func (UnimplementedAdminServiceServer) GetChallenge(context.Context, *GetChallengeRequest) (*GetChallengeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetChallenge not implemented")
+}
+func (UnimplementedAdminServiceServer) ListBuildLogs(context.Context, *ListBuildLogsRequest) (*ListBuildLogsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListBuildLogs not implemented")
+}
+func (UnimplementedAdminServiceServer) GetBuildLog(context.Context, *GetBuildLogRequest) (*GetBuildLogResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBuildLog not implemented")
 }
 func (UnimplementedAdminServiceServer) mustEmbedUnimplementedAdminServiceServer() {}
 func (UnimplementedAdminServiceServer) testEmbeddedByValue()                      {}
@@ -240,6 +288,60 @@ func _AdminService_ListChallenges_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminService_GetChallenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChallengeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServiceServer).GetChallenge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminService_GetChallenge_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServiceServer).GetChallenge(ctx, req.(*GetChallengeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminService_ListBuildLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListBuildLogsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServiceServer).ListBuildLogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminService_ListBuildLogs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServiceServer).ListBuildLogs(ctx, req.(*ListBuildLogsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminService_GetBuildLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBuildLogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServiceServer).GetBuildLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminService_GetBuildLog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServiceServer).GetBuildLog(ctx, req.(*GetBuildLogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminService_ServiceDesc is the grpc.ServiceDesc for AdminService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +368,18 @@ var AdminService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListChallenges",
 			Handler:    _AdminService_ListChallenges_Handler,
+		},
+		{
+			MethodName: "GetChallenge",
+			Handler:    _AdminService_GetChallenge_Handler,
+		},
+		{
+			MethodName: "ListBuildLogs",
+			Handler:    _AdminService_ListBuildLogs_Handler,
+		},
+		{
+			MethodName: "GetBuildLog",
+			Handler:    _AdminService_GetBuildLog_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

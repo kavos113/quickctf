@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { adminGuard, authGuard, guestGuard } from './guards/auth.guard';
 import { AdminActivateComponent } from './pages/admin/admin-activate/admin-activate';
 import { AdminChallengesComponent } from './pages/admin/admin-challenges/admin-challenges';
+import { ChallengeDetailComponent } from './pages/admin/challenge-detail/challenge-detail';
 import { ChallengeFormComponent } from './pages/admin/challenge-form/challenge-form';
 import { ChallengesComponent } from './pages/challenges/challenges';
 import { LoginComponent } from './pages/login/login';
@@ -21,6 +22,11 @@ export const routes: Routes = [
   {
     path: 'admin/challenges/edit/:challengeId',
     component: ChallengeFormComponent,
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/challenges/:challengeId',
+    component: ChallengeDetailComponent,
     canActivate: [adminGuard],
   },
   { path: '', redirectTo: '/challenges', pathMatch: 'full' },

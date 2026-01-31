@@ -2,22 +2,26 @@
 // @generated from file api/server/v1/admin.proto (package api.server.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Challenge, ChallengeRequest } from "./model_pb";
-import { file_api_server_v1_model } from "./model_pb";
-import type { Message } from "@bufbuild/protobuf";
+import type { GenFile, GenMessage, GenService } from '@bufbuild/protobuf/codegenv2';
+import { fileDesc, messageDesc, serviceDesc } from '@bufbuild/protobuf/codegenv2';
+import type { Challenge, ChallengeRequest } from './model_pb';
+import { file_api_server_v1_model } from './model_pb';
+import type { Message } from '@bufbuild/protobuf';
 
 /**
  * Describes the file api/server/v1/admin.proto.
  */
-export const file_api_server_v1_admin: GenFile = /*@__PURE__*/
-  fileDesc("ChlhcGkvc2VydmVyL3YxL2FkbWluLnByb3RvEg1hcGkuc2VydmVyLnYxIkwKFkNyZWF0ZUNoYWxsZW5nZVJlcXVlc3QSMgoJY2hhbGxlbmdlGAEgASgLMh8uYXBpLnNlcnZlci52MS5DaGFsbGVuZ2VSZXF1ZXN0IkYKF0NyZWF0ZUNoYWxsZW5nZVJlc3BvbnNlEhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIkUKFlVwZGF0ZUNoYWxsZW5nZVJlcXVlc3QSKwoJY2hhbGxlbmdlGAEgASgLMhguYXBpLnNlcnZlci52MS5DaGFsbGVuZ2UiMAoXVXBkYXRlQ2hhbGxlbmdlUmVzcG9uc2USFQoNZXJyb3JfbWVzc2FnZRgBIAEoCSJHChtVcGxvYWRDaGFsbGVuZ2VJbWFnZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJEhIKCmltYWdlX2RhdGEYAiABKAwiNQocVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJIi4KFkRlbGV0ZUNoYWxsZW5nZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJIjAKF0RlbGV0ZUNoYWxsZW5nZVJlc3BvbnNlEhUKDWVycm9yX21lc3NhZ2UYASABKAkiFwoVTGlzdENoYWxsZW5nZXNSZXF1ZXN0Il0KFkxpc3RDaGFsbGVuZ2VzUmVzcG9uc2USLAoKY2hhbGxlbmdlcxgBIAMoCzIYLmFwaS5zZXJ2ZXIudjEuQ2hhbGxlbmdlEhUKDWVycm9yX21lc3NhZ2UYAiABKAkiJQoRQWRtaW5Mb2dpblJlcXVlc3QSEAoIcGFzc3dvcmQYASABKAkiFAoSQWRtaW5Mb2dpblJlc3BvbnNlIhQKEkFkbWluTG9nb3V0UmVxdWVzdCIVChNBZG1pbkxvZ291dFJlc3BvbnNlMoQECgxBZG1pblNlcnZpY2USYAoPQ3JlYXRlQ2hhbGxlbmdlEiUuYXBpLnNlcnZlci52MS5DcmVhdGVDaGFsbGVuZ2VSZXF1ZXN0GiYuYXBpLnNlcnZlci52MS5DcmVhdGVDaGFsbGVuZ2VSZXNwb25zZRJgCg9VcGRhdGVDaGFsbGVuZ2USJS5hcGkuc2VydmVyLnYxLlVwZGF0ZUNoYWxsZW5nZVJlcXVlc3QaJi5hcGkuc2VydmVyLnYxLlVwZGF0ZUNoYWxsZW5nZVJlc3BvbnNlEm8KFFVwbG9hZENoYWxsZW5nZUltYWdlEiouYXBpLnNlcnZlci52MS5VcGxvYWRDaGFsbGVuZ2VJbWFnZVJlcXVlc3QaKy5hcGkuc2VydmVyLnYxLlVwbG9hZENoYWxsZW5nZUltYWdlUmVzcG9uc2USYAoPRGVsZXRlQ2hhbGxlbmdlEiUuYXBpLnNlcnZlci52MS5EZWxldGVDaGFsbGVuZ2VSZXF1ZXN0GiYuYXBpLnNlcnZlci52MS5EZWxldGVDaGFsbGVuZ2VSZXNwb25zZRJdCg5MaXN0Q2hhbGxlbmdlcxIkLmFwaS5zZXJ2ZXIudjEuTGlzdENoYWxsZW5nZXNSZXF1ZXN0GiUuYXBpLnNlcnZlci52MS5MaXN0Q2hhbGxlbmdlc1Jlc3BvbnNlMrsBChBBZG1pbkF1dGhTZXJ2aWNlElEKCkFkbWluTG9naW4SIC5hcGkuc2VydmVyLnYxLkFkbWluTG9naW5SZXF1ZXN0GiEuYXBpLnNlcnZlci52MS5BZG1pbkxvZ2luUmVzcG9uc2USVAoLQWRtaW5Mb2dvdXQSIS5hcGkuc2VydmVyLnYxLkFkbWluTG9nb3V0UmVxdWVzdBoiLmFwaS5zZXJ2ZXIudjEuQWRtaW5Mb2dvdXRSZXNwb25zZUKxAQoRY29tLmFwaS5zZXJ2ZXIudjFCCkFkbWluUHJvdG9QAVo6Z2l0aHViLmNvbS9rYXZvczExMy9xdWlja2N0Zi9nZW4vZ28vYXBpL3NlcnZlci92MTtzZXJ2ZXJ2MaICA0FTWKoCDUFwaS5TZXJ2ZXIuVjHKAg1BcGlcU2VydmVyXFYx4gIZQXBpXFNlcnZlclxWMVxHUEJNZXRhZGF0YeoCD0FwaTo6U2VydmVyOjpWMWIGcHJvdG8z", [file_api_server_v1_model]);
+export const file_api_server_v1_admin: GenFile =
+  /*@__PURE__*/
+  fileDesc(
+    'ChlhcGkvc2VydmVyL3YxL2FkbWluLnByb3RvEg1hcGkuc2VydmVyLnYxIkwKFkNyZWF0ZUNoYWxsZW5nZVJlcXVlc3QSMgoJY2hhbGxlbmdlGAEgASgLMh8uYXBpLnNlcnZlci52MS5DaGFsbGVuZ2VSZXF1ZXN0IkYKF0NyZWF0ZUNoYWxsZW5nZVJlc3BvbnNlEhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIkUKFlVwZGF0ZUNoYWxsZW5nZVJlcXVlc3QSKwoJY2hhbGxlbmdlGAEgASgLMhguYXBpLnNlcnZlci52MS5DaGFsbGVuZ2UiMAoXVXBkYXRlQ2hhbGxlbmdlUmVzcG9uc2USFQoNZXJyb3JfbWVzc2FnZRgBIAEoCSJHChtVcGxvYWRDaGFsbGVuZ2VJbWFnZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJEhIKCmltYWdlX2RhdGEYAiABKAwiNQocVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJIi4KFkRlbGV0ZUNoYWxsZW5nZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJIjAKF0RlbGV0ZUNoYWxsZW5nZVJlc3BvbnNlEhUKDWVycm9yX21lc3NhZ2UYASABKAkiFwoVTGlzdENoYWxsZW5nZXNSZXF1ZXN0Il0KFkxpc3RDaGFsbGVuZ2VzUmVzcG9uc2USLAoKY2hhbGxlbmdlcxgBIAMoCzIYLmFwaS5zZXJ2ZXIudjEuQ2hhbGxlbmdlEhUKDWVycm9yX21lc3NhZ2UYAiABKAkiKwoTR2V0Q2hhbGxlbmdlUmVxdWVzdBIUCgxjaGFsbGVuZ2VfaWQYASABKAkiWgoUR2V0Q2hhbGxlbmdlUmVzcG9uc2USKwoJY2hhbGxlbmdlGAEgASgLMhguYXBpLnNlcnZlci52MS5DaGFsbGVuZ2USFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSJxCg9CdWlsZExvZ1N1bW1hcnkSDgoGam9iX2lkGAEgASgJEhQKDGNoYWxsZW5nZV9pZBgCIAEoCRIOCgZzdGF0dXMYAyABKAkSEgoKY3JlYXRlZF9hdBgEIAEoCRIUCgxjb21wbGV0ZWRfYXQYBSABKAkiLAoUTGlzdEJ1aWxkTG9nc1JlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJIlwKFUxpc3RCdWlsZExvZ3NSZXNwb25zZRIsCgRsb2dzGAEgAygLMh4uYXBpLnNlcnZlci52MS5CdWlsZExvZ1N1bW1hcnkSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSIkChJHZXRCdWlsZExvZ1JlcXVlc3QSDgoGam9iX2lkGAEgASgJImEKE0dldEJ1aWxkTG9nUmVzcG9uc2USDgoGam9iX2lkGAEgASgJEhMKC2xvZ19jb250ZW50GAIgASgJEg4KBnN0YXR1cxgDIAEoCRIVCg1lcnJvcl9tZXNzYWdlGAQgASgJIiUKEUFkbWluTG9naW5SZXF1ZXN0EhAKCHBhc3N3b3JkGAEgASgJIhQKEkFkbWluTG9naW5SZXNwb25zZSIUChJBZG1pbkxvZ291dFJlcXVlc3QiFQoTQWRtaW5Mb2dvdXRSZXNwb25zZTKPBgoMQWRtaW5TZXJ2aWNlEmAKD0NyZWF0ZUNoYWxsZW5nZRIlLmFwaS5zZXJ2ZXIudjEuQ3JlYXRlQ2hhbGxlbmdlUmVxdWVzdBomLmFwaS5zZXJ2ZXIudjEuQ3JlYXRlQ2hhbGxlbmdlUmVzcG9uc2USYAoPVXBkYXRlQ2hhbGxlbmdlEiUuYXBpLnNlcnZlci52MS5VcGRhdGVDaGFsbGVuZ2VSZXF1ZXN0GiYuYXBpLnNlcnZlci52MS5VcGRhdGVDaGFsbGVuZ2VSZXNwb25zZRJvChRVcGxvYWRDaGFsbGVuZ2VJbWFnZRIqLmFwaS5zZXJ2ZXIudjEuVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXF1ZXN0GisuYXBpLnNlcnZlci52MS5VcGxvYWRDaGFsbGVuZ2VJbWFnZVJlc3BvbnNlEmAKD0RlbGV0ZUNoYWxsZW5nZRIlLmFwaS5zZXJ2ZXIudjEuRGVsZXRlQ2hhbGxlbmdlUmVxdWVzdBomLmFwaS5zZXJ2ZXIudjEuRGVsZXRlQ2hhbGxlbmdlUmVzcG9uc2USXQoOTGlzdENoYWxsZW5nZXMSJC5hcGkuc2VydmVyLnYxLkxpc3RDaGFsbGVuZ2VzUmVxdWVzdBolLmFwaS5zZXJ2ZXIudjEuTGlzdENoYWxsZW5nZXNSZXNwb25zZRJXCgxHZXRDaGFsbGVuZ2USIi5hcGkuc2VydmVyLnYxLkdldENoYWxsZW5nZVJlcXVlc3QaIy5hcGkuc2VydmVyLnYxLkdldENoYWxsZW5nZVJlc3BvbnNlEloKDUxpc3RCdWlsZExvZ3MSIy5hcGkuc2VydmVyLnYxLkxpc3RCdWlsZExvZ3NSZXF1ZXN0GiQuYXBpLnNlcnZlci52MS5MaXN0QnVpbGRMb2dzUmVzcG9uc2USVAoLR2V0QnVpbGRMb2cSIS5hcGkuc2VydmVyLnYxLkdldEJ1aWxkTG9nUmVxdWVzdBoiLmFwaS5zZXJ2ZXIudjEuR2V0QnVpbGRMb2dSZXNwb25zZTK7AQoQQWRtaW5BdXRoU2VydmljZRJRCgpBZG1pbkxvZ2luEiAuYXBpLnNlcnZlci52MS5BZG1pbkxvZ2luUmVxdWVzdBohLmFwaS5zZXJ2ZXIudjEuQWRtaW5Mb2dpblJlc3BvbnNlElQKC0FkbWluTG9nb3V0EiEuYXBpLnNlcnZlci52MS5BZG1pbkxvZ291dFJlcXVlc3QaIi5hcGkuc2VydmVyLnYxLkFkbWluTG9nb3V0UmVzcG9uc2VCsQEKEWNvbS5hcGkuc2VydmVyLnYxQgpBZG1pblByb3RvUAFaOmdpdGh1Yi5jb20va2F2b3MxMTMvcXVpY2tjdGYvZ2VuL2dvL2FwaS9zZXJ2ZXIvdjE7c2VydmVydjGiAgNBU1iqAg1BcGkuU2VydmVyLlYxygINQXBpXFNlcnZlclxWMeICGUFwaVxTZXJ2ZXJcVjFcR1BCTWV0YWRhdGHqAg9BcGk6OlNlcnZlcjo6VjFiBnByb3RvMw',
+    [file_api_server_v1_model],
+  );
 
 /**
  * @generated from message api.server.v1.CreateChallengeRequest
  */
-export type CreateChallengeRequest = Message<"api.server.v1.CreateChallengeRequest"> & {
+export type CreateChallengeRequest = Message<'api.server.v1.CreateChallengeRequest'> & {
   /**
    * @generated from field: api.server.v1.ChallengeRequest challenge = 1;
    */
@@ -28,13 +32,14 @@ export type CreateChallengeRequest = Message<"api.server.v1.CreateChallengeReque
  * Describes the message api.server.v1.CreateChallengeRequest.
  * Use `create(CreateChallengeRequestSchema)` to create a new message.
  */
-export const CreateChallengeRequestSchema: GenMessage<CreateChallengeRequest> = /*@__PURE__*/
+export const CreateChallengeRequestSchema: GenMessage<CreateChallengeRequest> =
+  /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 0);
 
 /**
  * @generated from message api.server.v1.CreateChallengeResponse
  */
-export type CreateChallengeResponse = Message<"api.server.v1.CreateChallengeResponse"> & {
+export type CreateChallengeResponse = Message<'api.server.v1.CreateChallengeResponse'> & {
   /**
    * @generated from field: string challenge_id = 1;
    */
@@ -50,13 +55,14 @@ export type CreateChallengeResponse = Message<"api.server.v1.CreateChallengeResp
  * Describes the message api.server.v1.CreateChallengeResponse.
  * Use `create(CreateChallengeResponseSchema)` to create a new message.
  */
-export const CreateChallengeResponseSchema: GenMessage<CreateChallengeResponse> = /*@__PURE__*/
+export const CreateChallengeResponseSchema: GenMessage<CreateChallengeResponse> =
+  /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 1);
 
 /**
  * @generated from message api.server.v1.UpdateChallengeRequest
  */
-export type UpdateChallengeRequest = Message<"api.server.v1.UpdateChallengeRequest"> & {
+export type UpdateChallengeRequest = Message<'api.server.v1.UpdateChallengeRequest'> & {
   /**
    * @generated from field: api.server.v1.Challenge challenge = 1;
    */
@@ -67,13 +73,14 @@ export type UpdateChallengeRequest = Message<"api.server.v1.UpdateChallengeReque
  * Describes the message api.server.v1.UpdateChallengeRequest.
  * Use `create(UpdateChallengeRequestSchema)` to create a new message.
  */
-export const UpdateChallengeRequestSchema: GenMessage<UpdateChallengeRequest> = /*@__PURE__*/
+export const UpdateChallengeRequestSchema: GenMessage<UpdateChallengeRequest> =
+  /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 2);
 
 /**
  * @generated from message api.server.v1.UpdateChallengeResponse
  */
-export type UpdateChallengeResponse = Message<"api.server.v1.UpdateChallengeResponse"> & {
+export type UpdateChallengeResponse = Message<'api.server.v1.UpdateChallengeResponse'> & {
   /**
    * @generated from field: string error_message = 1;
    */
@@ -84,13 +91,14 @@ export type UpdateChallengeResponse = Message<"api.server.v1.UpdateChallengeResp
  * Describes the message api.server.v1.UpdateChallengeResponse.
  * Use `create(UpdateChallengeResponseSchema)` to create a new message.
  */
-export const UpdateChallengeResponseSchema: GenMessage<UpdateChallengeResponse> = /*@__PURE__*/
+export const UpdateChallengeResponseSchema: GenMessage<UpdateChallengeResponse> =
+  /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 3);
 
 /**
  * @generated from message api.server.v1.UploadChallengeImageRequest
  */
-export type UploadChallengeImageRequest = Message<"api.server.v1.UploadChallengeImageRequest"> & {
+export type UploadChallengeImageRequest = Message<'api.server.v1.UploadChallengeImageRequest'> & {
   /**
    * @generated from field: string challenge_id = 1;
    */
@@ -106,13 +114,14 @@ export type UploadChallengeImageRequest = Message<"api.server.v1.UploadChallenge
  * Describes the message api.server.v1.UploadChallengeImageRequest.
  * Use `create(UploadChallengeImageRequestSchema)` to create a new message.
  */
-export const UploadChallengeImageRequestSchema: GenMessage<UploadChallengeImageRequest> = /*@__PURE__*/
+export const UploadChallengeImageRequestSchema: GenMessage<UploadChallengeImageRequest> =
+  /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 4);
 
 /**
  * @generated from message api.server.v1.UploadChallengeImageResponse
  */
-export type UploadChallengeImageResponse = Message<"api.server.v1.UploadChallengeImageResponse"> & {
+export type UploadChallengeImageResponse = Message<'api.server.v1.UploadChallengeImageResponse'> & {
   /**
    * @generated from field: string error_message = 1;
    */
@@ -123,13 +132,14 @@ export type UploadChallengeImageResponse = Message<"api.server.v1.UploadChalleng
  * Describes the message api.server.v1.UploadChallengeImageResponse.
  * Use `create(UploadChallengeImageResponseSchema)` to create a new message.
  */
-export const UploadChallengeImageResponseSchema: GenMessage<UploadChallengeImageResponse> = /*@__PURE__*/
+export const UploadChallengeImageResponseSchema: GenMessage<UploadChallengeImageResponse> =
+  /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 5);
 
 /**
  * @generated from message api.server.v1.DeleteChallengeRequest
  */
-export type DeleteChallengeRequest = Message<"api.server.v1.DeleteChallengeRequest"> & {
+export type DeleteChallengeRequest = Message<'api.server.v1.DeleteChallengeRequest'> & {
   /**
    * @generated from field: string challenge_id = 1;
    */
@@ -140,13 +150,14 @@ export type DeleteChallengeRequest = Message<"api.server.v1.DeleteChallengeReque
  * Describes the message api.server.v1.DeleteChallengeRequest.
  * Use `create(DeleteChallengeRequestSchema)` to create a new message.
  */
-export const DeleteChallengeRequestSchema: GenMessage<DeleteChallengeRequest> = /*@__PURE__*/
+export const DeleteChallengeRequestSchema: GenMessage<DeleteChallengeRequest> =
+  /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 6);
 
 /**
  * @generated from message api.server.v1.DeleteChallengeResponse
  */
-export type DeleteChallengeResponse = Message<"api.server.v1.DeleteChallengeResponse"> & {
+export type DeleteChallengeResponse = Message<'api.server.v1.DeleteChallengeResponse'> & {
   /**
    * @generated from field: string error_message = 1;
    */
@@ -157,26 +168,27 @@ export type DeleteChallengeResponse = Message<"api.server.v1.DeleteChallengeResp
  * Describes the message api.server.v1.DeleteChallengeResponse.
  * Use `create(DeleteChallengeResponseSchema)` to create a new message.
  */
-export const DeleteChallengeResponseSchema: GenMessage<DeleteChallengeResponse> = /*@__PURE__*/
+export const DeleteChallengeResponseSchema: GenMessage<DeleteChallengeResponse> =
+  /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 7);
 
 /**
  * @generated from message api.server.v1.ListChallengesRequest
  */
-export type ListChallengesRequest = Message<"api.server.v1.ListChallengesRequest"> & {
-};
+export type ListChallengesRequest = Message<'api.server.v1.ListChallengesRequest'> & {};
 
 /**
  * Describes the message api.server.v1.ListChallengesRequest.
  * Use `create(ListChallengesRequestSchema)` to create a new message.
  */
-export const ListChallengesRequestSchema: GenMessage<ListChallengesRequest> = /*@__PURE__*/
+export const ListChallengesRequestSchema: GenMessage<ListChallengesRequest> =
+  /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 8);
 
 /**
  * @generated from message api.server.v1.ListChallengesResponse
  */
-export type ListChallengesResponse = Message<"api.server.v1.ListChallengesResponse"> & {
+export type ListChallengesResponse = Message<'api.server.v1.ListChallengesResponse'> & {
   /**
    * @generated from field: repeated api.server.v1.Challenge challenges = 1;
    */
@@ -192,13 +204,187 @@ export type ListChallengesResponse = Message<"api.server.v1.ListChallengesRespon
  * Describes the message api.server.v1.ListChallengesResponse.
  * Use `create(ListChallengesResponseSchema)` to create a new message.
  */
-export const ListChallengesResponseSchema: GenMessage<ListChallengesResponse> = /*@__PURE__*/
+export const ListChallengesResponseSchema: GenMessage<ListChallengesResponse> =
+  /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 9);
+
+/**
+ * @generated from message api.server.v1.GetChallengeRequest
+ */
+export type GetChallengeRequest = Message<'api.server.v1.GetChallengeRequest'> & {
+  /**
+   * @generated from field: string challenge_id = 1;
+   */
+  challengeId: string;
+};
+
+/**
+ * Describes the message api.server.v1.GetChallengeRequest.
+ * Use `create(GetChallengeRequestSchema)` to create a new message.
+ */
+export const GetChallengeRequestSchema: GenMessage<GetChallengeRequest> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 10);
+
+/**
+ * @generated from message api.server.v1.GetChallengeResponse
+ */
+export type GetChallengeResponse = Message<'api.server.v1.GetChallengeResponse'> & {
+  /**
+   * @generated from field: api.server.v1.Challenge challenge = 1;
+   */
+  challenge?: Challenge;
+
+  /**
+   * @generated from field: string error_message = 2;
+   */
+  errorMessage: string;
+};
+
+/**
+ * Describes the message api.server.v1.GetChallengeResponse.
+ * Use `create(GetChallengeResponseSchema)` to create a new message.
+ */
+export const GetChallengeResponseSchema: GenMessage<GetChallengeResponse> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 11);
+
+/**
+ * @generated from message api.server.v1.BuildLogSummary
+ */
+export type BuildLogSummary = Message<'api.server.v1.BuildLogSummary'> & {
+  /**
+   * @generated from field: string job_id = 1;
+   */
+  jobId: string;
+
+  /**
+   * @generated from field: string challenge_id = 2;
+   */
+  challengeId: string;
+
+  /**
+   * @generated from field: string status = 3;
+   */
+  status: string;
+
+  /**
+   * @generated from field: string created_at = 4;
+   */
+  createdAt: string;
+
+  /**
+   * @generated from field: string completed_at = 5;
+   */
+  completedAt: string;
+};
+
+/**
+ * Describes the message api.server.v1.BuildLogSummary.
+ * Use `create(BuildLogSummarySchema)` to create a new message.
+ */
+export const BuildLogSummarySchema: GenMessage<BuildLogSummary> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 12);
+
+/**
+ * @generated from message api.server.v1.ListBuildLogsRequest
+ */
+export type ListBuildLogsRequest = Message<'api.server.v1.ListBuildLogsRequest'> & {
+  /**
+   * optional, filter by challenge
+   *
+   * @generated from field: string challenge_id = 1;
+   */
+  challengeId: string;
+};
+
+/**
+ * Describes the message api.server.v1.ListBuildLogsRequest.
+ * Use `create(ListBuildLogsRequestSchema)` to create a new message.
+ */
+export const ListBuildLogsRequestSchema: GenMessage<ListBuildLogsRequest> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 13);
+
+/**
+ * @generated from message api.server.v1.ListBuildLogsResponse
+ */
+export type ListBuildLogsResponse = Message<'api.server.v1.ListBuildLogsResponse'> & {
+  /**
+   * @generated from field: repeated api.server.v1.BuildLogSummary logs = 1;
+   */
+  logs: BuildLogSummary[];
+
+  /**
+   * @generated from field: string error_message = 2;
+   */
+  errorMessage: string;
+};
+
+/**
+ * Describes the message api.server.v1.ListBuildLogsResponse.
+ * Use `create(ListBuildLogsResponseSchema)` to create a new message.
+ */
+export const ListBuildLogsResponseSchema: GenMessage<ListBuildLogsResponse> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 14);
+
+/**
+ * @generated from message api.server.v1.GetBuildLogRequest
+ */
+export type GetBuildLogRequest = Message<'api.server.v1.GetBuildLogRequest'> & {
+  /**
+   * @generated from field: string job_id = 1;
+   */
+  jobId: string;
+};
+
+/**
+ * Describes the message api.server.v1.GetBuildLogRequest.
+ * Use `create(GetBuildLogRequestSchema)` to create a new message.
+ */
+export const GetBuildLogRequestSchema: GenMessage<GetBuildLogRequest> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 15);
+
+/**
+ * @generated from message api.server.v1.GetBuildLogResponse
+ */
+export type GetBuildLogResponse = Message<'api.server.v1.GetBuildLogResponse'> & {
+  /**
+   * @generated from field: string job_id = 1;
+   */
+  jobId: string;
+
+  /**
+   * @generated from field: string log_content = 2;
+   */
+  logContent: string;
+
+  /**
+   * @generated from field: string status = 3;
+   */
+  status: string;
+
+  /**
+   * @generated from field: string error_message = 4;
+   */
+  errorMessage: string;
+};
+
+/**
+ * Describes the message api.server.v1.GetBuildLogResponse.
+ * Use `create(GetBuildLogResponseSchema)` to create a new message.
+ */
+export const GetBuildLogResponseSchema: GenMessage<GetBuildLogResponse> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 16);
 
 /**
  * @generated from message api.server.v1.AdminLoginRequest
  */
-export type AdminLoginRequest = Message<"api.server.v1.AdminLoginRequest"> & {
+export type AdminLoginRequest = Message<'api.server.v1.AdminLoginRequest'> & {
   /**
    * @generated from field: string password = 1;
    */
@@ -209,47 +395,48 @@ export type AdminLoginRequest = Message<"api.server.v1.AdminLoginRequest"> & {
  * Describes the message api.server.v1.AdminLoginRequest.
  * Use `create(AdminLoginRequestSchema)` to create a new message.
  */
-export const AdminLoginRequestSchema: GenMessage<AdminLoginRequest> = /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 10);
+export const AdminLoginRequestSchema: GenMessage<AdminLoginRequest> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 17);
 
 /**
  * @generated from message api.server.v1.AdminLoginResponse
  */
-export type AdminLoginResponse = Message<"api.server.v1.AdminLoginResponse"> & {
-};
+export type AdminLoginResponse = Message<'api.server.v1.AdminLoginResponse'> & {};
 
 /**
  * Describes the message api.server.v1.AdminLoginResponse.
  * Use `create(AdminLoginResponseSchema)` to create a new message.
  */
-export const AdminLoginResponseSchema: GenMessage<AdminLoginResponse> = /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 11);
+export const AdminLoginResponseSchema: GenMessage<AdminLoginResponse> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 18);
 
 /**
  * @generated from message api.server.v1.AdminLogoutRequest
  */
-export type AdminLogoutRequest = Message<"api.server.v1.AdminLogoutRequest"> & {
-};
+export type AdminLogoutRequest = Message<'api.server.v1.AdminLogoutRequest'> & {};
 
 /**
  * Describes the message api.server.v1.AdminLogoutRequest.
  * Use `create(AdminLogoutRequestSchema)` to create a new message.
  */
-export const AdminLogoutRequestSchema: GenMessage<AdminLogoutRequest> = /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 12);
+export const AdminLogoutRequestSchema: GenMessage<AdminLogoutRequest> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 19);
 
 /**
  * @generated from message api.server.v1.AdminLogoutResponse
  */
-export type AdminLogoutResponse = Message<"api.server.v1.AdminLogoutResponse"> & {
-};
+export type AdminLogoutResponse = Message<'api.server.v1.AdminLogoutResponse'> & {};
 
 /**
  * Describes the message api.server.v1.AdminLogoutResponse.
  * Use `create(AdminLogoutResponseSchema)` to create a new message.
  */
-export const AdminLogoutResponseSchema: GenMessage<AdminLogoutResponse> = /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 13);
+export const AdminLogoutResponseSchema: GenMessage<AdminLogoutResponse> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 20);
 
 /**
  * @generated from service api.server.v1.AdminService
@@ -259,44 +446,67 @@ export const AdminService: GenService<{
    * @generated from rpc api.server.v1.AdminService.CreateChallenge
    */
   createChallenge: {
-    methodKind: "unary";
+    methodKind: 'unary';
     input: typeof CreateChallengeRequestSchema;
     output: typeof CreateChallengeResponseSchema;
-  },
+  };
   /**
    * @generated from rpc api.server.v1.AdminService.UpdateChallenge
    */
   updateChallenge: {
-    methodKind: "unary";
+    methodKind: 'unary';
     input: typeof UpdateChallengeRequestSchema;
     output: typeof UpdateChallengeResponseSchema;
-  },
+  };
   /**
    * @generated from rpc api.server.v1.AdminService.UploadChallengeImage
    */
   uploadChallengeImage: {
-    methodKind: "unary";
+    methodKind: 'unary';
     input: typeof UploadChallengeImageRequestSchema;
     output: typeof UploadChallengeImageResponseSchema;
-  },
+  };
   /**
    * @generated from rpc api.server.v1.AdminService.DeleteChallenge
    */
   deleteChallenge: {
-    methodKind: "unary";
+    methodKind: 'unary';
     input: typeof DeleteChallengeRequestSchema;
     output: typeof DeleteChallengeResponseSchema;
-  },
+  };
   /**
    * @generated from rpc api.server.v1.AdminService.ListChallenges
    */
   listChallenges: {
-    methodKind: "unary";
+    methodKind: 'unary';
     input: typeof ListChallengesRequestSchema;
     output: typeof ListChallengesResponseSchema;
-  },
-}> = /*@__PURE__*/
-  serviceDesc(file_api_server_v1_admin, 0);
+  };
+  /**
+   * @generated from rpc api.server.v1.AdminService.GetChallenge
+   */
+  getChallenge: {
+    methodKind: 'unary';
+    input: typeof GetChallengeRequestSchema;
+    output: typeof GetChallengeResponseSchema;
+  };
+  /**
+   * @generated from rpc api.server.v1.AdminService.ListBuildLogs
+   */
+  listBuildLogs: {
+    methodKind: 'unary';
+    input: typeof ListBuildLogsRequestSchema;
+    output: typeof ListBuildLogsResponseSchema;
+  };
+  /**
+   * @generated from rpc api.server.v1.AdminService.GetBuildLog
+   */
+  getBuildLog: {
+    methodKind: 'unary';
+    input: typeof GetBuildLogRequestSchema;
+    output: typeof GetBuildLogResponseSchema;
+  };
+}> = /*@__PURE__*/ serviceDesc(file_api_server_v1_admin, 0);
 
 /**
  * @generated from service api.server.v1.AdminAuthService
@@ -306,18 +516,16 @@ export const AdminAuthService: GenService<{
    * @generated from rpc api.server.v1.AdminAuthService.AdminLogin
    */
   adminLogin: {
-    methodKind: "unary";
+    methodKind: 'unary';
     input: typeof AdminLoginRequestSchema;
     output: typeof AdminLoginResponseSchema;
-  },
+  };
   /**
    * @generated from rpc api.server.v1.AdminAuthService.AdminLogout
    */
   adminLogout: {
-    methodKind: "unary";
+    methodKind: 'unary';
     input: typeof AdminLogoutRequestSchema;
     output: typeof AdminLogoutResponseSchema;
-  },
-}> = /*@__PURE__*/
-  serviceDesc(file_api_server_v1_admin, 1);
-
+  };
+}> = /*@__PURE__*/ serviceDesc(file_api_server_v1_admin, 1);

@@ -27,7 +27,9 @@ export class ChallengeDetailComponent implements OnInit {
     message: string;
   } | null>(null);
   isSubmitting = signal(false);
-  instanceStatus = signal<GetInstanceStatusResponse_Status>(GetInstanceStatusResponse_Status.UNSPECIFIED);
+  instanceStatus = signal<GetInstanceStatusResponse_Status>(
+    GetInstanceStatusResponse_Status.UNSPECIFIED,
+  );
   isInstanceLoading = signal(false);
   instanceConnectionInfo = signal<InstanceConnectionInfo | null>(null);
 

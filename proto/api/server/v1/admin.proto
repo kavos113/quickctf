@@ -10,6 +10,9 @@ service AdminService {
   rpc UploadChallengeImage(UploadChallengeImageRequest) returns (UploadChallengeImageResponse);
   rpc DeleteChallenge(DeleteChallengeRequest) returns (DeleteChallengeResponse);
   rpc ListChallenges(ListChallengesRequest) returns (ListChallengesResponse);
+  rpc GetChallenge(GetChallengeRequest) returns (GetChallengeResponse);
+  rpc ListBuildLogs(ListBuildLogsRequest) returns (ListBuildLogsResponse);
+  rpc GetBuildLog(GetBuildLogRequest) returns (GetBuildLogResponse);
 }
 
 message CreateChallengeRequest {
@@ -51,6 +54,43 @@ message ListChallengesRequest {}
 message ListChallengesResponse {
   repeated Challenge challenges = 1;
   string error_message = 2;
+}
+
+message GetChallengeRequest {
+  string challenge_id = 1;
+}
+
+message GetChallengeResponse {
+  Challenge challenge = 1;
+  string error_message = 2;
+}
+
+message BuildLogSummary {
+  string job_id = 1;
+  string challenge_id = 2;
+  string status = 3;
+  string created_at = 4;
+  string completed_at = 5;
+}
+
+message ListBuildLogsRequest {
+  string challenge_id = 1; // optional, filter by challenge
+}
+
+message ListBuildLogsResponse {
+  repeated BuildLogSummary logs = 1;
+  string error_message = 2;
+}
+
+message GetBuildLogRequest {
+  string job_id = 1;
+}
+
+message GetBuildLogResponse {
+  string job_id = 1;
+  string log_content = 2;
+  string status = 3;
+  string error_message = 4;
 }
 
 service AdminAuthService {

@@ -1,0 +1,121 @@
+<div class="challenge-detail-container">
+  <header class="header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">← 戻る</button>
+      <h1>問題詳細</h1>
+    </div>
+    <div class="header-actions">
+      <button class="theme-toggle" (click)="themeService.toggleTheme()" title="テーマ切り替え">
+        @if (themeService.isDark()) {
+        ☀️
+        } @else {
+        🌙
+        }
+      </button>
+    </div>
+  </header>
+
+  @if (isLoading()) {
+  <div class="loading">読み込み中...</div>
+  } @else if (error()) {
+  <div class="error-message">{{ error() }}</div>
+  } @else if (challenge()) {
+  <div class="detail-wrapper">
+    <!-- 左側：詳細情報 -->
+    <div class="detail-card">
+      <div class="challenge-header">
+        <span class="challenge-genre">{{ challenge()!.genre }}</span>
+        <h2 class="challenge-name">{{ challenge()!.name }}</h2>
+        <div class="challenge-points">{{ challenge()!.points }} pts</div>
+      </div>
+
+      <div class="challenge-info">
+        <div class="info-section">
+          <h3>説明</h3>
+          <div class="description-content">{{ challenge()!.description }}</div>
+        </div>
+
+        <div class="info-section">
+          <h3>フラグ</h3>
+          <code class="code-display">{{ challenge()!.flag }}</code>
+        </div>
+
+        <div class="info-section">
+          <h3>Challenge ID</h3>
+          <code class="code-display">{{ challenge()!.challengeId }}</code>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" (click)="editChallenge()">編集</button>
+        <button class="btn-danger" (click)="deleteChallenge()">削除</button>
+      </div>
+
+      <!-- ビルドログ折り畳みセクション -->
+      <div class="build-logs-section">
+        <button class="build-logs-toggle" (click)="toggleBuildLogs()">
+          <span class="toggle-icon">{{ buildLogsExpanded() ? '▼' : '▶' }}</span>
+          <span>ビルドログ ({{ buildLogs().length }})</span>
+        </button>
+
+        @if (buildLogsExpanded()) {
+        <div class="build-logs-content">
+          @if (isLoadingLogs()) {
+          <div class="loading-small">読み込み中...</div>
+          } @else if (buildLogs().length === 0) {
+          <div class="no-logs">ビルドログはありません</div>
+          } @else {
+          <div class="build-logs-list">
+            @for (log of buildLogs(); track log.jobId) {
+            <div class="build-log-item">
+              <button class="build-log-header" type="button" (click)="viewBuildLog(log.jobId)"
+                [class.expanded]="selectedLog()?.jobId === log.jobId">
+                <span class="log-status" [class]="getStatusClass(log.status)">
+                  {{ getStatusLabel(log.status) }}
+                </span>
+                <span class="log-date">{{ log.createdAt }}</span>
+                <span class="log-expand-icon">{{
+                  selectedLog()?.jobId === log.jobId ? '▼' : '▶'
+                  }}</span>
+              </button>
+              @if (selectedLog()?.jobId === log.jobId) {
+              <div class="build-log-content">
+                @if (isLoadingLogContent()) {
+                <div class="loading-small">読み込み中...</div>
+                } @else {
+                <pre class="log-output">{{
+                              selectedLog()!.content || 'ログがありません'
+                            }}</pre>
+                }
+              </div>
+              }
+            </div>
+            }
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- 右側：プレビュー -->
+    <div class="preview-card">
+      <h2>プレビュー</h2>
+      <div class="preview-content">
+        <div class="preview-header">
+          <span class="preview-genre">{{ challenge()!.genre }}</span>
+          <h3 class="preview-name">{{ challenge()!.name }}</h3>
+          <div class="preview-points">{{ challenge()!.points }} pts</div>
+        </div>
+
+        <div class="preview-description">
+          <h4>説明</h4>
+          <div class="preview-description-content">
+            <p>{{ challenge()!.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>

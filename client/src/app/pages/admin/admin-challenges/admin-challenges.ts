@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Challenge } from '../../../../gen/api/server/v1/model_pb';
 import { AdminService } from '../../../services/admin.service';
@@ -15,8 +15,6 @@ export class AdminChallengesComponent implements OnInit {
   readonly themeService = inject(ThemeService);
   private readonly router = inject(Router);
 
-  readonly selectedChallenge = signal<Challenge | null>(null);
-
   ngOnInit(): void {
     this.adminService.loadChallenges();
   }
@@ -25,21 +23,8 @@ export class AdminChallengesComponent implements OnInit {
     this.router.navigate(['/admin/challenges/create']);
   }
 
-  editChallenge(challenge: Challenge): void {
-    this.router.navigate(['/admin/challenges/edit', challenge.challengeId]);
-  }
-
-  async deleteChallenge(challenge: Challenge): Promise<void> {
-    if (!confirm(`「${challenge.name}」を削除してもよろしいですか？`)) {
-      return;
-    }
-
-    const result = await this.adminService.deleteChallenge(challenge.challengeId);
-    if (result.success) {
-      await this.adminService.loadChallenges();
-    } else {
-      alert(result.error || '削除に失敗しました');
-    }
+  openDetail(challenge: Challenge): void {
+    this.router.navigate(['/admin/challenges', challenge.challengeId]);
   }
 
   goBack(): void {

@@ -50,6 +50,15 @@ const (
 	// AdminServiceListChallengesProcedure is the fully-qualified name of the AdminService's
 	// ListChallenges RPC.
 	AdminServiceListChallengesProcedure = "/api.server.v1.AdminService/ListChallenges"
+	// AdminServiceGetChallengeProcedure is the fully-qualified name of the AdminService's GetChallenge
+	// RPC.
+	AdminServiceGetChallengeProcedure = "/api.server.v1.AdminService/GetChallenge"
+	// AdminServiceListBuildLogsProcedure is the fully-qualified name of the AdminService's
+	// ListBuildLogs RPC.
+	AdminServiceListBuildLogsProcedure = "/api.server.v1.AdminService/ListBuildLogs"
+	// AdminServiceGetBuildLogProcedure is the fully-qualified name of the AdminService's GetBuildLog
+	// RPC.
+	AdminServiceGetBuildLogProcedure = "/api.server.v1.AdminService/GetBuildLog"
 	// AdminAuthServiceAdminLoginProcedure is the fully-qualified name of the AdminAuthService's
 	// AdminLogin RPC.
 	AdminAuthServiceAdminLoginProcedure = "/api.server.v1.AdminAuthService/AdminLogin"
@@ -65,6 +74,9 @@ type AdminServiceClient interface {
 	UploadChallengeImage(context.Context, *connect.Request[v1.UploadChallengeImageRequest]) (*connect.Response[v1.UploadChallengeImageResponse], error)
 	DeleteChallenge(context.Context, *connect.Request[v1.DeleteChallengeRequest]) (*connect.Response[v1.DeleteChallengeResponse], error)
 	ListChallenges(context.Context, *connect.Request[v1.ListChallengesRequest]) (*connect.Response[v1.ListChallengesResponse], error)
+	GetChallenge(context.Context, *connect.Request[v1.GetChallengeRequest]) (*connect.Response[v1.GetChallengeResponse], error)
+	ListBuildLogs(context.Context, *connect.Request[v1.ListBuildLogsRequest]) (*connect.Response[v1.ListBuildLogsResponse], error)
+	GetBuildLog(context.Context, *connect.Request[v1.GetBuildLogRequest]) (*connect.Response[v1.GetBuildLogResponse], error)
 }
 
 // NewAdminServiceClient constructs a client for the api.server.v1.AdminService service. By default,
@@ -108,6 +120,24 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("ListChallenges")),
 			connect.WithClientOptions(opts...),
 		),
+		getChallenge: connect.NewClient[v1.GetChallengeRequest, v1.GetChallengeResponse](
+			httpClient,
+			baseURL+AdminServiceGetChallengeProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetChallenge")),
+			connect.WithClientOptions(opts...),
+		),
+		listBuildLogs: connect.NewClient[v1.ListBuildLogsRequest, v1.ListBuildLogsResponse](
+			httpClient,
+			baseURL+AdminServiceListBuildLogsProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("ListBuildLogs")),
+			connect.WithClientOptions(opts...),
+		),
+		getBuildLog: connect.NewClient[v1.GetBuildLogRequest, v1.GetBuildLogResponse](
+			httpClient,
+			baseURL+AdminServiceGetBuildLogProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetBuildLog")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -118,6 +148,9 @@ type adminServiceClient struct {
 	uploadChallengeImage *connect.Client[v1.UploadChallengeImageRequest, v1.UploadChallengeImageResponse]
 	deleteChallenge      *connect.Client[v1.DeleteChallengeRequest, v1.DeleteChallengeResponse]
 	listChallenges       *connect.Client[v1.ListChallengesRequest, v1.ListChallengesResponse]
+	getChallenge         *connect.Client[v1.GetChallengeRequest, v1.GetChallengeResponse]
+	listBuildLogs        *connect.Client[v1.ListBuildLogsRequest, v1.ListBuildLogsResponse]
+	getBuildLog          *connect.Client[v1.GetBuildLogRequest, v1.GetBuildLogResponse]
 }
 
 // CreateChallenge calls api.server.v1.AdminService.CreateChallenge.
@@ -145,6 +178,21 @@ func (c *adminServiceClient) ListChallenges(ctx context.Context, req *connect.Re
 	return c.listChallenges.CallUnary(ctx, req)
 }
 
+// GetChallenge calls api.server.v1.AdminService.GetChallenge.
+func (c *adminServiceClient) GetChallenge(ctx context.Context, req *connect.Request[v1.GetChallengeRequest]) (*connect.Response[v1.GetChallengeResponse], error) {
+	return c.getChallenge.CallUnary(ctx, req)
+}
+
+// ListBuildLogs calls api.server.v1.AdminService.ListBuildLogs.
+func (c *adminServiceClient) ListBuildLogs(ctx context.Context, req *connect.Request[v1.ListBuildLogsRequest]) (*connect.Response[v1.ListBuildLogsResponse], error) {
+	return c.listBuildLogs.CallUnary(ctx, req)
+}
+
+// GetBuildLog calls api.server.v1.AdminService.GetBuildLog.
+func (c *adminServiceClient) GetBuildLog(ctx context.Context, req *connect.Request[v1.GetBuildLogRequest]) (*connect.Response[v1.GetBuildLogResponse], error) {
+	return c.getBuildLog.CallUnary(ctx, req)
+}
+
 // AdminServiceHandler is an implementation of the api.server.v1.AdminService service.
 type AdminServiceHandler interface {
 	CreateChallenge(context.Context, *connect.Request[v1.CreateChallengeRequest]) (*connect.Response[v1.CreateChallengeResponse], error)
@@ -152,6 +200,9 @@ type AdminServiceHandler interface {
 	UploadChallengeImage(context.Context, *connect.Request[v1.UploadChallengeImageRequest]) (*connect.Response[v1.UploadChallengeImageResponse], error)
 	DeleteChallenge(context.Context, *connect.Request[v1.DeleteChallengeRequest]) (*connect.Response[v1.DeleteChallengeResponse], error)
 	ListChallenges(context.Context, *connect.Request[v1.ListChallengesRequest]) (*connect.Response[v1.ListChallengesResponse], error)
+	GetChallenge(context.Context, *connect.Request[v1.GetChallengeRequest]) (*connect.Response[v1.GetChallengeResponse], error)
+	ListBuildLogs(context.Context, *connect.Request[v1.ListBuildLogsRequest]) (*connect.Response[v1.ListBuildLogsResponse], error)
+	GetBuildLog(context.Context, *connect.Request[v1.GetBuildLogRequest]) (*connect.Response[v1.GetBuildLogResponse], error)
 }
 
 // NewAdminServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -191,6 +242,24 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("ListChallenges")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceGetChallengeHandler := connect.NewUnaryHandler(
+		AdminServiceGetChallengeProcedure,
+		svc.GetChallenge,
+		connect.WithSchema(adminServiceMethods.ByName("GetChallenge")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceListBuildLogsHandler := connect.NewUnaryHandler(
+		AdminServiceListBuildLogsProcedure,
+		svc.ListBuildLogs,
+		connect.WithSchema(adminServiceMethods.ByName("ListBuildLogs")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetBuildLogHandler := connect.NewUnaryHandler(
+		AdminServiceGetBuildLogProcedure,
+		svc.GetBuildLog,
+		connect.WithSchema(adminServiceMethods.ByName("GetBuildLog")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/api.server.v1.AdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AdminServiceCreateChallengeProcedure:
@@ -203,6 +272,12 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceDeleteChallengeHandler.ServeHTTP(w, r)
 		case AdminServiceListChallengesProcedure:
 			adminServiceListChallengesHandler.ServeHTTP(w, r)
+		case AdminServiceGetChallengeProcedure:
+			adminServiceGetChallengeHandler.ServeHTTP(w, r)
+		case AdminServiceListBuildLogsProcedure:
+			adminServiceListBuildLogsHandler.ServeHTTP(w, r)
+		case AdminServiceGetBuildLogProcedure:
+			adminServiceGetBuildLogHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -230,6 +305,18 @@ func (UnimplementedAdminServiceHandler) DeleteChallenge(context.Context, *connec
 
 func (UnimplementedAdminServiceHandler) ListChallenges(context.Context, *connect.Request[v1.ListChallengesRequest]) (*connect.Response[v1.ListChallengesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminService.ListChallenges is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetChallenge(context.Context, *connect.Request[v1.GetChallengeRequest]) (*connect.Response[v1.GetChallengeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminService.GetChallenge is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) ListBuildLogs(context.Context, *connect.Request[v1.ListBuildLogsRequest]) (*connect.Response[v1.ListBuildLogsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminService.ListBuildLogs is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetBuildLog(context.Context, *connect.Request[v1.GetBuildLogRequest]) (*connect.Response[v1.GetBuildLogResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminService.GetBuildLog is not implemented"))
 }
 
 // AdminAuthServiceClient is a client for the api.server.v1.AdminAuthService service.

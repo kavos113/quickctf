@@ -94,7 +94,6 @@ func (w *BuildWorker) processJob(ctx context.Context, job *queue.BuildJob) {
 		w.redisClient.SetBuildResult(ctx, result)
 		w.redisClient.PublishLog(ctx, job.JobID, fmt.Sprintf("BUILD_COMPLETE:failed:%s", err.Error()))
 
-		// Save log to S3
 		w.saveBuildLog(ctx, job.JobID, logBuilder.String())
 		return
 	}
@@ -116,7 +115,6 @@ func (w *BuildWorker) processJob(ctx context.Context, job *queue.BuildJob) {
 		w.redisClient.SetBuildResult(ctx, result)
 		w.redisClient.PublishLog(ctx, job.JobID, fmt.Sprintf("BUILD_COMPLETE:failed:push failed: %v", err))
 
-		// Save log to S3
 		w.saveBuildLog(ctx, job.JobID, logBuilder.String())
 		return
 	}
@@ -134,7 +132,6 @@ func (w *BuildWorker) processJob(ctx context.Context, job *queue.BuildJob) {
 	w.redisClient.SetBuildResult(ctx, result)
 	w.redisClient.PublishLog(ctx, job.JobID, fmt.Sprintf("BUILD_COMPLETE:success:%s", imageID))
 
-	// Save log to S3
 	w.saveBuildLog(ctx, job.JobID, logBuilder.String())
 }
 

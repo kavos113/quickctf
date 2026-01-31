@@ -4,9 +4,9 @@
     <div class="header-actions">
       <button class="theme-toggle" (click)="themeService.toggleTheme()" title="テーマ切り替え">
         @if (themeService.isDark()) {
-          ☀️
+        ☀️
         } @else {
-          🌙
+        🌙
         }
       </button>
       <button class="btn-secondary" (click)="goBack()">ユーザー画面へ</button>
@@ -21,42 +21,37 @@
   </div>
 
   @if (adminService.isLoading()) {
-    <div class="loading">読み込み中...</div>
+  <div class="loading">読み込み中...</div>
   } @else if (adminService.error()) {
-    <div class="error-message">{{ adminService.error() }}</div>
+  <div class="error-message">{{ adminService.error() }}</div>
   } @else {
-    <div class="challenges-table-container">
-      <table class="challenges-table">
-        <thead>
-          <tr>
-            <th>問題名</th>
-            <th>ジャンル</th>
-            <th>ポイント</th>
-            <th>フラグ</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (challenge of adminService.challenges(); track challenge.name) {
-            <tr>
-              <td class="challenge-name">{{ challenge.name }}</td>
-              <td>
-                <span class="genre-badge">{{ challenge.genre }}</span>
-              </td>
-              <td class="points">{{ challenge.points }} pts</td>
-              <td class="flag">{{ challenge.flag }}</td>
-              <td class="actions">
-                <button class="btn-edit" (click)="editChallenge(challenge)">編集</button>
-                <button class="btn-delete" (click)="deleteChallenge(challenge)">削除</button>
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="5" class="empty-message">問題がありません</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+  <div class="challenges-table-container">
+    <table class="challenges-table">
+      <thead>
+        <tr>
+          <th>問題名</th>
+          <th>ジャンル</th>
+          <th>ポイント</th>
+          <th>フラグ</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (challenge of adminService.challenges(); track challenge.name) {
+        <tr class="challenge-row" (click)="openDetail(challenge)">
+          <td class="challenge-name">{{ challenge.name }}</td>
+          <td>
+            <span class="genre-badge">{{ challenge.genre }}</span>
+          </td>
+          <td class="points">{{ challenge.points }} pts</td>
+          <td class="flag">{{ challenge.flag }}</td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="4" class="empty-message">問題がありません</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
   }
 </div>

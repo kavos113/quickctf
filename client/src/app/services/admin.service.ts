@@ -1,8 +1,12 @@
 import { Injectable, signal } from '@angular/core';
 import { create } from '@bufbuild/protobuf';
 import {
+  BuildLogSummary,
   CreateChallengeRequestSchema,
   DeleteChallengeRequestSchema,
+  GetBuildLogRequestSchema,
+  GetChallengeRequestSchema,
+  ListBuildLogsRequestSchema,
   ListChallengesRequestSchema,
   UpdateChallengeRequestSchema,
   UploadChallengeImageRequestSchema,
@@ -191,6 +195,60 @@ export class AdminService {
     } catch (err) {
       console.error('Failed to upload challenge image:', err);
       return { success: false, error: 'イメージのアップロードに失敗しました' };
+    }
+  }
+
+  async getChallenge(
+    challengeId: string,
+  ): Promise<{ success: boolean; challenge?: Challenge; error?: string }> {
+    try {
+      const request = create(GetChallengeRequestSchema, { challengeId });
+      const response = await adminClient.getChallenge(request);
+
+      if (response.errorMessage) {
+        return { success: false, error: response.errorMessage };
+      }
+
+      return { success: true, challenge: response.challenge };
+    } catch (err) {
+      console.error('Failed to get challenge:', err);
+      return { success: false, error: '問題の取得に失敗しました' };
+    }
+  }
+
+  async listBuildLogs(
+    challengeId: string,
+  ): Promise<{ success: boolean; logs?: BuildLogSummary[]; error?: string }> {
+    try {
+      const request = create(ListBuildLogsRequestSchema, { challengeId });
+      const response = await adminClient.listBuildLogs(request);
+
+      if (response.errorMessage) {
+        return { success: false, error: response.errorMessage };
+      }
+
+      return { success: true, logs: response.logs };
+    } catch (err) {
+      console.error('Failed to list build logs:', err);
+      return { success: false, error: 'ビルドログの取得に失敗しました' };
+    }
+  }
+
+  async getBuildLog(
+    jobId: string,
+  ): Promise<{ success: boolean; logContent?: string; status?: string; error?: string }> {
+    try {
+      const request = create(GetBuildLogRequestSchema, { jobId });
+      const response = await adminClient.getBuildLog(request);
+
+      if (response.errorMessage) {
+        return { success: false, error: response.errorMessage };
+      }
+
+      return { success: true, logContent: response.logContent, status: response.status };
+    } catch (err) {
+      console.error('Failed to get build log:', err);
+      return { success: false, error: 'ビルドログの取得に失敗しました' };
     }
   }
 }
