@@ -4,21 +4,21 @@
     align-items: flex-start;
     min-height: 100vh;
     padding: 2rem;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: var(--gradient-bg-alt);
 }
 
 .challenge-form-card {
-    background: #0f0f23;
-    border: 1px solid #333;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 2rem;
     width: 100%;
     max-width: 600px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow);
 }
 
 .challenge-form-card h1 {
-    color: #ffd700;
+    color: var(--accent-primary);
     text-align: center;
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
@@ -30,23 +30,23 @@
 
 .form-group label {
     display: block;
-    color: #ccc;
+    color: var(--text-secondary);
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
 }
 
 .required {
-    color: #ff6b6b;
+    color: var(--accent-danger-hover);
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
     padding: 0.75rem;
-    background: #1a1a2e;
-    border: 1px solid #333;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 1rem;
     transition: border-color 0.2s;
     box-sizing: border-box;
@@ -61,7 +61,7 @@
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #ffd700;
+    border-color: var(--accent-primary);
 }
 
 .form-group input:disabled,
@@ -98,13 +98,13 @@
 }
 
 .btn-primary {
-    background: #ffd700;
-    color: #0f0f23;
+    background: var(--accent-primary);
+    color: var(--bg-card);
     font-weight: bold;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: #ffed4a;
+    background: var(--accent-primary-hover);
     transform: translateY(-2px);
 }
 
@@ -114,12 +114,12 @@
 }
 
 .btn-secondary {
-    background: #333;
-    color: #ccc;
+    background: var(--border-color);
+    color: var(--text-secondary);
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: #444;
+    background: var(--bg-input);
 }
 
 .btn-secondary:disabled {
@@ -129,8 +129,8 @@
 
 .error-message {
     background: rgba(255, 107, 107, 0.1);
-    border: 1px solid #ff6b6b;
-    color: #ff6b6b;
+    border: 1px solid var(--accent-danger-hover);
+    color: var(--accent-danger-hover);
     padding: 0.75rem;
     border-radius: 6px;
     margin-bottom: 1rem;

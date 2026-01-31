@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-register',
@@ -12,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 export class RegisterComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  readonly themeService = inject(ThemeService);
 
   username = signal('');
   password = signal('');

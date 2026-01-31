@@ -4,6 +4,7 @@ import { Challenge } from '../../../gen/api/server/v1/model_pb';
 import { AdminService } from '../../services/admin.service';
 import { AuthService } from '../../services/auth.service';
 import { ChallengeService } from '../../services/challenge.service';
+import { ThemeService } from '../../services/theme.service';
 import { ChallengeDetailComponent } from './challenge-detail/challenge-detail';
 
 @Component({
@@ -16,6 +17,7 @@ export class ChallengesComponent implements OnInit {
   private readonly authService = inject(AuthService);
   readonly adminService = inject(AdminService);
   readonly challengeService = inject(ChallengeService);
+  readonly themeService = inject(ThemeService);
   private readonly router = inject(Router);
 
   readonly challenges = this.challengeService.challenges;

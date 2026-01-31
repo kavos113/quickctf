@@ -2,6 +2,13 @@
   <header class="header">
     <h1>問題管理</h1>
     <div class="header-actions">
+      <button class="theme-toggle" (click)="themeService.toggleTheme()" title="テーマ切り替え">
+        @if (themeService.isDark()) {
+        ☀️
+        } @else {
+        🌙
+        }
+      </button>
       <button class="btn-secondary" (click)="goBack()">ユーザー画面へ</button>
       <button class="btn-warning" (click)="deactivateAdmin()">管理者モード終了</button>
     </div>

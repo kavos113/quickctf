@@ -1,5 +1,57 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Theme Variables */
+:root,
+[data-theme='dark'] {
+  --bg-primary: #0d1b2a;
+  --bg-secondary: #1b263b;
+  --bg-card: #0f0f23;
+  --bg-input: #1a1a2e;
+  --bg-header: rgba(255, 255, 255, 0.05);
+
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --text-muted: #888888;
+
+  --border-color: #333333;
+  --border-light: rgba(255, 255, 255, 0.1);
+
+  --accent-primary: #ffd700;
+  --accent-primary-hover: #ffed4a;
+  --accent-secondary: #4ecdc4;
+  --accent-danger: #ef4444;
+  --accent-danger-hover: #ff6b6b;
+
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --gradient-bg: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+  --gradient-bg-alt: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+[data-theme='light'] {
+  --bg-primary: #fafafc;
+  --bg-secondary: #faf4fb;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --bg-header: rgba(255, 255, 255, 0.9);
+
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+
+  --border-color: #cbd5e1;
+  --border-light: rgba(0, 0, 0, 0.1);
+
+  --accent-primary: #d19e07;
+  --accent-primary-hover: #b67d03;
+  --accent-secondary: #14b8a6;
+  --accent-danger: #dc2626;
+  --accent-danger-hover: #b91c1c;
+
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --gradient-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --gradient-bg-alt: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -18,6 +70,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 html,

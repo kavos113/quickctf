@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Challenge } from '../../../../gen/api/server/v1/model_pb';
 import { AdminService } from '../../../services/admin.service';
+import { ThemeService } from '../../../services/theme.service';
 
 @Component({
   selector: 'app-admin-challenges',
@@ -11,6 +12,7 @@ import { AdminService } from '../../../services/admin.service';
 })
 export class AdminChallengesComponent implements OnInit {
   readonly adminService = inject(AdminService);
+  readonly themeService = inject(ThemeService);
   private readonly router = inject(Router);
 
   readonly selectedChallenge = signal<Challenge | null>(null);

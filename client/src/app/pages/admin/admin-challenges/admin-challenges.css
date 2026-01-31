@@ -1,6 +1,6 @@
 .admin-challenges-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: var(--gradient-bg-alt);
     padding: 2rem;
 }
 
@@ -10,11 +10,11 @@
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .header h1 {
-    color: #ffd700;
+    color: var(--accent-primary);
     font-size: 1.8rem;
     margin: 0;
 }
@@ -40,13 +40,13 @@
 }
 
 .btn-primary {
-    background: #ffd700;
-    color: #0f0f23;
+    background: var(--accent-primary);
+    color: var(--bg-card);
     font-weight: bold;
 }
 
 .btn-primary:hover {
-    background: #ffed4a;
+    background: var(--accent-primary-hover);
     transform: translateY(-2px);
 }
 
@@ -55,42 +55,42 @@
 }
 
 .btn-secondary {
-    background: #333;
-    color: #ccc;
+    background: var(--border-color);
+    color: var(--text-secondary);
 }
 
 .btn-secondary:hover {
-    background: #444;
+    background: var(--bg-input);
 }
 
 .btn-warning {
-    background: #ff6b6b;
+    background: var(--accent-danger-hover);
     color: #fff;
 }
 
 .btn-warning:hover {
-    background: #ff8787;
+    background: var(--accent-danger);
 }
 
 .loading {
     text-align: center;
-    color: #888;
+    color: var(--text-muted);
     padding: 3rem;
     font-size: 1.1rem;
 }
 
 .error-message {
     background: rgba(255, 107, 107, 0.1);
-    border: 1px solid #ff6b6b;
-    color: #ff6b6b;
+    border: 1px solid var(--accent-danger-hover);
+    color: var(--accent-danger-hover);
     padding: 1rem;
     border-radius: 8px;
     text-align: center;
 }
 
 .challenges-table-container {
-    background: #0f0f23;
-    border: 1px solid #333;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     overflow: hidden;
 }
@@ -104,12 +104,12 @@
 .challenges-table td {
     padding: 1rem;
     text-align: left;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .challenges-table th {
-    background: #1a1a2e;
-    color: #ffd700;
+    background: var(--bg-input);
+    color: var(--accent-primary);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.85rem;
@@ -121,25 +121,25 @@
 }
 
 .challenge-name {
-    color: #fff;
+    color: var(--text-primary);
     font-weight: 500;
 }
 
 .genre-badge {
-    background: #333;
-    color: #4ecdc4;
+    background: var(--border-color);
+    color: var(--accent-secondary);
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.85rem;
 }
 
 .points {
-    color: #ffd700;
+    color: var(--accent-primary);
     font-weight: bold;
 }
 
 .flag {
-    color: #888;
+    color: var(--text-muted);
     font-family: monospace;
     font-size: 0.9rem;
     max-width: 200px;
@@ -164,25 +164,40 @@
 }
 
 .btn-edit {
-    background: #4ecdc4;
-    color: #0f0f23;
+    background: var(--accent-secondary);
+    color: var(--bg-card);
 }
 
 .btn-edit:hover {
-    background: #6ee7df;
+    filter: brightness(1.1);
 }
 
 .btn-delete {
-    background: #ff6b6b;
+    background: var(--accent-danger-hover);
     color: #fff;
 }
 
 .btn-delete:hover {
-    background: #ff8787;
+    background: var(--accent-danger);
 }
 
 .empty-message {
     text-align: center;
-    color: #888;
+    color: var(--text-muted);
     padding: 2rem;
+}
+
+.theme-toggle {
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+    background: var(--bg-input);
+    border-color: var(--accent-primary);
 }

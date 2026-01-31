@@ -4,6 +4,13 @@
       <h1>CTF Challenges</h1>
       <div class="user-info">
         <span class="username">{{ username() }}</span>
+        <button class="theme-toggle" (click)="themeService.toggleTheme()" title="テーマ切り替え">
+          @if (themeService.isDark()) {
+          ☀️
+          } @else {
+          🌙
+          }
+        </button>
         <button class="admin-button" (click)="goToAdmin()">
           @if (adminService.isAdmin()) {
           管理画面

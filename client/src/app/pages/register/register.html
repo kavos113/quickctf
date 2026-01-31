@@ -1,64 +1,50 @@
 <div class="register-container">
+  <button class="theme-toggle" (click)="themeService.toggleTheme()" title="テーマ切り替え">
+    @if (themeService.isDark()) {
+    ☀️
+    } @else {
+    🌙
+    }
+  </button>
   <div class="register-card">
     <h1>アカウント登録</h1>
 
     @if (errorMessage()) {
-      <div class="error-message">
-        {{ errorMessage() }}
-      </div>
+    <div class="error-message">
+      {{ errorMessage() }}
+    </div>
     }
 
     @if (successMessage()) {
-      <div class="success-message">
-        {{ successMessage() }}
-      </div>
+    <div class="success-message">
+      {{ successMessage() }}
+    </div>
     }
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="username">ユーザー名</label>
-        <input
-          type="text"
-          id="username"
-          [value]="username()"
-          (input)="updateUsername($event)"
-          placeholder="ユーザー名を入力"
-          [disabled]="isLoading()"
-          autocomplete="username"
-        />
+        <input type="text" id="username" [value]="username()" (input)="updateUsername($event)" placeholder="ユーザー名を入力"
+          [disabled]="isLoading()" autocomplete="username" />
       </div>
 
       <div class="form-group">
         <label for="password">パスワード</label>
-        <input
-          type="password"
-          id="password"
-          [value]="password()"
-          (input)="updatePassword($event)"
-          placeholder="8文字以上で入力"
-          [disabled]="isLoading()"
-          autocomplete="new-password"
-        />
+        <input type="password" id="password" [value]="password()" (input)="updatePassword($event)"
+          placeholder="8文字以上で入力" [disabled]="isLoading()" autocomplete="new-password" />
       </div>
 
       <div class="form-group">
         <label for="confirmPassword">パスワード（確認）</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          [value]="confirmPassword()"
-          (input)="updateConfirmPassword($event)"
-          placeholder="パスワードを再入力"
-          [disabled]="isLoading()"
-          autocomplete="new-password"
-        />
+        <input type="password" id="confirmPassword" [value]="confirmPassword()" (input)="updateConfirmPassword($event)"
+          placeholder="パスワードを再入力" [disabled]="isLoading()" autocomplete="new-password" />
       </div>
 
       <button type="submit" class="submit-button" [disabled]="isLoading()">
         @if (isLoading()) {
-          <span>登録中...</span>
+        <span>登録中...</span>
         } @else {
-          <span>登録</span>
+        <span>登録</span>
         }
       </button>
     </form>
