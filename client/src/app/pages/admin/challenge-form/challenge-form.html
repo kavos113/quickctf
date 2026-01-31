@@ -6,152 +6,168 @@
 
       <form (ngSubmit)="onSubmit()">
         @if (error()) {
-          <div class="error-message">{{ error() }}</div>
+        <div class="error-message">{{ error() }}</div>
         }
 
         <div class="form-group">
           <label for="name">問題名 <span class="required">*</span></label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            [(ngModel)]="name"
-            placeholder="問題名を入力"
-            [disabled]="isLoading()"
-          />
+          <input type="text" id="name" name="name" [(ngModel)]="name" placeholder="問題名を入力" [disabled]="isLoading()" />
         </div>
 
         <div class="form-group">
           <label for="genre">ジャンル <span class="required">*</span></label>
-          <input
-            type="text"
-            id="genre"
-            name="genre"
-            [(ngModel)]="genre"
-            placeholder="例: Web, Crypto, Pwn, Rev, Misc"
-            [disabled]="isLoading()"
-          />
+          <input type="text" id="genre" name="genre" [(ngModel)]="genre" placeholder="例: Web, Crypto, Pwn, Rev, Misc"
+            [disabled]="isLoading()" />
         </div>
 
         <div class="form-group">
           <label for="points">ポイント <span class="required">*</span></label>
-          <input
-            type="number"
-            id="points"
-            name="points"
-            [(ngModel)]="points"
-            min="1"
-            [disabled]="isLoading()"
-          />
+          <input type="number" id="points" name="points" [(ngModel)]="points" min="1" [disabled]="isLoading()" />
         </div>
 
         <div class="form-group">
           <label for="flag">フラグ <span class="required">*</span></label>
-          <input
-            type="text"
-            id="flag"
-            name="flag"
-            [(ngModel)]="flag"
-            placeholder="例: flag{example_flag}"
-            [disabled]="isLoading()"
-          />
+          <input type="text" id="flag" name="flag" [(ngModel)]="flag" placeholder="例: flag{example_flag}"
+            [disabled]="isLoading()" />
         </div>
 
         <div class="form-group">
           <label for="description">説明 <span class="required">*</span></label>
-          <textarea
-            id="description"
-            name="description"
-            [(ngModel)]="description"
-            placeholder="問題の説明を入力（Markdownのような記法が使えます）"
-            rows="8"
-            [disabled]="isLoading()"
-          ></textarea>
+          <textarea id="description" name="description" [(ngModel)]="description"
+            placeholder="問題の説明を入力（Markdownのような記法が使えます）" rows="8" [disabled]="isLoading()"></textarea>
         </div>
 
         <div class="form-group">
           <label for="imageFile">問題イメージ (tar)</label>
           <div class="file-upload-wrapper">
-            <input
-              type="file"
-              id="imageFile"
-              accept=".tar,.tar.gz,.tgz"
-              (change)="onFileSelected($event)"
-              [disabled]="isLoading()"
-            />
+            <input type="file" id="imageFile" accept=".tar,.tar.gz,.tgz" (change)="onFileSelected($event)"
+              [disabled]="isLoading()" />
             <div class="file-upload-area" [class.has-file]="selectedFile()">
               @if (selectedFile()) {
-                <span class="file-name">📦 {{ selectedFile()?.name }}</span>
-                <button type="button" class="remove-file" (click)="removeFile()">✕</button>
+              <span class="file-name">📦 {{ selectedFile()?.name }}</span>
+              <button type="button" class="remove-file" (click)="removeFile()">✕</button>
               } @else {
-                <span class="upload-text">クリックまたはドラッグ＆ドロップでtarファイルを選択</span>
+              <span class="upload-text">クリックまたはドラッグ＆ドロップでtarファイルを選択</span>
               }
             </div>
           </div>
-          @if (uploadProgress() > 0 && uploadProgress() < 100) {
-            <div class="progress-bar">
-              <div class="progress-fill" [style.width.%]="uploadProgress()"></div>
-            </div>
-          }
+          @if (uploadProgress() > 0 && uploadProgress() < 100) { <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="uploadProgress()"></div>
         </div>
-
-        <div class="button-group">
-          <button type="button" class="btn-secondary" (click)="cancel()" [disabled]="isLoading()">
-            キャンセル
-          </button>
-          <button type="submit" class="btn-primary" [disabled]="isLoading()">
-            @if (isLoading()) {
-              <span>保存中...</span>
-            } @else {
-              <span>{{ isEditMode() ? '更新' : '作成' }}</span>
-            }
-          </button>
-        </div>
-      </form>
+        }
     </div>
 
-    <!-- 右側：プレビュー -->
-    <div class="challenge-preview-card">
-      <h2>プレビュー</h2>
-
-      <div class="preview-content">
-        <div class="preview-header">
-          @if (genre) {
-            <span class="preview-genre">{{ genre }}</span>
-          }
-          <h3 class="preview-name">{{ name || '問題名' }}</h3>
-          <div class="preview-points">{{ points }} pts</div>
+    @if (isEditMode()) {
+    <div class="form-group">
+      <label for="attachmentFile">添付ファイル</label>
+      @if (attachments().length > 0) {
+      <div class="attachments-list">
+        @for (attachment of attachments(); track attachment.attachmentId) {
+        <div class="attachment-item">
+          <span class="attachment-icon">📎</span>
+          <a [href]="attachment.url" target="_blank" class="attachment-name">{{
+            attachment.filename
+            }}</a>
+          <span class="attachment-size">({{ formatFileSize(attachment.size) }})</span>
+          <button type="button" class="attachment-delete" (click)="deleteAttachment(attachment.attachmentId)"
+            [disabled]="isLoading()">
+            🗑️
+          </button>
         </div>
-
-        <div class="preview-description">
-          <h4>説明</h4>
-          <div class="preview-description-content">
-            @if (description) {
-              <p>{{ description }}</p>
-            } @else {
-              <p class="placeholder-text">問題の説明がここに表示されます</p>
-            }
-          </div>
-        </div>
-
-        @if (flag) {
-          <div class="preview-flag">
-            <h4>フラグ</h4>
-            <code>{{ flag }}</code>
-          </div>
-        }
-
-        @if (selectedFile()) {
-          <div class="preview-image">
-            <h4>問題イメージ</h4>
-            <div class="image-info">
-              <span class="file-icon">📦</span>
-              <span>{{ selectedFile()?.name }}</span>
-              <span class="file-size">({{ formatFileSize(selectedFile()?.size || 0) }})</span>
-            </div>
-          </div>
         }
       </div>
+      }
+      <div class="attachment-upload">
+        <input type="file" id="attachmentFile" (change)="onAttachmentFileSelected($event)"
+          [disabled]="isLoading() || isUploadingAttachment()" />
+        @if (selectedAttachmentFile()) {
+        <div class="selected-attachment">
+          <span>{{ selectedAttachmentFile()?.name }}</span>
+          <button type="button" class="remove-file" (click)="removeAttachmentFile()">
+            ✕
+          </button>
+        </div>
+        }
+        <button type="button" class="btn-secondary btn-upload" (click)="uploadAttachment()"
+          [disabled]="!selectedAttachmentFile() || isLoading() || isUploadingAttachment()">
+          @if (isUploadingAttachment()) {
+          <span>アップロード中...</span>
+          } @else {
+          <span>添付ファイルをアップロード</span>
+          }
+        </button>
+      </div>
+    </div>
+    }
+
+    <div class="button-group">
+      <button type="button" class="btn-secondary" (click)="cancel()" [disabled]="isLoading()">
+        キャンセル
+      </button>
+      <button type="submit" class="btn-primary" [disabled]="isLoading()">
+        @if (isLoading()) {
+        <span>保存中...</span>
+        } @else {
+        <span>{{ isEditMode() ? '更新' : '作成' }}</span>
+        }
+      </button>
+    </div>
+    </form>
+  </div>
+
+  <!-- 右側：プレビュー -->
+  <div class="challenge-preview-card">
+    <h2>プレビュー</h2>
+
+    <div class="preview-content">
+      <div class="preview-header">
+        @if (genre) {
+        <span class="preview-genre">{{ genre }}</span>
+        }
+        <h3 class="preview-name">{{ name || '問題名' }}</h3>
+        <div class="preview-points">{{ points }} pts</div>
+      </div>
+
+      <div class="preview-description">
+        <h4>説明</h4>
+        <div class="preview-description-content">
+          @if (description) {
+          <p>{{ description }}</p>
+          } @else {
+          <p class="placeholder-text">問題の説明がここに表示されます</p>
+          }
+        </div>
+      </div>
+
+      @if (flag) {
+      <div class="preview-flag">
+        <h4>フラグ</h4>
+        <code>{{ flag }}</code>
+      </div>
+      }
+
+      @if (selectedFile()) {
+      <div class="preview-image">
+        <h4>問題イメージ</h4>
+        <div class="image-info">
+          <span class="file-icon">📦</span>
+          <span>{{ selectedFile()?.name }}</span>
+          <span class="file-size">({{ formatFileSize(selectedFile()?.size || 0) }})</span>
+        </div>
+      </div>
+      }
+
+      @if (attachments().length > 0) {
+      <div class="preview-attachments">
+        <h4>添付ファイル</h4>
+        <ul>
+          @for (attachment of attachments(); track attachment.attachmentId) {
+          <li>📎 {{ attachment.filename }}</li>
+          }
+        </ul>
+      </div>
+      }
     </div>
   </div>
+</div>
 </div>

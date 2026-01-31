@@ -41,6 +41,7 @@ func main() {
 	challengeRepo := repository.NewMySQLChallengeRepository(db)
 	submissionRepo := repository.NewMySQLSubmissionRepository(db)
 	instanceRepo := repository.NewMySQLInstanceRepository(db)
+	attachmentRepo := repository.NewAttachmentRepository(db)
 
 	builderClient, err := client.NewBuilderClient()
 	if err != nil {
@@ -54,9 +55,14 @@ func main() {
 	}
 	defer managerClient.Close()
 
+	storageClient, err := client.NewStorageClient()
+	if err != nil {
+		log.Fatalf("failed to create storage client: %v", err)
+	}
+
 	userAuthUsecase := usecase.NewUserAuthUsecase(userRepo, sessionRepo)
 	adminAuthUsecase := usecase.NewAdminAuthUsecase(sessionRepo)
-	adminServiceUsecase := usecase.NewAdminServiceUsecase(challengeRepo, sessionRepo, builderClient)
+	adminServiceUsecase := usecase.NewAdminServiceUsecase(challengeRepo, attachmentRepo, sessionRepo, builderClient, storageClient)
 	clientChallengeUsecase := usecase.NewClientChallengeUsecase(challengeRepo, submissionRepo, instanceRepo, managerClient)
 
 	userAuthService := service.NewUserAuthService(userAuthUsecase)

@@ -9,6 +9,14 @@ message Challenge {
   string flag = 4;
   int32 points = 5;
   string genre = 6;
+  repeated Attachment attachments = 7;
+}
+
+message Attachment {
+  string attachment_id = 1;
+  string filename = 2;
+  int64 size = 3;
+  string url = 4;
 }
 
 message ChallengeRequest {

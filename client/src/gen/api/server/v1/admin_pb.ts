@@ -4,7 +4,7 @@
 
 import type { GenFile, GenMessage, GenService } from '@bufbuild/protobuf/codegenv2';
 import { fileDesc, messageDesc, serviceDesc } from '@bufbuild/protobuf/codegenv2';
-import type { Challenge, ChallengeRequest } from './model_pb';
+import type { Attachment, Challenge, ChallengeRequest } from './model_pb';
 import { file_api_server_v1_model } from './model_pb';
 import type { Message } from '@bufbuild/protobuf';
 
@@ -14,7 +14,7 @@ import type { Message } from '@bufbuild/protobuf';
 export const file_api_server_v1_admin: GenFile =
   /*@__PURE__*/
   fileDesc(
-    'ChlhcGkvc2VydmVyL3YxL2FkbWluLnByb3RvEg1hcGkuc2VydmVyLnYxIkwKFkNyZWF0ZUNoYWxsZW5nZVJlcXVlc3QSMgoJY2hhbGxlbmdlGAEgASgLMh8uYXBpLnNlcnZlci52MS5DaGFsbGVuZ2VSZXF1ZXN0IkYKF0NyZWF0ZUNoYWxsZW5nZVJlc3BvbnNlEhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIkUKFlVwZGF0ZUNoYWxsZW5nZVJlcXVlc3QSKwoJY2hhbGxlbmdlGAEgASgLMhguYXBpLnNlcnZlci52MS5DaGFsbGVuZ2UiMAoXVXBkYXRlQ2hhbGxlbmdlUmVzcG9uc2USFQoNZXJyb3JfbWVzc2FnZRgBIAEoCSJHChtVcGxvYWRDaGFsbGVuZ2VJbWFnZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJEhIKCmltYWdlX2RhdGEYAiABKAwiRQocVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXNwb25zZRIOCgZqb2JfaWQYASABKAkSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSIuChZEZWxldGVDaGFsbGVuZ2VSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCSIwChdEZWxldGVDaGFsbGVuZ2VSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJIhcKFUxpc3RDaGFsbGVuZ2VzUmVxdWVzdCJdChZMaXN0Q2hhbGxlbmdlc1Jlc3BvbnNlEiwKCmNoYWxsZW5nZXMYASADKAsyGC5hcGkuc2VydmVyLnYxLkNoYWxsZW5nZRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIisKE0dldENoYWxsZW5nZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJIloKFEdldENoYWxsZW5nZVJlc3BvbnNlEisKCWNoYWxsZW5nZRgBIAEoCzIYLmFwaS5zZXJ2ZXIudjEuQ2hhbGxlbmdlEhUKDWVycm9yX21lc3NhZ2UYAiABKAkicQoPQnVpbGRMb2dTdW1tYXJ5Eg4KBmpvYl9pZBgBIAEoCRIUCgxjaGFsbGVuZ2VfaWQYAiABKAkSDgoGc3RhdHVzGAMgASgJEhIKCmNyZWF0ZWRfYXQYBCABKAkSFAoMY29tcGxldGVkX2F0GAUgASgJIiwKFExpc3RCdWlsZExvZ3NSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCSJcChVMaXN0QnVpbGRMb2dzUmVzcG9uc2USLAoEbG9ncxgBIAMoCzIeLmFwaS5zZXJ2ZXIudjEuQnVpbGRMb2dTdW1tYXJ5EhUKDWVycm9yX21lc3NhZ2UYAiABKAkiJAoSR2V0QnVpbGRMb2dSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCSJhChNHZXRCdWlsZExvZ1Jlc3BvbnNlEg4KBmpvYl9pZBgBIAEoCRITCgtsb2dfY29udGVudBgCIAEoCRIOCgZzdGF0dXMYAyABKAkSFQoNZXJyb3JfbWVzc2FnZRgEIAEoCSIlChFBZG1pbkxvZ2luUmVxdWVzdBIQCghwYXNzd29yZBgBIAEoCSIUChJBZG1pbkxvZ2luUmVzcG9uc2UiFAoSQWRtaW5Mb2dvdXRSZXF1ZXN0IhUKE0FkbWluTG9nb3V0UmVzcG9uc2UyjwYKDEFkbWluU2VydmljZRJgCg9DcmVhdGVDaGFsbGVuZ2USJS5hcGkuc2VydmVyLnYxLkNyZWF0ZUNoYWxsZW5nZVJlcXVlc3QaJi5hcGkuc2VydmVyLnYxLkNyZWF0ZUNoYWxsZW5nZVJlc3BvbnNlEmAKD1VwZGF0ZUNoYWxsZW5nZRIlLmFwaS5zZXJ2ZXIudjEuVXBkYXRlQ2hhbGxlbmdlUmVxdWVzdBomLmFwaS5zZXJ2ZXIudjEuVXBkYXRlQ2hhbGxlbmdlUmVzcG9uc2USbwoUVXBsb2FkQ2hhbGxlbmdlSW1hZ2USKi5hcGkuc2VydmVyLnYxLlVwbG9hZENoYWxsZW5nZUltYWdlUmVxdWVzdBorLmFwaS5zZXJ2ZXIudjEuVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXNwb25zZRJgCg9EZWxldGVDaGFsbGVuZ2USJS5hcGkuc2VydmVyLnYxLkRlbGV0ZUNoYWxsZW5nZVJlcXVlc3QaJi5hcGkuc2VydmVyLnYxLkRlbGV0ZUNoYWxsZW5nZVJlc3BvbnNlEl0KDkxpc3RDaGFsbGVuZ2VzEiQuYXBpLnNlcnZlci52MS5MaXN0Q2hhbGxlbmdlc1JlcXVlc3QaJS5hcGkuc2VydmVyLnYxLkxpc3RDaGFsbGVuZ2VzUmVzcG9uc2USVwoMR2V0Q2hhbGxlbmdlEiIuYXBpLnNlcnZlci52MS5HZXRDaGFsbGVuZ2VSZXF1ZXN0GiMuYXBpLnNlcnZlci52MS5HZXRDaGFsbGVuZ2VSZXNwb25zZRJaCg1MaXN0QnVpbGRMb2dzEiMuYXBpLnNlcnZlci52MS5MaXN0QnVpbGRMb2dzUmVxdWVzdBokLmFwaS5zZXJ2ZXIudjEuTGlzdEJ1aWxkTG9nc1Jlc3BvbnNlElQKC0dldEJ1aWxkTG9nEiEuYXBpLnNlcnZlci52MS5HZXRCdWlsZExvZ1JlcXVlc3QaIi5hcGkuc2VydmVyLnYxLkdldEJ1aWxkTG9nUmVzcG9uc2UyuwEKEEFkbWluQXV0aFNlcnZpY2USUQoKQWRtaW5Mb2dpbhIgLmFwaS5zZXJ2ZXIudjEuQWRtaW5Mb2dpblJlcXVlc3QaIS5hcGkuc2VydmVyLnYxLkFkbWluTG9naW5SZXNwb25zZRJUCgtBZG1pbkxvZ291dBIhLmFwaS5zZXJ2ZXIudjEuQWRtaW5Mb2dvdXRSZXF1ZXN0GiIuYXBpLnNlcnZlci52MS5BZG1pbkxvZ291dFJlc3BvbnNlQrEBChFjb20uYXBpLnNlcnZlci52MUIKQWRtaW5Qcm90b1ABWjpnaXRodWIuY29tL2thdm9zMTEzL3F1aWNrY3RmL2dlbi9nby9hcGkvc2VydmVyL3YxO3NlcnZlcnYxogIDQVNYqgINQXBpLlNlcnZlci5WMcoCDUFwaVxTZXJ2ZXJcVjHiAhlBcGlcU2VydmVyXFYxXEdQQk1ldGFkYXRh6gIPQXBpOjpTZXJ2ZXI6OlYxYgZwcm90bzM',
+    'ChlhcGkvc2VydmVyL3YxL2FkbWluLnByb3RvEg1hcGkuc2VydmVyLnYxIkwKFkNyZWF0ZUNoYWxsZW5nZVJlcXVlc3QSMgoJY2hhbGxlbmdlGAEgASgLMh8uYXBpLnNlcnZlci52MS5DaGFsbGVuZ2VSZXF1ZXN0IkYKF0NyZWF0ZUNoYWxsZW5nZVJlc3BvbnNlEhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIkUKFlVwZGF0ZUNoYWxsZW5nZVJlcXVlc3QSKwoJY2hhbGxlbmdlGAEgASgLMhguYXBpLnNlcnZlci52MS5DaGFsbGVuZ2UiMAoXVXBkYXRlQ2hhbGxlbmdlUmVzcG9uc2USFQoNZXJyb3JfbWVzc2FnZRgBIAEoCSJHChtVcGxvYWRDaGFsbGVuZ2VJbWFnZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJEhIKCmltYWdlX2RhdGEYAiABKAwiRQocVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXNwb25zZRIOCgZqb2JfaWQYASABKAkSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSIuChZEZWxldGVDaGFsbGVuZ2VSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCSIwChdEZWxldGVDaGFsbGVuZ2VSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJIhcKFUxpc3RDaGFsbGVuZ2VzUmVxdWVzdCJdChZMaXN0Q2hhbGxlbmdlc1Jlc3BvbnNlEiwKCmNoYWxsZW5nZXMYASADKAsyGC5hcGkuc2VydmVyLnYxLkNoYWxsZW5nZRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIisKE0dldENoYWxsZW5nZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJIloKFEdldENoYWxsZW5nZVJlc3BvbnNlEisKCWNoYWxsZW5nZRgBIAEoCzIYLmFwaS5zZXJ2ZXIudjEuQ2hhbGxlbmdlEhUKDWVycm9yX21lc3NhZ2UYAiABKAkicQoPQnVpbGRMb2dTdW1tYXJ5Eg4KBmpvYl9pZBgBIAEoCRIUCgxjaGFsbGVuZ2VfaWQYAiABKAkSDgoGc3RhdHVzGAMgASgJEhIKCmNyZWF0ZWRfYXQYBCABKAkSFAoMY29tcGxldGVkX2F0GAUgASgJIiwKFExpc3RCdWlsZExvZ3NSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCSJcChVMaXN0QnVpbGRMb2dzUmVzcG9uc2USLAoEbG9ncxgBIAMoCzIeLmFwaS5zZXJ2ZXIudjEuQnVpbGRMb2dTdW1tYXJ5EhUKDWVycm9yX21lc3NhZ2UYAiABKAkiJAoSR2V0QnVpbGRMb2dSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCSJhChNHZXRCdWlsZExvZ1Jlc3BvbnNlEg4KBmpvYl9pZBgBIAEoCRITCgtsb2dfY29udGVudBgCIAEoCRIOCgZzdGF0dXMYAyABKAkSFQoNZXJyb3JfbWVzc2FnZRgEIAEoCSJPChdVcGxvYWRBdHRhY2htZW50UmVxdWVzdBIUCgxjaGFsbGVuZ2VfaWQYASABKAkSEAoIZmlsZW5hbWUYAiABKAkSDAoEZGF0YRgDIAEoDCJgChhVcGxvYWRBdHRhY2htZW50UmVzcG9uc2USLQoKYXR0YWNobWVudBgBIAEoCzIZLmFwaS5zZXJ2ZXIudjEuQXR0YWNobWVudBIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIkYKF0RlbGV0ZUF0dGFjaG1lbnRSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIVCg1hdHRhY2htZW50X2lkGAIgASgJIjEKGERlbGV0ZUF0dGFjaG1lbnRSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJIiUKEUFkbWluTG9naW5SZXF1ZXN0EhAKCHBhc3N3b3JkGAEgASgJIhQKEkFkbWluTG9naW5SZXNwb25zZSIUChJBZG1pbkxvZ291dFJlcXVlc3QiFQoTQWRtaW5Mb2dvdXRSZXNwb25zZTLZBwoMQWRtaW5TZXJ2aWNlEmAKD0NyZWF0ZUNoYWxsZW5nZRIlLmFwaS5zZXJ2ZXIudjEuQ3JlYXRlQ2hhbGxlbmdlUmVxdWVzdBomLmFwaS5zZXJ2ZXIudjEuQ3JlYXRlQ2hhbGxlbmdlUmVzcG9uc2USYAoPVXBkYXRlQ2hhbGxlbmdlEiUuYXBpLnNlcnZlci52MS5VcGRhdGVDaGFsbGVuZ2VSZXF1ZXN0GiYuYXBpLnNlcnZlci52MS5VcGRhdGVDaGFsbGVuZ2VSZXNwb25zZRJvChRVcGxvYWRDaGFsbGVuZ2VJbWFnZRIqLmFwaS5zZXJ2ZXIudjEuVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXF1ZXN0GisuYXBpLnNlcnZlci52MS5VcGxvYWRDaGFsbGVuZ2VJbWFnZVJlc3BvbnNlEmAKD0RlbGV0ZUNoYWxsZW5nZRIlLmFwaS5zZXJ2ZXIudjEuRGVsZXRlQ2hhbGxlbmdlUmVxdWVzdBomLmFwaS5zZXJ2ZXIudjEuRGVsZXRlQ2hhbGxlbmdlUmVzcG9uc2USXQoOTGlzdENoYWxsZW5nZXMSJC5hcGkuc2VydmVyLnYxLkxpc3RDaGFsbGVuZ2VzUmVxdWVzdBolLmFwaS5zZXJ2ZXIudjEuTGlzdENoYWxsZW5nZXNSZXNwb25zZRJXCgxHZXRDaGFsbGVuZ2USIi5hcGkuc2VydmVyLnYxLkdldENoYWxsZW5nZVJlcXVlc3QaIy5hcGkuc2VydmVyLnYxLkdldENoYWxsZW5nZVJlc3BvbnNlEloKDUxpc3RCdWlsZExvZ3MSIy5hcGkuc2VydmVyLnYxLkxpc3RCdWlsZExvZ3NSZXF1ZXN0GiQuYXBpLnNlcnZlci52MS5MaXN0QnVpbGRMb2dzUmVzcG9uc2USVAoLR2V0QnVpbGRMb2cSIS5hcGkuc2VydmVyLnYxLkdldEJ1aWxkTG9nUmVxdWVzdBoiLmFwaS5zZXJ2ZXIudjEuR2V0QnVpbGRMb2dSZXNwb25zZRJjChBVcGxvYWRBdHRhY2htZW50EiYuYXBpLnNlcnZlci52MS5VcGxvYWRBdHRhY2htZW50UmVxdWVzdBonLmFwaS5zZXJ2ZXIudjEuVXBsb2FkQXR0YWNobWVudFJlc3BvbnNlEmMKEERlbGV0ZUF0dGFjaG1lbnQSJi5hcGkuc2VydmVyLnYxLkRlbGV0ZUF0dGFjaG1lbnRSZXF1ZXN0GicuYXBpLnNlcnZlci52MS5EZWxldGVBdHRhY2htZW50UmVzcG9uc2UyuwEKEEFkbWluQXV0aFNlcnZpY2USUQoKQWRtaW5Mb2dpbhIgLmFwaS5zZXJ2ZXIudjEuQWRtaW5Mb2dpblJlcXVlc3QaIS5hcGkuc2VydmVyLnYxLkFkbWluTG9naW5SZXNwb25zZRJUCgtBZG1pbkxvZ291dBIhLmFwaS5zZXJ2ZXIudjEuQWRtaW5Mb2dvdXRSZXF1ZXN0GiIuYXBpLnNlcnZlci52MS5BZG1pbkxvZ291dFJlc3BvbnNlQrEBChFjb20uYXBpLnNlcnZlci52MUIKQWRtaW5Qcm90b1ABWjpnaXRodWIuY29tL2thdm9zMTEzL3F1aWNrY3RmL2dlbi9nby9hcGkvc2VydmVyL3YxO3NlcnZlcnYxogIDQVNYqgINQXBpLlNlcnZlci5WMcoCDUFwaVxTZXJ2ZXJcVjHiAhlBcGlcU2VydmVyXFYxXEdQQk1ldGFkYXRh6gIPQXBpOjpTZXJ2ZXI6OlYxYgZwcm90bzM',
     [file_api_server_v1_model],
   );
 
@@ -387,6 +387,98 @@ export const GetBuildLogResponseSchema: GenMessage<GetBuildLogResponse> =
   messageDesc(file_api_server_v1_admin, 16);
 
 /**
+ * @generated from message api.server.v1.UploadAttachmentRequest
+ */
+export type UploadAttachmentRequest = Message<'api.server.v1.UploadAttachmentRequest'> & {
+  /**
+   * @generated from field: string challenge_id = 1;
+   */
+  challengeId: string;
+
+  /**
+   * @generated from field: string filename = 2;
+   */
+  filename: string;
+
+  /**
+   * @generated from field: bytes data = 3;
+   */
+  data: Uint8Array;
+};
+
+/**
+ * Describes the message api.server.v1.UploadAttachmentRequest.
+ * Use `create(UploadAttachmentRequestSchema)` to create a new message.
+ */
+export const UploadAttachmentRequestSchema: GenMessage<UploadAttachmentRequest> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 17);
+
+/**
+ * @generated from message api.server.v1.UploadAttachmentResponse
+ */
+export type UploadAttachmentResponse = Message<'api.server.v1.UploadAttachmentResponse'> & {
+  /**
+   * @generated from field: api.server.v1.Attachment attachment = 1;
+   */
+  attachment?: Attachment;
+
+  /**
+   * @generated from field: string error_message = 2;
+   */
+  errorMessage: string;
+};
+
+/**
+ * Describes the message api.server.v1.UploadAttachmentResponse.
+ * Use `create(UploadAttachmentResponseSchema)` to create a new message.
+ */
+export const UploadAttachmentResponseSchema: GenMessage<UploadAttachmentResponse> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 18);
+
+/**
+ * @generated from message api.server.v1.DeleteAttachmentRequest
+ */
+export type DeleteAttachmentRequest = Message<'api.server.v1.DeleteAttachmentRequest'> & {
+  /**
+   * @generated from field: string challenge_id = 1;
+   */
+  challengeId: string;
+
+  /**
+   * @generated from field: string attachment_id = 2;
+   */
+  attachmentId: string;
+};
+
+/**
+ * Describes the message api.server.v1.DeleteAttachmentRequest.
+ * Use `create(DeleteAttachmentRequestSchema)` to create a new message.
+ */
+export const DeleteAttachmentRequestSchema: GenMessage<DeleteAttachmentRequest> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 19);
+
+/**
+ * @generated from message api.server.v1.DeleteAttachmentResponse
+ */
+export type DeleteAttachmentResponse = Message<'api.server.v1.DeleteAttachmentResponse'> & {
+  /**
+   * @generated from field: string error_message = 1;
+   */
+  errorMessage: string;
+};
+
+/**
+ * Describes the message api.server.v1.DeleteAttachmentResponse.
+ * Use `create(DeleteAttachmentResponseSchema)` to create a new message.
+ */
+export const DeleteAttachmentResponseSchema: GenMessage<DeleteAttachmentResponse> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 20);
+
+/**
  * @generated from message api.server.v1.AdminLoginRequest
  */
 export type AdminLoginRequest = Message<'api.server.v1.AdminLoginRequest'> & {
@@ -402,7 +494,7 @@ export type AdminLoginRequest = Message<'api.server.v1.AdminLoginRequest'> & {
  */
 export const AdminLoginRequestSchema: GenMessage<AdminLoginRequest> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 17);
+  messageDesc(file_api_server_v1_admin, 21);
 
 /**
  * @generated from message api.server.v1.AdminLoginResponse
@@ -415,7 +507,7 @@ export type AdminLoginResponse = Message<'api.server.v1.AdminLoginResponse'> & {
  */
 export const AdminLoginResponseSchema: GenMessage<AdminLoginResponse> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 18);
+  messageDesc(file_api_server_v1_admin, 22);
 
 /**
  * @generated from message api.server.v1.AdminLogoutRequest
@@ -428,7 +520,7 @@ export type AdminLogoutRequest = Message<'api.server.v1.AdminLogoutRequest'> & {
  */
 export const AdminLogoutRequestSchema: GenMessage<AdminLogoutRequest> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 19);
+  messageDesc(file_api_server_v1_admin, 23);
 
 /**
  * @generated from message api.server.v1.AdminLogoutResponse
@@ -441,7 +533,7 @@ export type AdminLogoutResponse = Message<'api.server.v1.AdminLogoutResponse'> &
  */
 export const AdminLogoutResponseSchema: GenMessage<AdminLogoutResponse> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 20);
+  messageDesc(file_api_server_v1_admin, 24);
 
 /**
  * @generated from service api.server.v1.AdminService
@@ -510,6 +602,22 @@ export const AdminService: GenService<{
     methodKind: 'unary';
     input: typeof GetBuildLogRequestSchema;
     output: typeof GetBuildLogResponseSchema;
+  };
+  /**
+   * @generated from rpc api.server.v1.AdminService.UploadAttachment
+   */
+  uploadAttachment: {
+    methodKind: 'unary';
+    input: typeof UploadAttachmentRequestSchema;
+    output: typeof UploadAttachmentResponseSchema;
+  };
+  /**
+   * @generated from rpc api.server.v1.AdminService.DeleteAttachment
+   */
+  deleteAttachment: {
+    methodKind: 'unary';
+    input: typeof DeleteAttachmentRequestSchema;
+    output: typeof DeleteAttachmentResponseSchema;
   };
 }> = /*@__PURE__*/ serviceDesc(file_api_server_v1_admin, 0);
 

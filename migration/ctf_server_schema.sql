@@ -35,6 +35,17 @@ CREATE TABLE IF NOT EXISTS challenges (
     updated_at TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS attachments (
+    id CHAR(36) PRIMARY KEY,
+    challenge_id CHAR(36) NOT NULL,
+    filename VARCHAR(255) NOT NULL,
+    s3_key VARCHAR(512) NOT NULL,
+    size BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    FOREIGN KEY (challenge_id) REFERENCES challenges(id) ON DELETE CASCADE,
+    INDEX idx_challenge_id (challenge_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS submissions (
     id CHAR(36) PRIMARY KEY,
     user_id CHAR(36) NOT NULL,

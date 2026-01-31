@@ -59,6 +59,12 @@ const (
 	// AdminServiceGetBuildLogProcedure is the fully-qualified name of the AdminService's GetBuildLog
 	// RPC.
 	AdminServiceGetBuildLogProcedure = "/api.server.v1.AdminService/GetBuildLog"
+	// AdminServiceUploadAttachmentProcedure is the fully-qualified name of the AdminService's
+	// UploadAttachment RPC.
+	AdminServiceUploadAttachmentProcedure = "/api.server.v1.AdminService/UploadAttachment"
+	// AdminServiceDeleteAttachmentProcedure is the fully-qualified name of the AdminService's
+	// DeleteAttachment RPC.
+	AdminServiceDeleteAttachmentProcedure = "/api.server.v1.AdminService/DeleteAttachment"
 	// AdminAuthServiceAdminLoginProcedure is the fully-qualified name of the AdminAuthService's
 	// AdminLogin RPC.
 	AdminAuthServiceAdminLoginProcedure = "/api.server.v1.AdminAuthService/AdminLogin"
@@ -77,6 +83,8 @@ type AdminServiceClient interface {
 	GetChallenge(context.Context, *connect.Request[v1.GetChallengeRequest]) (*connect.Response[v1.GetChallengeResponse], error)
 	ListBuildLogs(context.Context, *connect.Request[v1.ListBuildLogsRequest]) (*connect.Response[v1.ListBuildLogsResponse], error)
 	GetBuildLog(context.Context, *connect.Request[v1.GetBuildLogRequest]) (*connect.Response[v1.GetBuildLogResponse], error)
+	UploadAttachment(context.Context, *connect.Request[v1.UploadAttachmentRequest]) (*connect.Response[v1.UploadAttachmentResponse], error)
+	DeleteAttachment(context.Context, *connect.Request[v1.DeleteAttachmentRequest]) (*connect.Response[v1.DeleteAttachmentResponse], error)
 }
 
 // NewAdminServiceClient constructs a client for the api.server.v1.AdminService service. By default,
@@ -138,6 +146,18 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("GetBuildLog")),
 			connect.WithClientOptions(opts...),
 		),
+		uploadAttachment: connect.NewClient[v1.UploadAttachmentRequest, v1.UploadAttachmentResponse](
+			httpClient,
+			baseURL+AdminServiceUploadAttachmentProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("UploadAttachment")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteAttachment: connect.NewClient[v1.DeleteAttachmentRequest, v1.DeleteAttachmentResponse](
+			httpClient,
+			baseURL+AdminServiceDeleteAttachmentProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("DeleteAttachment")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -151,6 +171,8 @@ type adminServiceClient struct {
 	getChallenge         *connect.Client[v1.GetChallengeRequest, v1.GetChallengeResponse]
 	listBuildLogs        *connect.Client[v1.ListBuildLogsRequest, v1.ListBuildLogsResponse]
 	getBuildLog          *connect.Client[v1.GetBuildLogRequest, v1.GetBuildLogResponse]
+	uploadAttachment     *connect.Client[v1.UploadAttachmentRequest, v1.UploadAttachmentResponse]
+	deleteAttachment     *connect.Client[v1.DeleteAttachmentRequest, v1.DeleteAttachmentResponse]
 }
 
 // CreateChallenge calls api.server.v1.AdminService.CreateChallenge.
@@ -193,6 +215,16 @@ func (c *adminServiceClient) GetBuildLog(ctx context.Context, req *connect.Reque
 	return c.getBuildLog.CallUnary(ctx, req)
 }
 
+// UploadAttachment calls api.server.v1.AdminService.UploadAttachment.
+func (c *adminServiceClient) UploadAttachment(ctx context.Context, req *connect.Request[v1.UploadAttachmentRequest]) (*connect.Response[v1.UploadAttachmentResponse], error) {
+	return c.uploadAttachment.CallUnary(ctx, req)
+}
+
+// DeleteAttachment calls api.server.v1.AdminService.DeleteAttachment.
+func (c *adminServiceClient) DeleteAttachment(ctx context.Context, req *connect.Request[v1.DeleteAttachmentRequest]) (*connect.Response[v1.DeleteAttachmentResponse], error) {
+	return c.deleteAttachment.CallUnary(ctx, req)
+}
+
 // AdminServiceHandler is an implementation of the api.server.v1.AdminService service.
 type AdminServiceHandler interface {
 	CreateChallenge(context.Context, *connect.Request[v1.CreateChallengeRequest]) (*connect.Response[v1.CreateChallengeResponse], error)
@@ -203,6 +235,8 @@ type AdminServiceHandler interface {
 	GetChallenge(context.Context, *connect.Request[v1.GetChallengeRequest]) (*connect.Response[v1.GetChallengeResponse], error)
 	ListBuildLogs(context.Context, *connect.Request[v1.ListBuildLogsRequest]) (*connect.Response[v1.ListBuildLogsResponse], error)
 	GetBuildLog(context.Context, *connect.Request[v1.GetBuildLogRequest]) (*connect.Response[v1.GetBuildLogResponse], error)
+	UploadAttachment(context.Context, *connect.Request[v1.UploadAttachmentRequest]) (*connect.Response[v1.UploadAttachmentResponse], error)
+	DeleteAttachment(context.Context, *connect.Request[v1.DeleteAttachmentRequest]) (*connect.Response[v1.DeleteAttachmentResponse], error)
 }
 
 // NewAdminServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -260,6 +294,18 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("GetBuildLog")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceUploadAttachmentHandler := connect.NewUnaryHandler(
+		AdminServiceUploadAttachmentProcedure,
+		svc.UploadAttachment,
+		connect.WithSchema(adminServiceMethods.ByName("UploadAttachment")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceDeleteAttachmentHandler := connect.NewUnaryHandler(
+		AdminServiceDeleteAttachmentProcedure,
+		svc.DeleteAttachment,
+		connect.WithSchema(adminServiceMethods.ByName("DeleteAttachment")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/api.server.v1.AdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AdminServiceCreateChallengeProcedure:
@@ -278,6 +324,10 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceListBuildLogsHandler.ServeHTTP(w, r)
 		case AdminServiceGetBuildLogProcedure:
 			adminServiceGetBuildLogHandler.ServeHTTP(w, r)
+		case AdminServiceUploadAttachmentProcedure:
+			adminServiceUploadAttachmentHandler.ServeHTTP(w, r)
+		case AdminServiceDeleteAttachmentProcedure:
+			adminServiceDeleteAttachmentHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -317,6 +367,14 @@ func (UnimplementedAdminServiceHandler) ListBuildLogs(context.Context, *connect.
 
 func (UnimplementedAdminServiceHandler) GetBuildLog(context.Context, *connect.Request[v1.GetBuildLogRequest]) (*connect.Response[v1.GetBuildLogResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminService.GetBuildLog is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) UploadAttachment(context.Context, *connect.Request[v1.UploadAttachmentRequest]) (*connect.Response[v1.UploadAttachmentResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminService.UploadAttachment is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) DeleteAttachment(context.Context, *connect.Request[v1.DeleteAttachmentRequest]) (*connect.Response[v1.DeleteAttachmentResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminService.DeleteAttachment is not implemented"))
 }
 
 // AdminAuthServiceClient is a client for the api.server.v1.AdminAuthService service.

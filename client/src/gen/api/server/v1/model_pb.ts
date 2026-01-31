@@ -12,7 +12,7 @@ import type { Message } from '@bufbuild/protobuf';
 export const file_api_server_v1_model: GenFile =
   /*@__PURE__*/
   fileDesc(
-    'ChlhcGkvc2VydmVyL3YxL21vZGVsLnByb3RvEg1hcGkuc2VydmVyLnYxInEKCUNoYWxsZW5nZRIUCgxjaGFsbGVuZ2VfaWQYASABKAkSDAoEbmFtZRgCIAEoCRITCgtkZXNjcmlwdGlvbhgDIAEoCRIMCgRmbGFnGAQgASgJEg4KBnBvaW50cxgFIAEoBRINCgVnZW5yZRgGIAEoCSJiChBDaGFsbGVuZ2VSZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkSDAoEZmxhZxgDIAEoCRIOCgZwb2ludHMYBCABKAUSDQoFZ2VucmUYBSABKAkiXgoKU3VibWlzc2lvbhIUCgxjaGFsbGVuZ2VfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRIWCg5zdWJtaXR0ZWRfZmxhZxgDIAEoCRIRCgl0aW1lc3RhbXAYBCABKANCsQEKEWNvbS5hcGkuc2VydmVyLnYxQgpNb2RlbFByb3RvUAFaOmdpdGh1Yi5jb20va2F2b3MxMTMvcXVpY2tjdGYvZ2VuL2dvL2FwaS9zZXJ2ZXIvdjE7c2VydmVydjGiAgNBU1iqAg1BcGkuU2VydmVyLlYxygINQXBpXFNlcnZlclxWMeICGUFwaVxTZXJ2ZXJcVjFcR1BCTWV0YWRhdGHqAg9BcGk6OlNlcnZlcjo6VjFiBnByb3RvMw',
+    'ChlhcGkvc2VydmVyL3YxL21vZGVsLnByb3RvEg1hcGkuc2VydmVyLnYxIqEBCglDaGFsbGVuZ2USFAoMY2hhbGxlbmdlX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkSDAoEZmxhZxgEIAEoCRIOCgZwb2ludHMYBSABKAUSDQoFZ2VucmUYBiABKAkSLgoLYXR0YWNobWVudHMYByADKAsyGS5hcGkuc2VydmVyLnYxLkF0dGFjaG1lbnQiUAoKQXR0YWNobWVudBIVCg1hdHRhY2htZW50X2lkGAEgASgJEhAKCGZpbGVuYW1lGAIgASgJEgwKBHNpemUYAyABKAMSCwoDdXJsGAQgASgJImIKEENoYWxsZW5nZVJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRIMCgRmbGFnGAMgASgJEg4KBnBvaW50cxgEIAEoBRINCgVnZW5yZRgFIAEoCSJeCgpTdWJtaXNzaW9uEhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEhYKDnN1Ym1pdHRlZF9mbGFnGAMgASgJEhEKCXRpbWVzdGFtcBgEIAEoA0KxAQoRY29tLmFwaS5zZXJ2ZXIudjFCCk1vZGVsUHJvdG9QAVo6Z2l0aHViLmNvbS9rYXZvczExMy9xdWlja2N0Zi9nZW4vZ28vYXBpL3NlcnZlci92MTtzZXJ2ZXJ2MaICA0FTWKoCDUFwaS5TZXJ2ZXIuVjHKAg1BcGlcU2VydmVyXFYx4gIZQXBpXFNlcnZlclxWMVxHUEJNZXRhZGF0YeoCD0FwaTo6U2VydmVyOjpWMWIGcHJvdG8z',
   );
 
 /**
@@ -48,6 +48,11 @@ export type Challenge = Message<'api.server.v1.Challenge'> & {
    * @generated from field: string genre = 6;
    */
   genre: string;
+
+  /**
+   * @generated from field: repeated api.server.v1.Attachment attachments = 7;
+   */
+  attachments: Attachment[];
 };
 
 /**
@@ -57,6 +62,39 @@ export type Challenge = Message<'api.server.v1.Challenge'> & {
 export const ChallengeSchema: GenMessage<Challenge> =
   /*@__PURE__*/
   messageDesc(file_api_server_v1_model, 0);
+
+/**
+ * @generated from message api.server.v1.Attachment
+ */
+export type Attachment = Message<'api.server.v1.Attachment'> & {
+  /**
+   * @generated from field: string attachment_id = 1;
+   */
+  attachmentId: string;
+
+  /**
+   * @generated from field: string filename = 2;
+   */
+  filename: string;
+
+  /**
+   * @generated from field: int64 size = 3;
+   */
+  size: bigint;
+
+  /**
+   * @generated from field: string url = 4;
+   */
+  url: string;
+};
+
+/**
+ * Describes the message api.server.v1.Attachment.
+ * Use `create(AttachmentSchema)` to create a new message.
+ */
+export const AttachmentSchema: GenMessage<Attachment> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_model, 1);
 
 /**
  * @generated from message api.server.v1.ChallengeRequest
@@ -94,7 +132,7 @@ export type ChallengeRequest = Message<'api.server.v1.ChallengeRequest'> & {
  */
 export const ChallengeRequestSchema: GenMessage<ChallengeRequest> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_model, 1);
+  messageDesc(file_api_server_v1_model, 2);
 
 /**
  * @generated from message api.server.v1.Submission
@@ -127,4 +165,4 @@ export type Submission = Message<'api.server.v1.Submission'> & {
  */
 export const SubmissionSchema: GenMessage<Submission> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_model, 2);
+  messageDesc(file_api_server_v1_model, 3);

@@ -27,6 +27,8 @@ const (
 	AdminService_GetChallenge_FullMethodName         = "/api.server.v1.AdminService/GetChallenge"
 	AdminService_ListBuildLogs_FullMethodName        = "/api.server.v1.AdminService/ListBuildLogs"
 	AdminService_GetBuildLog_FullMethodName          = "/api.server.v1.AdminService/GetBuildLog"
+	AdminService_UploadAttachment_FullMethodName     = "/api.server.v1.AdminService/UploadAttachment"
+	AdminService_DeleteAttachment_FullMethodName     = "/api.server.v1.AdminService/DeleteAttachment"
 )
 
 // AdminServiceClient is the client API for AdminService service.
@@ -41,6 +43,8 @@ type AdminServiceClient interface {
 	GetChallenge(ctx context.Context, in *GetChallengeRequest, opts ...grpc.CallOption) (*GetChallengeResponse, error)
 	ListBuildLogs(ctx context.Context, in *ListBuildLogsRequest, opts ...grpc.CallOption) (*ListBuildLogsResponse, error)
 	GetBuildLog(ctx context.Context, in *GetBuildLogRequest, opts ...grpc.CallOption) (*GetBuildLogResponse, error)
+	UploadAttachment(ctx context.Context, in *UploadAttachmentRequest, opts ...grpc.CallOption) (*UploadAttachmentResponse, error)
+	DeleteAttachment(ctx context.Context, in *DeleteAttachmentRequest, opts ...grpc.CallOption) (*DeleteAttachmentResponse, error)
 }
 
 type adminServiceClient struct {
@@ -131,6 +135,26 @@ func (c *adminServiceClient) GetBuildLog(ctx context.Context, in *GetBuildLogReq
 	return out, nil
 }
 
+func (c *adminServiceClient) UploadAttachment(ctx context.Context, in *UploadAttachmentRequest, opts ...grpc.CallOption) (*UploadAttachmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadAttachmentResponse)
+	err := c.cc.Invoke(ctx, AdminService_UploadAttachment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminServiceClient) DeleteAttachment(ctx context.Context, in *DeleteAttachmentRequest, opts ...grpc.CallOption) (*DeleteAttachmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteAttachmentResponse)
+	err := c.cc.Invoke(ctx, AdminService_DeleteAttachment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServiceServer is the server API for AdminService service.
 // All implementations must embed UnimplementedAdminServiceServer
 // for forward compatibility.
@@ -143,6 +167,8 @@ type AdminServiceServer interface {
 	GetChallenge(context.Context, *GetChallengeRequest) (*GetChallengeResponse, error)
 	ListBuildLogs(context.Context, *ListBuildLogsRequest) (*ListBuildLogsResponse, error)
 	GetBuildLog(context.Context, *GetBuildLogRequest) (*GetBuildLogResponse, error)
+	UploadAttachment(context.Context, *UploadAttachmentRequest) (*UploadAttachmentResponse, error)
+	DeleteAttachment(context.Context, *DeleteAttachmentRequest) (*DeleteAttachmentResponse, error)
 	mustEmbedUnimplementedAdminServiceServer()
 }
 
@@ -176,6 +202,12 @@ func (UnimplementedAdminServiceServer) ListBuildLogs(context.Context, *ListBuild
 }
 func (UnimplementedAdminServiceServer) GetBuildLog(context.Context, *GetBuildLogRequest) (*GetBuildLogResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBuildLog not implemented")
+}
+func (UnimplementedAdminServiceServer) UploadAttachment(context.Context, *UploadAttachmentRequest) (*UploadAttachmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UploadAttachment not implemented")
+}
+func (UnimplementedAdminServiceServer) DeleteAttachment(context.Context, *DeleteAttachmentRequest) (*DeleteAttachmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteAttachment not implemented")
 }
 func (UnimplementedAdminServiceServer) mustEmbedUnimplementedAdminServiceServer() {}
 func (UnimplementedAdminServiceServer) testEmbeddedByValue()                      {}
@@ -342,6 +374,42 @@ func _AdminService_GetBuildLog_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminService_UploadAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadAttachmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServiceServer).UploadAttachment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminService_UploadAttachment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServiceServer).UploadAttachment(ctx, req.(*UploadAttachmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminService_DeleteAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAttachmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServiceServer).DeleteAttachment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminService_DeleteAttachment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServiceServer).DeleteAttachment(ctx, req.(*DeleteAttachmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminService_ServiceDesc is the grpc.ServiceDesc for AdminService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -380,6 +448,14 @@ var AdminService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBuildLog",
 			Handler:    _AdminService_GetBuildLog_Handler,
+		},
+		{
+			MethodName: "UploadAttachment",
+			Handler:    _AdminService_UploadAttachment_Handler,
+		},
+		{
+			MethodName: "DeleteAttachment",
+			Handler:    _AdminService_DeleteAttachment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

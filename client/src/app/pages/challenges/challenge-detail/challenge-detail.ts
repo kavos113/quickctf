@@ -114,4 +114,13 @@ export class ChallengeDetailComponent implements OnInit {
     console.log(this.instanceStatus());
     return this.instanceStatus() === GetInstanceStatusResponse_Status.RUNNING;
   }
+
+  formatFileSize(bytes: number | bigint): string {
+    const numBytes = typeof bytes === 'bigint' ? Number(bytes) : bytes;
+    if (numBytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(numBytes) / Math.log(k));
+    return parseFloat((numBytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
 }

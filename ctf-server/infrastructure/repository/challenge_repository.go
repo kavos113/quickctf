@@ -9,11 +9,15 @@ import (
 )
 
 type MySQLChallengeRepository struct {
-	db *sql.DB
+	db             *sql.DB
+	attachmentRepo *AttachmentRepository
 }
 
 func NewMySQLChallengeRepository(db *sql.DB) *MySQLChallengeRepository {
-	return &MySQLChallengeRepository{db: db}
+	return &MySQLChallengeRepository{
+		db:             db,
+		attachmentRepo: NewAttachmentRepository(db),
+	}
 }
 
 func (r *MySQLChallengeRepository) Create(ctx context.Context, challenge *domain.Challenge) error {
@@ -63,6 +67,13 @@ func (r *MySQLChallengeRepository) FindByID(ctx context.Context, challengeID str
 	if err != nil {
 		return nil, err
 	}
+
+	attachments, err := r.attachmentRepo.FindByChallengeID(ctx, challengeID)
+	if err != nil {
+		return nil, err
+	}
+	challenge.Attachments = attachments
+
 	return challenge, nil
 }
 
@@ -98,6 +109,14 @@ func (r *MySQLChallengeRepository) FindAll(ctx context.Context) ([]*domain.Chall
 
 	if err := rows.Err(); err != nil {
 		return nil, err
+	}
+
+	for _, challenge := range challenges {
+		attachments, err := r.attachmentRepo.FindByChallengeID(ctx, challenge.ChallengeID)
+		if err != nil {
+			return nil, err
+		}
+		challenge.Attachments = attachments
 	}
 
 	return challenges, nil

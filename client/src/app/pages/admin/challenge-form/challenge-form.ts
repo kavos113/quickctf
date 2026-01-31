@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Attachment } from '../../../../gen/api/server/v1/model_pb';
 import { AdminService } from '../../../services/admin.service';
 
 @Component({
@@ -19,6 +20,9 @@ export class ChallengeFormComponent implements OnInit {
   readonly error = signal<string | null>(null);
   readonly selectedFile = signal<File | null>(null);
   readonly uploadProgress = signal(0);
+  readonly attachments = signal<Attachment[]>([]);
+  readonly selectedAttachmentFile = signal<File | null>(null);
+  readonly isUploadingAttachment = signal(false);
 
   challengeId = '';
   name = '';
@@ -48,6 +52,7 @@ export class ChallengeFormComponent implements OnInit {
       this.flag = challenge.flag;
       this.points = challenge.points;
       this.genre = challenge.genre;
+      this.attachments.set([...challenge.attachments]);
     } else {
       this.adminService.loadChallenges().then(() => {
         const reloadedChallenges = this.adminService.challenges();
@@ -58,6 +63,7 @@ export class ChallengeFormComponent implements OnInit {
           this.flag = foundChallenge.flag;
           this.points = foundChallenge.points;
           this.genre = foundChallenge.genre;
+          this.attachments.set([...foundChallenge.attachments]);
         } else {
           this.error.set('問題が見つかりません');
         }
@@ -177,15 +183,82 @@ export class ChallengeFormComponent implements OnInit {
     }
   }
 
-  formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+  formatFileSize(bytes: number | bigint): string {
+    const numBytes = typeof bytes === 'bigint' ? Number(bytes) : bytes;
+    if (numBytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    const i = Math.floor(Math.log(numBytes) / Math.log(k));
+    return parseFloat((numBytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   cancel(): void {
     this.router.navigate(['/admin/challenges']);
+  }
+
+  onAttachmentFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedAttachmentFile.set(input.files[0]);
+      this.error.set(null);
+    }
+  }
+
+  async uploadAttachment(): Promise<void> {
+    const file = this.selectedAttachmentFile();
+    if (!file) {
+      this.error.set('ファイルを選択してください');
+      return;
+    }
+
+    if (!this.challengeId) {
+      this.error.set('問題を先に保存してください');
+      return;
+    }
+
+    this.isUploadingAttachment.set(true);
+    this.error.set(null);
+
+    const result = await this.adminService.uploadAttachment(this.challengeId, file);
+
+    this.isUploadingAttachment.set(false);
+
+    if (result.success && result.attachment) {
+      this.attachments.update((current) => [...current, result.attachment!]);
+      this.selectedAttachmentFile.set(null);
+      const fileInput = document.getElementById('attachmentFile') as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
+    } else {
+      this.error.set(result.error || '添付ファイルのアップロードに失敗しました');
+    }
+  }
+
+  async deleteAttachment(attachmentId: string): Promise<void> {
+    if (!confirm('この添付ファイルを削除しますか？')) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    const result = await this.adminService.deleteAttachment(this.challengeId, attachmentId);
+
+    this.isLoading.set(false);
+
+    if (result.success) {
+      this.attachments.update((current) => current.filter((a) => a.attachmentId !== attachmentId));
+    } else {
+      this.error.set(result.error || '添付ファイルの削除に失敗しました');
+    }
+  }
+
+  removeAttachmentFile(): void {
+    this.selectedAttachmentFile.set(null);
+    const fileInput = document.getElementById('attachmentFile') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }
 }

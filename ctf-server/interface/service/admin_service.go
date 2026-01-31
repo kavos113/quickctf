@@ -129,6 +129,16 @@ func (s *AdminService) ListChallenges(ctx context.Context, req *connect.Request[
 
 	pbChallenges := make([]*pb.Challenge, 0, len(challenges))
 	for _, c := range challenges {
+		pbAttachments := make([]*pb.Attachment, 0, len(c.Attachments))
+		for _, a := range c.Attachments {
+			url, _ := s.adminUsecase.GetAttachmentURL(ctx, a.AttachmentID)
+			pbAttachments = append(pbAttachments, &pb.Attachment{
+				AttachmentId: a.AttachmentID,
+				Filename:     a.Filename,
+				Size:         a.Size,
+				Url:          url,
+			})
+		}
 		pbChallenges = append(pbChallenges, &pb.Challenge{
 			ChallengeId: c.ChallengeID,
 			Name:        c.Name,
@@ -136,6 +146,7 @@ func (s *AdminService) ListChallenges(ctx context.Context, req *connect.Request[
 			Flag:        c.Flag,
 			Points:      int32(c.Points),
 			Genre:       c.Genre,
+			Attachments: pbAttachments,
 		})
 	}
 
@@ -159,6 +170,17 @@ func (s *AdminService) GetChallenge(ctx context.Context, req *connect.Request[pb
 		}), nil
 	}
 
+	pbAttachments := make([]*pb.Attachment, 0, len(challenge.Attachments))
+	for _, a := range challenge.Attachments {
+		url, _ := s.adminUsecase.GetAttachmentURL(ctx, a.AttachmentID)
+		pbAttachments = append(pbAttachments, &pb.Attachment{
+			AttachmentId: a.AttachmentID,
+			Filename:     a.Filename,
+			Size:         a.Size,
+			Url:          url,
+		})
+	}
+
 	return connect.NewResponse(&pb.GetChallengeResponse{
 		Challenge: &pb.Challenge{
 			ChallengeId: challenge.ChallengeID,
@@ -167,6 +189,7 @@ func (s *AdminService) GetChallenge(ctx context.Context, req *connect.Request[pb
 			Flag:        challenge.Flag,
 			Points:      int32(challenge.Points),
 			Genre:       challenge.Genre,
+			Attachments: pbAttachments,
 		},
 	}), nil
 }
@@ -222,4 +245,52 @@ func (s *AdminService) GetBuildLog(ctx context.Context, req *connect.Request[pb.
 		LogContent: logContent,
 		Status:     status,
 	}), nil
+}
+
+func (s *AdminService) UploadAttachment(ctx context.Context, req *connect.Request[pb.UploadAttachmentRequest]) (*connect.Response[pb.UploadAttachmentResponse], error) {
+	_, err := requireAdminSession(ctx)
+	if err != nil {
+		return connect.NewResponse(&pb.UploadAttachmentResponse{
+			ErrorMessage: err.Error(),
+		}), nil
+	}
+
+	attachment, err := s.adminUsecase.UploadAttachment(ctx, req.Msg.ChallengeId, req.Msg.Filename, req.Msg.Data)
+	if err != nil {
+		return connect.NewResponse(&pb.UploadAttachmentResponse{
+			ErrorMessage: err.Error(),
+		}), nil
+	}
+
+	url, err := s.adminUsecase.GetAttachmentURL(ctx, attachment.AttachmentID)
+	if err != nil {
+		url = ""
+	}
+
+	return connect.NewResponse(&pb.UploadAttachmentResponse{
+		Attachment: &pb.Attachment{
+			AttachmentId: attachment.AttachmentID,
+			Filename:     attachment.Filename,
+			Size:         attachment.Size,
+			Url:          url,
+		},
+	}), nil
+}
+
+func (s *AdminService) DeleteAttachment(ctx context.Context, req *connect.Request[pb.DeleteAttachmentRequest]) (*connect.Response[pb.DeleteAttachmentResponse], error) {
+	_, err := requireAdminSession(ctx)
+	if err != nil {
+		return connect.NewResponse(&pb.DeleteAttachmentResponse{
+			ErrorMessage: err.Error(),
+		}), nil
+	}
+
+	err = s.adminUsecase.DeleteAttachment(ctx, req.Msg.ChallengeId, req.Msg.AttachmentId)
+	if err != nil {
+		return connect.NewResponse(&pb.DeleteAttachmentResponse{
+			ErrorMessage: err.Error(),
+		}), nil
+	}
+
+	return connect.NewResponse(&pb.DeleteAttachmentResponse{}), nil
 }

@@ -3,15 +3,18 @@ import { create } from '@bufbuild/protobuf';
 import {
   BuildLogSummary,
   CreateChallengeRequestSchema,
+  DeleteAttachmentRequestSchema,
   DeleteChallengeRequestSchema,
   GetBuildLogRequestSchema,
   GetChallengeRequestSchema,
   ListBuildLogsRequestSchema,
   ListChallengesRequestSchema,
   UpdateChallengeRequestSchema,
+  UploadAttachmentRequestSchema,
   UploadChallengeImageRequestSchema,
 } from '../../gen/api/server/v1/admin_pb';
 import {
+  Attachment,
   Challenge,
   ChallengeRequestSchema,
   ChallengeSchema,
@@ -249,6 +252,54 @@ export class AdminService {
     } catch (err) {
       console.error('Failed to get build log:', err);
       return { success: false, error: 'ビルドログの取得に失敗しました' };
+    }
+  }
+
+  async uploadAttachment(
+    challengeId: string,
+    file: File,
+  ): Promise<{ success: boolean; attachment?: Attachment; error?: string }> {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const data = new Uint8Array(arrayBuffer);
+
+      const request = create(UploadAttachmentRequestSchema, {
+        challengeId,
+        filename: file.name,
+        data,
+      });
+      const response = await adminClient.uploadAttachment(request);
+
+      if (response.errorMessage) {
+        return { success: false, error: response.errorMessage };
+      }
+
+      return { success: true, attachment: response.attachment };
+    } catch (err) {
+      console.error('Failed to upload attachment:', err);
+      return { success: false, error: '添付ファイルのアップロードに失敗しました' };
+    }
+  }
+
+  async deleteAttachment(
+    challengeId: string,
+    attachmentId: string,
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      const request = create(DeleteAttachmentRequestSchema, {
+        challengeId,
+        attachmentId,
+      });
+      const response = await adminClient.deleteAttachment(request);
+
+      if (response.errorMessage) {
+        return { success: false, error: response.errorMessage };
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error('Failed to delete attachment:', err);
+      return { success: false, error: '添付ファイルの削除に失敗しました' };
     }
   }
 }

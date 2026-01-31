@@ -13,6 +13,8 @@ service AdminService {
   rpc GetChallenge(GetChallengeRequest) returns (GetChallengeResponse);
   rpc ListBuildLogs(ListBuildLogsRequest) returns (ListBuildLogsResponse);
   rpc GetBuildLog(GetBuildLogRequest) returns (GetBuildLogResponse);
+  rpc UploadAttachment(UploadAttachmentRequest) returns (UploadAttachmentResponse);
+  rpc DeleteAttachment(DeleteAttachmentRequest) returns (DeleteAttachmentResponse);
 }
 
 message CreateChallengeRequest {
@@ -92,6 +94,26 @@ message GetBuildLogResponse {
   string log_content = 2;
   string status = 3;
   string error_message = 4;
+}
+
+message UploadAttachmentRequest {
+  string challenge_id = 1;
+  string filename = 2;
+  bytes data = 3;
+}
+
+message UploadAttachmentResponse {
+  Attachment attachment = 1;
+  string error_message = 2;
+}
+
+message DeleteAttachmentRequest {
+  string challenge_id = 1;
+  string attachment_id = 2;
+}
+
+message DeleteAttachmentResponse {
+  string error_message = 1;
 }
 
 service AdminAuthService {
