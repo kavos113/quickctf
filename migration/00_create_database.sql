@@ -1,0 +1,2 @@
+CREATE DATABASE IF NOT EXISTS ctf_manager_db;
+CREATE DATABASE IF NOT EXISTS ctf_server_db;

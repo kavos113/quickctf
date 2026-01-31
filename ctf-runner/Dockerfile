@@ -2,7 +2,8 @@ FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
-COPY gen/ /app/gen/
+COPY gen/ /gen/
+COPY lib/ /lib/
 COPY ctf-runner/go.mod ctf-runner/go.sum ./
 
 RUN go mod download

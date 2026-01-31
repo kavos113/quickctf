@@ -1,3 +1,5 @@
+USE ctf_server_db;
+
 CREATE TABLE IF NOT EXISTS users (
     id CHAR(36) PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,

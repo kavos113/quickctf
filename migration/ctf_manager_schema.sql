@@ -1,5 +1,4 @@
--- ctf_manager_db schema
--- Instances table for CTF instance management
+USE ctf_manager_db;
 
 CREATE TABLE IF NOT EXISTS instances (
     instance_id VARCHAR(255) PRIMARY KEY,
