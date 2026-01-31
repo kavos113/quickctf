@@ -64,7 +64,7 @@ func (u *AdminServiceUsecase) UploadChallengeImage(ctx context.Context, challeng
 
 	imageTag := fmt.Sprintf("ctf-%s:%s", challenge.Name, challengeID[:8])
 
-	_, err = u.builderClient.BuildImage(ctx, imageTag, imageTar)
+	_, err = u.builderClient.BuildImage(ctx, imageTag, imageTar, challengeID)
 	if err != nil {
 		return fmt.Errorf("failed to build image: %w", err)
 	}

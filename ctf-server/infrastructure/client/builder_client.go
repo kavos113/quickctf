@@ -84,7 +84,6 @@ func NewBuilderClient() (*BuilderClient, error) {
 		return nil, fmt.Errorf("failed to connect to redis: %w", err)
 	}
 
-	// Setup S3 client
 	s3Endpoint := os.Getenv("S3_ENDPOINT")
 	if s3Endpoint == "" {
 		s3Endpoint = "http://localhost:9000"
@@ -235,8 +234,8 @@ func (c *BuilderClient) SubscribeBuildLogs(ctx context.Context, jobID string, ca
 	}
 }
 
-func (c *BuilderClient) BuildImage(ctx context.Context, imageTag string, sourceTar []byte) (string, error) {
-	jobID, err := c.EnqueueBuild(ctx, imageTag, sourceTar, "")
+func (c *BuilderClient) BuildImage(ctx context.Context, imageTag string, sourceTar []byte, challengeID string) (string, error) {
+	jobID, err := c.EnqueueBuild(ctx, imageTag, sourceTar, challengeID)
 	if err != nil {
 		return "", fmt.Errorf("failed to enqueue build: %w", err)
 	}
@@ -308,7 +307,6 @@ func (c *BuilderClient) ListBuildLogs(ctx context.Context, challengeID string) (
 
 	var logs []BuildLogSummary
 	for _, jobID := range jobIDs {
-		// Get job info
 		infoKey := BuildJobInfoKey + jobID
 		infoData, err := c.redisClient.Get(ctx, infoKey).Result()
 		if err == redis.Nil {
@@ -324,12 +322,10 @@ func (c *BuilderClient) ListBuildLogs(ctx context.Context, challengeID string) (
 			continue
 		}
 
-		// Filter by challengeID if provided
 		if challengeID != "" && jobInfo.ChallengeID != challengeID {
 			continue
 		}
 
-		// Get build result for status
 		result, err := c.GetBuildResult(ctx, jobID)
 		if err != nil || result == nil {
 			continue
