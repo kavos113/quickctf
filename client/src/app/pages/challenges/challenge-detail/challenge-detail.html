@@ -1,5 +1,11 @@
-<div class="modal-overlay" (click)="onOverlayClick($event)" (keydown.escape)="onClose()" tabindex="0" role="dialog"
-  aria-modal="true">
+<div
+  class="modal-overlay"
+  (click)="onOverlayClick($event)"
+  (keydown.escape)="onClose()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
   <div class="modal-content">
     <button class="close-button" (click)="onClose()" aria-label="閉じる">×</button>
 
@@ -15,79 +21,101 @@
     </div>
 
     @if (challenge.attachments.length > 0) {
-    <div class="attachments-section">
-      <h3>添付ファイル</h3>
-      <div class="attachments-list">
-        @for (attachment of challenge.attachments; track attachment.attachmentId) {
-        <a [href]="attachment.url" target="_blank" class="attachment-link">
-          <span class="attachment-icon">📎</span>
-          <span class="attachment-name">{{ attachment.filename }}</span>
-          <span class="attachment-size">({{ formatFileSize(attachment.size) }})</span>
-        </a>
-        }
+      <div class="attachments-section">
+        <h3>添付ファイル</h3>
+        <div class="attachments-list">
+          @for (attachment of challenge.attachments; track attachment.attachmentId) {
+            <a [href]="attachment.url" target="_blank" class="attachment-link">
+              <span class="attachment-icon">📎</span>
+              <span class="attachment-name">{{ attachment.filename }}</span>
+              <span class="attachment-size">({{ formatFileSize(attachment.size) }})</span>
+            </a>
+          }
+        </div>
       </div>
-    </div>
     }
 
     @if (challenge.requiresInstance) {
-    <div class="instance-section">
-      <h3>インスタンス</h3>
-      @if (isRunning()) {
-      <div class="instance-status">
-        <span class="status-badge running">実行中</span>
-      </div>
-      <div class="instance-access">
-        <div>
-          web:
-          <a class="code-block" href="http://{{ instanceConnectionInfo()?.host }}:{{
+      <div class="instance-section">
+        <h3>インスタンス</h3>
+        @if (isRunning()) {
+          <div class="instance-status">
+            <span class="status-badge running">実行中</span>
+          </div>
+          <div class="instance-access">
+            <div>
+              web:
+              <a
+                class="code-block"
+                href="http://{{ instanceConnectionInfo()?.host }}:{{
                   instanceConnectionInfo()?.port
-                }}" target="_blank" rel="noopener noreferrer">
-            http://{{ instanceConnectionInfo()?.host }}:{{ instanceConnectionInfo()?.port }}
-          </a>
-        </div>
-        <div>
-          pwn:
-          <span class="code-block">
-            nc {{ instanceConnectionInfo()?.host }} {{ instanceConnectionInfo()?.port }}
-          </span>
-        </div>
+                }}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                http://{{ instanceConnectionInfo()?.host }}:{{ instanceConnectionInfo()?.port }}
+              </a>
+            </div>
+            <div>
+              pwn:
+              <span class="code-block">
+                nc {{ instanceConnectionInfo()?.host }} {{ instanceConnectionInfo()?.port }}
+              </span>
+            </div>
+          </div>
+          <button
+            class="instance-button stop"
+            (click)="stopInstance()"
+            [disabled]="isInstanceLoading()"
+          >
+            @if (isInstanceLoading()) {
+              停止中...
+            } @else {
+              インスタンスを停止
+            }
+          </button>
+        } @else {
+          <button
+            class="instance-button start"
+            (click)="startInstance()"
+            [disabled]="isInstanceLoading()"
+          >
+            @if (isInstanceLoading()) {
+              起動中...
+            } @else {
+              インスタンスを起動
+            }
+          </button>
+        }
       </div>
-      <button class="instance-button stop" (click)="stopInstance()" [disabled]="isInstanceLoading()">
-        @if (isInstanceLoading()) {
-        停止中...
-        } @else {
-        インスタンスを停止
-        }
-      </button>
-      } @else {
-      <button class="instance-button start" (click)="startInstance()" [disabled]="isInstanceLoading()">
-        @if (isInstanceLoading()) {
-        起動中...
-        } @else {
-        インスタンスを起動
-        }
-      </button>
-      }
-    </div>
     }
 
     <div class="flag-section">
       <h3>フラグを提出</h3>
       @if (submitResult()) {
-      <div class="submit-result" [class.success]="submitResult()?.type === 'success'"
-        [class.error]="submitResult()?.type === 'error'" [class.wrong]="submitResult()?.type === 'wrong'">
-        {{ submitResult()?.message }}
-      </div>
+        <div
+          class="submit-result"
+          [class.success]="submitResult()?.type === 'success'"
+          [class.error]="submitResult()?.type === 'error'"
+          [class.wrong]="submitResult()?.type === 'wrong'"
+        >
+          {{ submitResult()?.message }}
+        </div>
       }
       <form (ngSubmit)="submitFlag()">
         <div class="flag-input-group">
-          <input type="text" placeholder="flag{...}" [value]="flag()" (input)="updateFlag($event)"
-            [disabled]="isSubmitting()" />
+          <input
+            type="text"
+            placeholder="flag{...}"
+            [value]="flag()"
+            (input)="updateFlag($event)"
+            [disabled]="isSubmitting()"
+          />
           <button type="submit" [disabled]="isSubmitting() || !flag()">
             @if (isSubmitting()) {
-            送信中...
+              送信中...
             } @else {
-            提出
+              提出
             }
           </button>
         </div>

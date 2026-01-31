@@ -27,6 +27,7 @@ const (
 	AdminService_GetChallenge_FullMethodName         = "/api.server.v1.AdminService/GetChallenge"
 	AdminService_ListBuildLogs_FullMethodName        = "/api.server.v1.AdminService/ListBuildLogs"
 	AdminService_GetBuildLog_FullMethodName          = "/api.server.v1.AdminService/GetBuildLog"
+	AdminService_StreamBuildLog_FullMethodName       = "/api.server.v1.AdminService/StreamBuildLog"
 	AdminService_UploadAttachment_FullMethodName     = "/api.server.v1.AdminService/UploadAttachment"
 	AdminService_DeleteAttachment_FullMethodName     = "/api.server.v1.AdminService/DeleteAttachment"
 )
@@ -43,6 +44,7 @@ type AdminServiceClient interface {
 	GetChallenge(ctx context.Context, in *GetChallengeRequest, opts ...grpc.CallOption) (*GetChallengeResponse, error)
 	ListBuildLogs(ctx context.Context, in *ListBuildLogsRequest, opts ...grpc.CallOption) (*ListBuildLogsResponse, error)
 	GetBuildLog(ctx context.Context, in *GetBuildLogRequest, opts ...grpc.CallOption) (*GetBuildLogResponse, error)
+	StreamBuildLog(ctx context.Context, in *StreamBuildLogRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamBuildLogResponse], error)
 	UploadAttachment(ctx context.Context, in *UploadAttachmentRequest, opts ...grpc.CallOption) (*UploadAttachmentResponse, error)
 	DeleteAttachment(ctx context.Context, in *DeleteAttachmentRequest, opts ...grpc.CallOption) (*DeleteAttachmentResponse, error)
 }
@@ -135,6 +137,25 @@ func (c *adminServiceClient) GetBuildLog(ctx context.Context, in *GetBuildLogReq
 	return out, nil
 }
 
+func (c *adminServiceClient) StreamBuildLog(ctx context.Context, in *StreamBuildLogRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamBuildLogResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &AdminService_ServiceDesc.Streams[0], AdminService_StreamBuildLog_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[StreamBuildLogRequest, StreamBuildLogResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AdminService_StreamBuildLogClient = grpc.ServerStreamingClient[StreamBuildLogResponse]
+
 func (c *adminServiceClient) UploadAttachment(ctx context.Context, in *UploadAttachmentRequest, opts ...grpc.CallOption) (*UploadAttachmentResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UploadAttachmentResponse)
@@ -167,6 +188,7 @@ type AdminServiceServer interface {
 	GetChallenge(context.Context, *GetChallengeRequest) (*GetChallengeResponse, error)
 	ListBuildLogs(context.Context, *ListBuildLogsRequest) (*ListBuildLogsResponse, error)
 	GetBuildLog(context.Context, *GetBuildLogRequest) (*GetBuildLogResponse, error)
+	StreamBuildLog(*StreamBuildLogRequest, grpc.ServerStreamingServer[StreamBuildLogResponse]) error
 	UploadAttachment(context.Context, *UploadAttachmentRequest) (*UploadAttachmentResponse, error)
 	DeleteAttachment(context.Context, *DeleteAttachmentRequest) (*DeleteAttachmentResponse, error)
 	mustEmbedUnimplementedAdminServiceServer()
@@ -202,6 +224,9 @@ func (UnimplementedAdminServiceServer) ListBuildLogs(context.Context, *ListBuild
 }
 func (UnimplementedAdminServiceServer) GetBuildLog(context.Context, *GetBuildLogRequest) (*GetBuildLogResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBuildLog not implemented")
+}
+func (UnimplementedAdminServiceServer) StreamBuildLog(*StreamBuildLogRequest, grpc.ServerStreamingServer[StreamBuildLogResponse]) error {
+	return status.Error(codes.Unimplemented, "method StreamBuildLog not implemented")
 }
 func (UnimplementedAdminServiceServer) UploadAttachment(context.Context, *UploadAttachmentRequest) (*UploadAttachmentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UploadAttachment not implemented")
@@ -374,6 +399,17 @@ func _AdminService_GetBuildLog_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminService_StreamBuildLog_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(StreamBuildLogRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(AdminServiceServer).StreamBuildLog(m, &grpc.GenericServerStream[StreamBuildLogRequest, StreamBuildLogResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AdminService_StreamBuildLogServer = grpc.ServerStreamingServer[StreamBuildLogResponse]
+
 func _AdminService_UploadAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UploadAttachmentRequest)
 	if err := dec(in); err != nil {
@@ -458,7 +494,13 @@ var AdminService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AdminService_DeleteAttachment_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamBuildLog",
+			Handler:       _AdminService_StreamBuildLog_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "api/server/v1/admin.proto",
 }
 

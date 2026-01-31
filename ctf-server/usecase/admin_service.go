@@ -116,6 +116,21 @@ func (u *AdminServiceUsecase) GetBuildLog(ctx context.Context, jobID string) (st
 	return logContent, result.Status, nil
 }
 
+func (u *AdminServiceUsecase) GetBuildStatus(ctx context.Context, jobID string) (string, error) {
+	result, err := u.builderClient.GetBuildResult(ctx, jobID)
+	if err != nil {
+		return "", fmt.Errorf("failed to get build result: %w", err)
+	}
+	if result == nil {
+		return "", fmt.Errorf("build job not found")
+	}
+	return result.Status, nil
+}
+
+func (u *AdminServiceUsecase) SubscribeBuildLogs(ctx context.Context, jobID string, callback func(logLine string)) error {
+	return u.builderClient.SubscribeBuildLogs(ctx, jobID, callback)
+}
+
 func (u *AdminServiceUsecase) UploadAttachment(ctx context.Context, challengeID string, filename string, data []byte) (*domain.Attachment, error) {
 	_, err := u.challengeRepo.FindByID(ctx, challengeID)
 	if err != nil {

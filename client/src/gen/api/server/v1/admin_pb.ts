@@ -2,8 +2,8 @@
 // @generated from file api/server/v1/admin.proto (package api.server.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from '@bufbuild/protobuf/codegenv2';
-import { fileDesc, messageDesc, serviceDesc } from '@bufbuild/protobuf/codegenv2';
+import type { GenEnum, GenFile, GenMessage, GenService } from '@bufbuild/protobuf/codegenv2';
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from '@bufbuild/protobuf/codegenv2';
 import type { Attachment, Challenge, ChallengeRequest } from './model_pb';
 import { file_api_server_v1_model } from './model_pb';
 import type { Message } from '@bufbuild/protobuf';
@@ -14,7 +14,7 @@ import type { Message } from '@bufbuild/protobuf';
 export const file_api_server_v1_admin: GenFile =
   /*@__PURE__*/
   fileDesc(
-    'ChlhcGkvc2VydmVyL3YxL2FkbWluLnByb3RvEg1hcGkuc2VydmVyLnYxIkwKFkNyZWF0ZUNoYWxsZW5nZVJlcXVlc3QSMgoJY2hhbGxlbmdlGAEgASgLMh8uYXBpLnNlcnZlci52MS5DaGFsbGVuZ2VSZXF1ZXN0IkYKF0NyZWF0ZUNoYWxsZW5nZVJlc3BvbnNlEhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIkUKFlVwZGF0ZUNoYWxsZW5nZVJlcXVlc3QSKwoJY2hhbGxlbmdlGAEgASgLMhguYXBpLnNlcnZlci52MS5DaGFsbGVuZ2UiMAoXVXBkYXRlQ2hhbGxlbmdlUmVzcG9uc2USFQoNZXJyb3JfbWVzc2FnZRgBIAEoCSJHChtVcGxvYWRDaGFsbGVuZ2VJbWFnZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJEhIKCmltYWdlX2RhdGEYAiABKAwiRQocVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXNwb25zZRIOCgZqb2JfaWQYASABKAkSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSIuChZEZWxldGVDaGFsbGVuZ2VSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCSIwChdEZWxldGVDaGFsbGVuZ2VSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJIhcKFUxpc3RDaGFsbGVuZ2VzUmVxdWVzdCJdChZMaXN0Q2hhbGxlbmdlc1Jlc3BvbnNlEiwKCmNoYWxsZW5nZXMYASADKAsyGC5hcGkuc2VydmVyLnYxLkNoYWxsZW5nZRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIisKE0dldENoYWxsZW5nZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJIloKFEdldENoYWxsZW5nZVJlc3BvbnNlEisKCWNoYWxsZW5nZRgBIAEoCzIYLmFwaS5zZXJ2ZXIudjEuQ2hhbGxlbmdlEhUKDWVycm9yX21lc3NhZ2UYAiABKAkicQoPQnVpbGRMb2dTdW1tYXJ5Eg4KBmpvYl9pZBgBIAEoCRIUCgxjaGFsbGVuZ2VfaWQYAiABKAkSDgoGc3RhdHVzGAMgASgJEhIKCmNyZWF0ZWRfYXQYBCABKAkSFAoMY29tcGxldGVkX2F0GAUgASgJIiwKFExpc3RCdWlsZExvZ3NSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCSJcChVMaXN0QnVpbGRMb2dzUmVzcG9uc2USLAoEbG9ncxgBIAMoCzIeLmFwaS5zZXJ2ZXIudjEuQnVpbGRMb2dTdW1tYXJ5EhUKDWVycm9yX21lc3NhZ2UYAiABKAkiJAoSR2V0QnVpbGRMb2dSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCSJhChNHZXRCdWlsZExvZ1Jlc3BvbnNlEg4KBmpvYl9pZBgBIAEoCRITCgtsb2dfY29udGVudBgCIAEoCRIOCgZzdGF0dXMYAyABKAkSFQoNZXJyb3JfbWVzc2FnZRgEIAEoCSJPChdVcGxvYWRBdHRhY2htZW50UmVxdWVzdBIUCgxjaGFsbGVuZ2VfaWQYASABKAkSEAoIZmlsZW5hbWUYAiABKAkSDAoEZGF0YRgDIAEoDCJgChhVcGxvYWRBdHRhY2htZW50UmVzcG9uc2USLQoKYXR0YWNobWVudBgBIAEoCzIZLmFwaS5zZXJ2ZXIudjEuQXR0YWNobWVudBIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIkYKF0RlbGV0ZUF0dGFjaG1lbnRSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIVCg1hdHRhY2htZW50X2lkGAIgASgJIjEKGERlbGV0ZUF0dGFjaG1lbnRSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJIiUKEUFkbWluTG9naW5SZXF1ZXN0EhAKCHBhc3N3b3JkGAEgASgJIhQKEkFkbWluTG9naW5SZXNwb25zZSIUChJBZG1pbkxvZ291dFJlcXVlc3QiFQoTQWRtaW5Mb2dvdXRSZXNwb25zZTLZBwoMQWRtaW5TZXJ2aWNlEmAKD0NyZWF0ZUNoYWxsZW5nZRIlLmFwaS5zZXJ2ZXIudjEuQ3JlYXRlQ2hhbGxlbmdlUmVxdWVzdBomLmFwaS5zZXJ2ZXIudjEuQ3JlYXRlQ2hhbGxlbmdlUmVzcG9uc2USYAoPVXBkYXRlQ2hhbGxlbmdlEiUuYXBpLnNlcnZlci52MS5VcGRhdGVDaGFsbGVuZ2VSZXF1ZXN0GiYuYXBpLnNlcnZlci52MS5VcGRhdGVDaGFsbGVuZ2VSZXNwb25zZRJvChRVcGxvYWRDaGFsbGVuZ2VJbWFnZRIqLmFwaS5zZXJ2ZXIudjEuVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXF1ZXN0GisuYXBpLnNlcnZlci52MS5VcGxvYWRDaGFsbGVuZ2VJbWFnZVJlc3BvbnNlEmAKD0RlbGV0ZUNoYWxsZW5nZRIlLmFwaS5zZXJ2ZXIudjEuRGVsZXRlQ2hhbGxlbmdlUmVxdWVzdBomLmFwaS5zZXJ2ZXIudjEuRGVsZXRlQ2hhbGxlbmdlUmVzcG9uc2USXQoOTGlzdENoYWxsZW5nZXMSJC5hcGkuc2VydmVyLnYxLkxpc3RDaGFsbGVuZ2VzUmVxdWVzdBolLmFwaS5zZXJ2ZXIudjEuTGlzdENoYWxsZW5nZXNSZXNwb25zZRJXCgxHZXRDaGFsbGVuZ2USIi5hcGkuc2VydmVyLnYxLkdldENoYWxsZW5nZVJlcXVlc3QaIy5hcGkuc2VydmVyLnYxLkdldENoYWxsZW5nZVJlc3BvbnNlEloKDUxpc3RCdWlsZExvZ3MSIy5hcGkuc2VydmVyLnYxLkxpc3RCdWlsZExvZ3NSZXF1ZXN0GiQuYXBpLnNlcnZlci52MS5MaXN0QnVpbGRMb2dzUmVzcG9uc2USVAoLR2V0QnVpbGRMb2cSIS5hcGkuc2VydmVyLnYxLkdldEJ1aWxkTG9nUmVxdWVzdBoiLmFwaS5zZXJ2ZXIudjEuR2V0QnVpbGRMb2dSZXNwb25zZRJjChBVcGxvYWRBdHRhY2htZW50EiYuYXBpLnNlcnZlci52MS5VcGxvYWRBdHRhY2htZW50UmVxdWVzdBonLmFwaS5zZXJ2ZXIudjEuVXBsb2FkQXR0YWNobWVudFJlc3BvbnNlEmMKEERlbGV0ZUF0dGFjaG1lbnQSJi5hcGkuc2VydmVyLnYxLkRlbGV0ZUF0dGFjaG1lbnRSZXF1ZXN0GicuYXBpLnNlcnZlci52MS5EZWxldGVBdHRhY2htZW50UmVzcG9uc2UyuwEKEEFkbWluQXV0aFNlcnZpY2USUQoKQWRtaW5Mb2dpbhIgLmFwaS5zZXJ2ZXIudjEuQWRtaW5Mb2dpblJlcXVlc3QaIS5hcGkuc2VydmVyLnYxLkFkbWluTG9naW5SZXNwb25zZRJUCgtBZG1pbkxvZ291dBIhLmFwaS5zZXJ2ZXIudjEuQWRtaW5Mb2dvdXRSZXF1ZXN0GiIuYXBpLnNlcnZlci52MS5BZG1pbkxvZ291dFJlc3BvbnNlQrEBChFjb20uYXBpLnNlcnZlci52MUIKQWRtaW5Qcm90b1ABWjpnaXRodWIuY29tL2thdm9zMTEzL3F1aWNrY3RmL2dlbi9nby9hcGkvc2VydmVyL3YxO3NlcnZlcnYxogIDQVNYqgINQXBpLlNlcnZlci5WMcoCDUFwaVxTZXJ2ZXJcVjHiAhlBcGlcU2VydmVyXFYxXEdQQk1ldGFkYXRh6gIPQXBpOjpTZXJ2ZXI6OlYxYgZwcm90bzM',
+    'ChlhcGkvc2VydmVyL3YxL2FkbWluLnByb3RvEg1hcGkuc2VydmVyLnYxIkwKFkNyZWF0ZUNoYWxsZW5nZVJlcXVlc3QSMgoJY2hhbGxlbmdlGAEgASgLMh8uYXBpLnNlcnZlci52MS5DaGFsbGVuZ2VSZXF1ZXN0IkYKF0NyZWF0ZUNoYWxsZW5nZVJlc3BvbnNlEhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIkUKFlVwZGF0ZUNoYWxsZW5nZVJlcXVlc3QSKwoJY2hhbGxlbmdlGAEgASgLMhguYXBpLnNlcnZlci52MS5DaGFsbGVuZ2UiMAoXVXBkYXRlQ2hhbGxlbmdlUmVzcG9uc2USFQoNZXJyb3JfbWVzc2FnZRgBIAEoCSJHChtVcGxvYWRDaGFsbGVuZ2VJbWFnZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJEhIKCmltYWdlX2RhdGEYAiABKAwiRQocVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXNwb25zZRIOCgZqb2JfaWQYASABKAkSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSIuChZEZWxldGVDaGFsbGVuZ2VSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCSIwChdEZWxldGVDaGFsbGVuZ2VSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJIhcKFUxpc3RDaGFsbGVuZ2VzUmVxdWVzdCJdChZMaXN0Q2hhbGxlbmdlc1Jlc3BvbnNlEiwKCmNoYWxsZW5nZXMYASADKAsyGC5hcGkuc2VydmVyLnYxLkNoYWxsZW5nZRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIisKE0dldENoYWxsZW5nZVJlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJIloKFEdldENoYWxsZW5nZVJlc3BvbnNlEisKCWNoYWxsZW5nZRgBIAEoCzIYLmFwaS5zZXJ2ZXIudjEuQ2hhbGxlbmdlEhUKDWVycm9yX21lc3NhZ2UYAiABKAkijQEKD0J1aWxkTG9nU3VtbWFyeRIOCgZqb2JfaWQYASABKAkSFAoMY2hhbGxlbmdlX2lkGAIgASgJEioKBnN0YXR1cxgDIAEoDjIaLmFwaS5zZXJ2ZXIudjEuQnVpbGRTdGF0dXMSEgoKY3JlYXRlZF9hdBgEIAEoCRIUCgxjb21wbGV0ZWRfYXQYBSABKAkiLAoUTGlzdEJ1aWxkTG9nc1JlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJIlwKFUxpc3RCdWlsZExvZ3NSZXNwb25zZRIsCgRsb2dzGAEgAygLMh4uYXBpLnNlcnZlci52MS5CdWlsZExvZ1N1bW1hcnkSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSIkChJHZXRCdWlsZExvZ1JlcXVlc3QSDgoGam9iX2lkGAEgASgJIn0KE0dldEJ1aWxkTG9nUmVzcG9uc2USDgoGam9iX2lkGAEgASgJEhMKC2xvZ19jb250ZW50GAIgASgJEioKBnN0YXR1cxgDIAEoDjIaLmFwaS5zZXJ2ZXIudjEuQnVpbGRTdGF0dXMSFQoNZXJyb3JfbWVzc2FnZRgEIAEoCSInChVTdHJlYW1CdWlsZExvZ1JlcXVlc3QSDgoGam9iX2lkGAEgASgJImsKFlN0cmVhbUJ1aWxkTG9nUmVzcG9uc2USEAoIbG9nX2xpbmUYASABKAkSKgoGc3RhdHVzGAIgASgOMhouYXBpLnNlcnZlci52MS5CdWlsZFN0YXR1cxITCgtpc19jb21wbGV0ZRgDIAEoCCJPChdVcGxvYWRBdHRhY2htZW50UmVxdWVzdBIUCgxjaGFsbGVuZ2VfaWQYASABKAkSEAoIZmlsZW5hbWUYAiABKAkSDAoEZGF0YRgDIAEoDCJgChhVcGxvYWRBdHRhY2htZW50UmVzcG9uc2USLQoKYXR0YWNobWVudBgBIAEoCzIZLmFwaS5zZXJ2ZXIudjEuQXR0YWNobWVudBIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIkYKF0RlbGV0ZUF0dGFjaG1lbnRSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIVCg1hdHRhY2htZW50X2lkGAIgASgJIjEKGERlbGV0ZUF0dGFjaG1lbnRSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJIiUKEUFkbWluTG9naW5SZXF1ZXN0EhAKCHBhc3N3b3JkGAEgASgJIhQKEkFkbWluTG9naW5SZXNwb25zZSIUChJBZG1pbkxvZ291dFJlcXVlc3QiFQoTQWRtaW5Mb2dvdXRSZXNwb25zZSqTAQoLQnVpbGRTdGF0dXMSHAoYQlVJTERfU1RBVFVTX1VOU1BFQ0lGSUVEEAASGAoUQlVJTERfU1RBVFVTX1BFTkRJTkcQARIZChVCVUlMRF9TVEFUVVNfQlVJTERJTkcQAhIYChRCVUlMRF9TVEFUVVNfU1VDQ0VTUxADEhcKE0JVSUxEX1NUQVRVU19GQUlMRUQQBDK6CAoMQWRtaW5TZXJ2aWNlEmAKD0NyZWF0ZUNoYWxsZW5nZRIlLmFwaS5zZXJ2ZXIudjEuQ3JlYXRlQ2hhbGxlbmdlUmVxdWVzdBomLmFwaS5zZXJ2ZXIudjEuQ3JlYXRlQ2hhbGxlbmdlUmVzcG9uc2USYAoPVXBkYXRlQ2hhbGxlbmdlEiUuYXBpLnNlcnZlci52MS5VcGRhdGVDaGFsbGVuZ2VSZXF1ZXN0GiYuYXBpLnNlcnZlci52MS5VcGRhdGVDaGFsbGVuZ2VSZXNwb25zZRJvChRVcGxvYWRDaGFsbGVuZ2VJbWFnZRIqLmFwaS5zZXJ2ZXIudjEuVXBsb2FkQ2hhbGxlbmdlSW1hZ2VSZXF1ZXN0GisuYXBpLnNlcnZlci52MS5VcGxvYWRDaGFsbGVuZ2VJbWFnZVJlc3BvbnNlEmAKD0RlbGV0ZUNoYWxsZW5nZRIlLmFwaS5zZXJ2ZXIudjEuRGVsZXRlQ2hhbGxlbmdlUmVxdWVzdBomLmFwaS5zZXJ2ZXIudjEuRGVsZXRlQ2hhbGxlbmdlUmVzcG9uc2USXQoOTGlzdENoYWxsZW5nZXMSJC5hcGkuc2VydmVyLnYxLkxpc3RDaGFsbGVuZ2VzUmVxdWVzdBolLmFwaS5zZXJ2ZXIudjEuTGlzdENoYWxsZW5nZXNSZXNwb25zZRJXCgxHZXRDaGFsbGVuZ2USIi5hcGkuc2VydmVyLnYxLkdldENoYWxsZW5nZVJlcXVlc3QaIy5hcGkuc2VydmVyLnYxLkdldENoYWxsZW5nZVJlc3BvbnNlEloKDUxpc3RCdWlsZExvZ3MSIy5hcGkuc2VydmVyLnYxLkxpc3RCdWlsZExvZ3NSZXF1ZXN0GiQuYXBpLnNlcnZlci52MS5MaXN0QnVpbGRMb2dzUmVzcG9uc2USVAoLR2V0QnVpbGRMb2cSIS5hcGkuc2VydmVyLnYxLkdldEJ1aWxkTG9nUmVxdWVzdBoiLmFwaS5zZXJ2ZXIudjEuR2V0QnVpbGRMb2dSZXNwb25zZRJfCg5TdHJlYW1CdWlsZExvZxIkLmFwaS5zZXJ2ZXIudjEuU3RyZWFtQnVpbGRMb2dSZXF1ZXN0GiUuYXBpLnNlcnZlci52MS5TdHJlYW1CdWlsZExvZ1Jlc3BvbnNlMAESYwoQVXBsb2FkQXR0YWNobWVudBImLmFwaS5zZXJ2ZXIudjEuVXBsb2FkQXR0YWNobWVudFJlcXVlc3QaJy5hcGkuc2VydmVyLnYxLlVwbG9hZEF0dGFjaG1lbnRSZXNwb25zZRJjChBEZWxldGVBdHRhY2htZW50EiYuYXBpLnNlcnZlci52MS5EZWxldGVBdHRhY2htZW50UmVxdWVzdBonLmFwaS5zZXJ2ZXIudjEuRGVsZXRlQXR0YWNobWVudFJlc3BvbnNlMrsBChBBZG1pbkF1dGhTZXJ2aWNlElEKCkFkbWluTG9naW4SIC5hcGkuc2VydmVyLnYxLkFkbWluTG9naW5SZXF1ZXN0GiEuYXBpLnNlcnZlci52MS5BZG1pbkxvZ2luUmVzcG9uc2USVAoLQWRtaW5Mb2dvdXQSIS5hcGkuc2VydmVyLnYxLkFkbWluTG9nb3V0UmVxdWVzdBoiLmFwaS5zZXJ2ZXIudjEuQWRtaW5Mb2dvdXRSZXNwb25zZUKxAQoRY29tLmFwaS5zZXJ2ZXIudjFCCkFkbWluUHJvdG9QAVo6Z2l0aHViLmNvbS9rYXZvczExMy9xdWlja2N0Zi9nZW4vZ28vYXBpL3NlcnZlci92MTtzZXJ2ZXJ2MaICA0FTWKoCDUFwaS5TZXJ2ZXIuVjHKAg1BcGlcU2VydmVyXFYx4gIZQXBpXFNlcnZlclxWMVxHUEJNZXRhZGF0YeoCD0FwaTo6U2VydmVyOjpWMWIGcHJvdG8z',
     [file_api_server_v1_model],
   );
 
@@ -269,9 +269,9 @@ export type BuildLogSummary = Message<'api.server.v1.BuildLogSummary'> & {
   challengeId: string;
 
   /**
-   * @generated from field: string status = 3;
+   * @generated from field: api.server.v1.BuildStatus status = 3;
    */
-  status: string;
+  status: BuildStatus;
 
   /**
    * @generated from field: string created_at = 4;
@@ -368,9 +368,9 @@ export type GetBuildLogResponse = Message<'api.server.v1.GetBuildLogResponse'> &
   logContent: string;
 
   /**
-   * @generated from field: string status = 3;
+   * @generated from field: api.server.v1.BuildStatus status = 3;
    */
-  status: string;
+  status: BuildStatus;
 
   /**
    * @generated from field: string error_message = 4;
@@ -385,6 +385,52 @@ export type GetBuildLogResponse = Message<'api.server.v1.GetBuildLogResponse'> &
 export const GetBuildLogResponseSchema: GenMessage<GetBuildLogResponse> =
   /*@__PURE__*/
   messageDesc(file_api_server_v1_admin, 16);
+
+/**
+ * @generated from message api.server.v1.StreamBuildLogRequest
+ */
+export type StreamBuildLogRequest = Message<'api.server.v1.StreamBuildLogRequest'> & {
+  /**
+   * @generated from field: string job_id = 1;
+   */
+  jobId: string;
+};
+
+/**
+ * Describes the message api.server.v1.StreamBuildLogRequest.
+ * Use `create(StreamBuildLogRequestSchema)` to create a new message.
+ */
+export const StreamBuildLogRequestSchema: GenMessage<StreamBuildLogRequest> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 17);
+
+/**
+ * @generated from message api.server.v1.StreamBuildLogResponse
+ */
+export type StreamBuildLogResponse = Message<'api.server.v1.StreamBuildLogResponse'> & {
+  /**
+   * @generated from field: string log_line = 1;
+   */
+  logLine: string;
+
+  /**
+   * @generated from field: api.server.v1.BuildStatus status = 2;
+   */
+  status: BuildStatus;
+
+  /**
+   * @generated from field: bool is_complete = 3;
+   */
+  isComplete: boolean;
+};
+
+/**
+ * Describes the message api.server.v1.StreamBuildLogResponse.
+ * Use `create(StreamBuildLogResponseSchema)` to create a new message.
+ */
+export const StreamBuildLogResponseSchema: GenMessage<StreamBuildLogResponse> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_admin, 18);
 
 /**
  * @generated from message api.server.v1.UploadAttachmentRequest
@@ -412,7 +458,7 @@ export type UploadAttachmentRequest = Message<'api.server.v1.UploadAttachmentReq
  */
 export const UploadAttachmentRequestSchema: GenMessage<UploadAttachmentRequest> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 17);
+  messageDesc(file_api_server_v1_admin, 19);
 
 /**
  * @generated from message api.server.v1.UploadAttachmentResponse
@@ -435,7 +481,7 @@ export type UploadAttachmentResponse = Message<'api.server.v1.UploadAttachmentRe
  */
 export const UploadAttachmentResponseSchema: GenMessage<UploadAttachmentResponse> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 18);
+  messageDesc(file_api_server_v1_admin, 20);
 
 /**
  * @generated from message api.server.v1.DeleteAttachmentRequest
@@ -458,7 +504,7 @@ export type DeleteAttachmentRequest = Message<'api.server.v1.DeleteAttachmentReq
  */
 export const DeleteAttachmentRequestSchema: GenMessage<DeleteAttachmentRequest> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 19);
+  messageDesc(file_api_server_v1_admin, 21);
 
 /**
  * @generated from message api.server.v1.DeleteAttachmentResponse
@@ -476,7 +522,7 @@ export type DeleteAttachmentResponse = Message<'api.server.v1.DeleteAttachmentRe
  */
 export const DeleteAttachmentResponseSchema: GenMessage<DeleteAttachmentResponse> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 20);
+  messageDesc(file_api_server_v1_admin, 22);
 
 /**
  * @generated from message api.server.v1.AdminLoginRequest
@@ -494,7 +540,7 @@ export type AdminLoginRequest = Message<'api.server.v1.AdminLoginRequest'> & {
  */
 export const AdminLoginRequestSchema: GenMessage<AdminLoginRequest> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 21);
+  messageDesc(file_api_server_v1_admin, 23);
 
 /**
  * @generated from message api.server.v1.AdminLoginResponse
@@ -507,7 +553,7 @@ export type AdminLoginResponse = Message<'api.server.v1.AdminLoginResponse'> & {
  */
 export const AdminLoginResponseSchema: GenMessage<AdminLoginResponse> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 22);
+  messageDesc(file_api_server_v1_admin, 24);
 
 /**
  * @generated from message api.server.v1.AdminLogoutRequest
@@ -520,7 +566,7 @@ export type AdminLogoutRequest = Message<'api.server.v1.AdminLogoutRequest'> & {
  */
 export const AdminLogoutRequestSchema: GenMessage<AdminLogoutRequest> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 23);
+  messageDesc(file_api_server_v1_admin, 25);
 
 /**
  * @generated from message api.server.v1.AdminLogoutResponse
@@ -533,7 +579,44 @@ export type AdminLogoutResponse = Message<'api.server.v1.AdminLogoutResponse'> &
  */
 export const AdminLogoutResponseSchema: GenMessage<AdminLogoutResponse> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_admin, 24);
+  messageDesc(file_api_server_v1_admin, 26);
+
+/**
+ * @generated from enum api.server.v1.BuildStatus
+ */
+export enum BuildStatus {
+  /**
+   * @generated from enum value: BUILD_STATUS_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: BUILD_STATUS_PENDING = 1;
+   */
+  PENDING = 1,
+
+  /**
+   * @generated from enum value: BUILD_STATUS_BUILDING = 2;
+   */
+  BUILDING = 2,
+
+  /**
+   * @generated from enum value: BUILD_STATUS_SUCCESS = 3;
+   */
+  SUCCESS = 3,
+
+  /**
+   * @generated from enum value: BUILD_STATUS_FAILED = 4;
+   */
+  FAILED = 4,
+}
+
+/**
+ * Describes the enum api.server.v1.BuildStatus.
+ */
+export const BuildStatusSchema: GenEnum<BuildStatus> =
+  /*@__PURE__*/
+  enumDesc(file_api_server_v1_admin, 0);
 
 /**
  * @generated from service api.server.v1.AdminService
@@ -602,6 +685,14 @@ export const AdminService: GenService<{
     methodKind: 'unary';
     input: typeof GetBuildLogRequestSchema;
     output: typeof GetBuildLogResponseSchema;
+  };
+  /**
+   * @generated from rpc api.server.v1.AdminService.StreamBuildLog
+   */
+  streamBuildLog: {
+    methodKind: 'server_streaming';
+    input: typeof StreamBuildLogRequestSchema;
+    output: typeof StreamBuildLogResponseSchema;
   };
   /**
    * @generated from rpc api.server.v1.AdminService.UploadAttachment

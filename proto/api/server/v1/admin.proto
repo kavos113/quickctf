@@ -4,6 +4,14 @@ package api.server.v1;
 
 import "api/server/v1/model.proto";
 
+enum BuildStatus {
+  BUILD_STATUS_UNSPECIFIED = 0;
+  BUILD_STATUS_PENDING = 1;
+  BUILD_STATUS_BUILDING = 2;
+  BUILD_STATUS_SUCCESS = 3;
+  BUILD_STATUS_FAILED = 4;
+}
+
 service AdminService {
   rpc CreateChallenge(CreateChallengeRequest) returns (CreateChallengeResponse);
   rpc UpdateChallenge(UpdateChallengeRequest) returns (UpdateChallengeResponse);
@@ -13,6 +21,7 @@ service AdminService {
   rpc GetChallenge(GetChallengeRequest) returns (GetChallengeResponse);
   rpc ListBuildLogs(ListBuildLogsRequest) returns (ListBuildLogsResponse);
   rpc GetBuildLog(GetBuildLogRequest) returns (GetBuildLogResponse);
+  rpc StreamBuildLog(StreamBuildLogRequest) returns (stream StreamBuildLogResponse);
   rpc UploadAttachment(UploadAttachmentRequest) returns (UploadAttachmentResponse);
   rpc DeleteAttachment(DeleteAttachmentRequest) returns (DeleteAttachmentResponse);
 }
@@ -71,7 +80,7 @@ message GetChallengeResponse {
 message BuildLogSummary {
   string job_id = 1;
   string challenge_id = 2;
-  string status = 3;
+  BuildStatus status = 3;
   string created_at = 4;
   string completed_at = 5;
 }
@@ -92,8 +101,18 @@ message GetBuildLogRequest {
 message GetBuildLogResponse {
   string job_id = 1;
   string log_content = 2;
-  string status = 3;
+  BuildStatus status = 3;
   string error_message = 4;
+}
+
+message StreamBuildLogRequest {
+  string job_id = 1;
+}
+
+message StreamBuildLogResponse {
+  string log_line = 1;
+  BuildStatus status = 2;
+  bool is_complete = 3;
 }
 
 message UploadAttachmentRequest {

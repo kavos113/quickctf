@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { create } from '@bufbuild/protobuf';
 import {
   BuildLogSummary,
+  BuildStatus,
   CreateChallengeRequestSchema,
   DeleteAttachmentRequestSchema,
   DeleteChallengeRequestSchema,
@@ -9,6 +10,7 @@ import {
   GetChallengeRequestSchema,
   ListBuildLogsRequestSchema,
   ListChallengesRequestSchema,
+  StreamBuildLogRequestSchema,
   UpdateChallengeRequestSchema,
   UploadAttachmentRequestSchema,
   UploadChallengeImageRequestSchema,
@@ -243,7 +245,7 @@ export class AdminService {
 
   async getBuildLog(
     jobId: string,
-  ): Promise<{ success: boolean; logContent?: string; status?: string; error?: string }> {
+  ): Promise<{ success: boolean; logContent?: string; status?: BuildStatus; error?: string }> {
     try {
       const request = create(GetBuildLogRequestSchema, { jobId });
       const response = await adminClient.getBuildLog(request);
@@ -256,6 +258,24 @@ export class AdminService {
     } catch (err) {
       console.error('Failed to get build log:', err);
       return { success: false, error: 'ビルドログの取得に失敗しました' };
+    }
+  }
+
+  async *streamBuildLog(
+    jobId: string,
+  ): AsyncGenerator<{ logLine: string; status: BuildStatus; isComplete: boolean }> {
+    const request = create(StreamBuildLogRequestSchema, { jobId });
+    try {
+      for await (const response of adminClient.streamBuildLog(request)) {
+        yield {
+          logLine: response.logLine,
+          status: response.status,
+          isComplete: response.isComplete,
+        };
+      }
+    } catch (err) {
+      console.error('Stream build log error:', err);
+      throw err;
     }
   }
 

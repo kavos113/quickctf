@@ -77,5 +77,40 @@ func (i *AuthInterceptor) WrapStreamingClient(next connect.StreamingClientFunc) 
 }
 
 func (i *AuthInterceptor) WrapStreamingHandler(next connect.StreamingHandlerFunc) connect.StreamingHandlerFunc {
-	return next
+	return func(ctx context.Context, conn connect.StreamingHandlerConn) error {
+		procedure := conn.Spec().Procedure
+
+		if i.publicMethods[procedure] {
+			return next(ctx, conn)
+		}
+
+		token := conn.RequestHeader().Get("Authorization")
+		if token == "" {
+			log.Printf("Authorization header not found in streaming request")
+			return connect.NewError(connect.CodeUnauthenticated, domain.ErrSessionNotFound)
+		}
+
+		if len(token) > 7 && token[:7] == "Bearer " {
+			token = token[7:]
+		}
+
+		session, err := i.sessionRepo.FindByToken(ctx, token)
+		if err != nil {
+			if err == domain.ErrSessionNotFound {
+				return connect.NewError(connect.CodeUnauthenticated, err)
+			}
+			log.Printf("Failed to find session: %v", err)
+			return connect.NewError(connect.CodeInternal, err)
+		}
+
+		if session.IsExpired() {
+			i.sessionRepo.Delete(ctx, token)
+			return connect.NewError(connect.CodeUnauthenticated, domain.ErrSessionExpired)
+		}
+
+		ctx = context.WithValue(ctx, SessionContextKey, session)
+		ctx = context.WithValue(ctx, UserIDContextKey, session.UserID)
+
+		return next(ctx, conn)
+	}
 }

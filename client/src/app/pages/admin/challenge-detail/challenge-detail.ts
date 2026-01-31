@@ -1,6 +1,14 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BuildLogSummary } from '../../../../gen/api/server/v1/admin_pb';
+import { BuildLogSummary, BuildStatus } from '../../../../gen/api/server/v1/admin_pb';
 import { Challenge } from '../../../../gen/api/server/v1/model_pb';
 import { AdminService } from '../../../services/admin.service';
 import { ThemeService } from '../../../services/theme.service';
@@ -17,17 +25,19 @@ export class ChallengeDetailComponent implements OnInit, OnDestroy {
   private readonly adminService = inject(AdminService);
   readonly themeService = inject(ThemeService);
 
+  @ViewChild('logOutput') logOutputRef?: ElementRef<HTMLPreElement>;
+
   challenge = signal<Challenge | null>(null);
   buildLogs = signal<BuildLogSummary[]>([]);
-  selectedLog = signal<{ jobId: string; content: string; status: string } | null>(null);
+  selectedLog = signal<{ jobId: string; content: string; status: BuildStatus } | null>(null);
   isLoading = signal(true);
   isLoadingLogs = signal(false);
   isLoadingLogContent = signal(false);
   error = signal<string | null>(null);
   buildLogsExpanded = signal(false);
-  isPolling = signal(false);
+  isStreaming = signal(false);
 
-  private pollingInterval: ReturnType<typeof setInterval> | null = null;
+  private abortController: AbortController | null = null;
   private targetJobId: string | null = null;
 
   ngOnInit(): void {
@@ -43,7 +53,14 @@ export class ChallengeDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.stopPolling();
+    this.stopStreaming();
+  }
+
+  private scrollToBottom(): void {
+    if (this.logOutputRef?.nativeElement) {
+      const element = this.logOutputRef.nativeElement;
+      element.scrollTop = element.scrollHeight;
+    }
   }
 
   private async loadChallenge(challengeId: string): Promise<void> {
@@ -56,11 +73,9 @@ export class ChallengeDetailComponent implements OnInit, OnDestroy {
         this.challenge.set(result.challenge);
         await this.loadBuildLogs(challengeId);
 
-        // jobIdクエリパラメータがある場合は該当のログを開いてポーリング開始
         if (this.targetJobId) {
           this.buildLogsExpanded.set(true);
           await this.viewBuildLog(this.targetJobId);
-          this.startPolling(this.targetJobId);
         }
       } else {
         this.error.set(result.error || '問題が見つかりません');
@@ -94,71 +109,99 @@ export class ChallengeDetailComponent implements OnInit, OnDestroy {
   async viewBuildLog(jobId: string): Promise<void> {
     if (this.selectedLog()?.jobId === jobId) {
       this.selectedLog.set(null);
-      this.stopPolling();
+      this.stopStreaming();
       return;
     }
 
+    this.stopStreaming();
     this.isLoadingLogContent.set(true);
-    try {
-      const result = await this.adminService.getBuildLog(jobId);
-      if (result.success) {
-        this.selectedLog.set({
-          jobId,
-          content: result.logContent || '',
-          status: result.status || '',
-        });
 
-        // ステータスがpendingまたはbuildingの場合はポーリング開始
-        if (result.status === 'pending' || result.status === 'building') {
-          this.startPolling(jobId);
-        } else {
-          this.stopPolling();
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load build log:', error);
-    } finally {
+    const logs = this.buildLogs();
+    const logInfo = logs.find((l) => l.jobId === jobId);
+    const status = logInfo?.status ?? BuildStatus.UNSPECIFIED;
+
+    if (status === BuildStatus.PENDING || status === BuildStatus.BUILDING) {
+      this.selectedLog.set({
+        jobId,
+        content: '',
+        status: status,
+      });
       this.isLoadingLogContent.set(false);
-    }
-  }
-
-  private startPolling(jobId: string): void {
-    this.stopPolling();
-    this.isPolling.set(true);
-
-    this.pollingInterval = setInterval(async () => {
+      await this.startStreaming(jobId);
+    } else {
       try {
         const result = await this.adminService.getBuildLog(jobId);
         if (result.success) {
           this.selectedLog.set({
             jobId,
             content: result.logContent || '',
-            status: result.status || '',
+            status: result.status ?? BuildStatus.UNSPECIFIED,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load build log:', error);
+      } finally {
+        this.isLoadingLogContent.set(false);
+      }
+    }
+  }
+
+  private async startStreaming(jobId: string): Promise<void> {
+    this.stopStreaming();
+    this.isStreaming.set(true);
+    this.isLoading.set(false);
+    this.abortController = new AbortController();
+
+    try {
+      for await (const data of this.adminService.streamBuildLog(jobId)) {
+        console.log('Received log data:', data);
+
+        if (this.abortController?.signal.aborted) break;
+
+        if (data.logLine) {
+          this.selectedLog.update((current) => {
+            if (!current) return current;
+            return {
+              ...current,
+              content: current.content + data.logLine,
+              status: data.status,
+            };
+          });
+          this.scrollToBottom();
+        }
+
+        if (data.isComplete) {
+          this.selectedLog.update((current) => {
+            if (!current) return current;
+            return {
+              ...current,
+              status: data.status,
+            };
           });
 
-          // ビルドログ一覧も更新
           const challenge = this.challenge();
           if (challenge) {
             await this.loadBuildLogs(challenge.challengeId);
           }
 
-          // ステータスがsuccessまたはfailedになったらポーリング停止
-          if (result.status === 'success' || result.status === 'failed') {
-            this.stopPolling();
-          }
+          this.stopStreaming();
+          break;
         }
-      } catch (error) {
-        console.error('Polling error:', error);
       }
-    }, 2000);
+    } catch (error) {
+      if (this.abortController?.signal.aborted) return;
+      console.error('Streaming error:', error);
+    } finally {
+      this.isStreaming.set(false);
+    }
   }
 
-  private stopPolling(): void {
-    if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
-      this.pollingInterval = null;
+  private stopStreaming(): void {
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
     }
-    this.isPolling.set(false);
+    this.isStreaming.set(false);
   }
 
   editChallenge(): void {
@@ -188,33 +231,33 @@ export class ChallengeDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/challenges']);
   }
 
-  getStatusClass(status: string): string {
+  getStatusClass(status: BuildStatus): string {
     switch (status) {
-      case 'success':
+      case BuildStatus.SUCCESS:
         return 'status-success';
-      case 'failed':
+      case BuildStatus.FAILED:
         return 'status-failed';
-      case 'building':
+      case BuildStatus.BUILDING:
         return 'status-building';
-      case 'pending':
+      case BuildStatus.PENDING:
         return 'status-pending';
       default:
         return '';
     }
   }
 
-  getStatusLabel(status: string): string {
+  getStatusLabel(status: BuildStatus): string {
     switch (status) {
-      case 'success':
+      case BuildStatus.SUCCESS:
         return '成功';
-      case 'failed':
+      case BuildStatus.FAILED:
         return '失敗';
-      case 'building':
+      case BuildStatus.BUILDING:
         return 'ビルド中';
-      case 'pending':
+      case BuildStatus.PENDING:
         return '待機中';
       default:
-        return status;
+        return '不明';
     }
   }
 }

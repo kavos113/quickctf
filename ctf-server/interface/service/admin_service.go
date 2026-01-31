@@ -2,14 +2,31 @@ package service
 
 import (
 	"context"
+	"strings"
 
 	"connectrpc.com/connect"
 
 	"github.com/kavos113/quickctf/ctf-server/domain"
+	"github.com/kavos113/quickctf/ctf-server/infrastructure/client"
 	"github.com/kavos113/quickctf/ctf-server/usecase"
 	pb "github.com/kavos113/quickctf/gen/go/api/server/v1"
 	"github.com/kavos113/quickctf/gen/go/api/server/v1/serverv1connect"
 )
+
+func stringToBuildStatus(status string) pb.BuildStatus {
+	switch status {
+	case client.BuildStatusPending:
+		return pb.BuildStatus_BUILD_STATUS_PENDING
+	case client.BuildStatusBuilding:
+		return pb.BuildStatus_BUILD_STATUS_BUILDING
+	case client.BuildStatusSuccess:
+		return pb.BuildStatus_BUILD_STATUS_SUCCESS
+	case client.BuildStatusFailed:
+		return pb.BuildStatus_BUILD_STATUS_FAILED
+	default:
+		return pb.BuildStatus_BUILD_STATUS_UNSPECIFIED
+	}
+}
 
 type AdminService struct {
 	serverv1connect.UnimplementedAdminServiceHandler
@@ -218,7 +235,7 @@ func (s *AdminService) ListBuildLogs(ctx context.Context, req *connect.Request[p
 		pbLogs = append(pbLogs, &pb.BuildLogSummary{
 			JobId:       l.JobID,
 			ChallengeId: l.ChallengeID,
-			Status:      l.Status,
+			Status:      stringToBuildStatus(l.Status),
 			CreatedAt:   l.CreatedAt.Format("2006-01-02 15:04:05"),
 			CompletedAt: l.CompletedAt.Format("2006-01-02 15:04:05"),
 		})
@@ -247,7 +264,7 @@ func (s *AdminService) GetBuildLog(ctx context.Context, req *connect.Request[pb.
 	return connect.NewResponse(&pb.GetBuildLogResponse{
 		JobId:      req.Msg.JobId,
 		LogContent: logContent,
-		Status:     status,
+		Status:     stringToBuildStatus(status),
 	}), nil
 }
 
@@ -297,4 +314,65 @@ func (s *AdminService) DeleteAttachment(ctx context.Context, req *connect.Reques
 	}
 
 	return connect.NewResponse(&pb.DeleteAttachmentResponse{}), nil
+}
+
+func (s *AdminService) StreamBuildLog(ctx context.Context, req *connect.Request[pb.StreamBuildLogRequest], stream *connect.ServerStream[pb.StreamBuildLogResponse]) error {
+	_, err := requireAdminSession(ctx)
+	if err != nil {
+		return err
+	}
+
+	jobID := req.Msg.JobId
+
+	// まず初期ステータスを送信
+	status, err := s.adminUsecase.GetBuildStatus(ctx, jobID)
+	if err != nil {
+		return err
+	}
+
+	// 既に完了している場合はそれを返して終了
+	if status == client.BuildStatusSuccess || status == client.BuildStatusFailed {
+		return stream.Send(&pb.StreamBuildLogResponse{
+			LogLine:    "",
+			Status:     stringToBuildStatus(status),
+			IsComplete: true,
+		})
+	}
+
+	// 初期ステータスを送信（これによりクライアントは接続成功を確認できる）
+	if err := stream.Send(&pb.StreamBuildLogResponse{
+		LogLine:    "",
+		Status:     stringToBuildStatus(status),
+		IsComplete: false,
+	}); err != nil {
+		return err
+	}
+
+	err = s.adminUsecase.SubscribeBuildLogs(ctx, jobID, func(logLine string) {
+		if strings.HasPrefix(logLine, "BUILD_COMPLETE:") {
+			parts := strings.SplitN(logLine, ":", 2)
+			finalStatus := client.BuildStatusSuccess
+			if len(parts) > 1 {
+				finalStatus = parts[1]
+			}
+			stream.Send(&pb.StreamBuildLogResponse{
+				LogLine:    "",
+				Status:     stringToBuildStatus(finalStatus),
+				IsComplete: true,
+			})
+			return
+		}
+
+		stream.Send(&pb.StreamBuildLogResponse{
+			LogLine:    logLine,
+			Status:     pb.BuildStatus_BUILD_STATUS_BUILDING,
+			IsComplete: false,
+		})
+	})
+
+	if err != nil && err != context.Canceled {
+		return err
+	}
+
+	return nil
 }

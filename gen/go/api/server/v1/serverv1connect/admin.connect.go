@@ -59,6 +59,9 @@ const (
 	// AdminServiceGetBuildLogProcedure is the fully-qualified name of the AdminService's GetBuildLog
 	// RPC.
 	AdminServiceGetBuildLogProcedure = "/api.server.v1.AdminService/GetBuildLog"
+	// AdminServiceStreamBuildLogProcedure is the fully-qualified name of the AdminService's
+	// StreamBuildLog RPC.
+	AdminServiceStreamBuildLogProcedure = "/api.server.v1.AdminService/StreamBuildLog"
 	// AdminServiceUploadAttachmentProcedure is the fully-qualified name of the AdminService's
 	// UploadAttachment RPC.
 	AdminServiceUploadAttachmentProcedure = "/api.server.v1.AdminService/UploadAttachment"
@@ -83,6 +86,7 @@ type AdminServiceClient interface {
 	GetChallenge(context.Context, *connect.Request[v1.GetChallengeRequest]) (*connect.Response[v1.GetChallengeResponse], error)
 	ListBuildLogs(context.Context, *connect.Request[v1.ListBuildLogsRequest]) (*connect.Response[v1.ListBuildLogsResponse], error)
 	GetBuildLog(context.Context, *connect.Request[v1.GetBuildLogRequest]) (*connect.Response[v1.GetBuildLogResponse], error)
+	StreamBuildLog(context.Context, *connect.Request[v1.StreamBuildLogRequest]) (*connect.ServerStreamForClient[v1.StreamBuildLogResponse], error)
 	UploadAttachment(context.Context, *connect.Request[v1.UploadAttachmentRequest]) (*connect.Response[v1.UploadAttachmentResponse], error)
 	DeleteAttachment(context.Context, *connect.Request[v1.DeleteAttachmentRequest]) (*connect.Response[v1.DeleteAttachmentResponse], error)
 }
@@ -146,6 +150,12 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("GetBuildLog")),
 			connect.WithClientOptions(opts...),
 		),
+		streamBuildLog: connect.NewClient[v1.StreamBuildLogRequest, v1.StreamBuildLogResponse](
+			httpClient,
+			baseURL+AdminServiceStreamBuildLogProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("StreamBuildLog")),
+			connect.WithClientOptions(opts...),
+		),
 		uploadAttachment: connect.NewClient[v1.UploadAttachmentRequest, v1.UploadAttachmentResponse](
 			httpClient,
 			baseURL+AdminServiceUploadAttachmentProcedure,
@@ -171,6 +181,7 @@ type adminServiceClient struct {
 	getChallenge         *connect.Client[v1.GetChallengeRequest, v1.GetChallengeResponse]
 	listBuildLogs        *connect.Client[v1.ListBuildLogsRequest, v1.ListBuildLogsResponse]
 	getBuildLog          *connect.Client[v1.GetBuildLogRequest, v1.GetBuildLogResponse]
+	streamBuildLog       *connect.Client[v1.StreamBuildLogRequest, v1.StreamBuildLogResponse]
 	uploadAttachment     *connect.Client[v1.UploadAttachmentRequest, v1.UploadAttachmentResponse]
 	deleteAttachment     *connect.Client[v1.DeleteAttachmentRequest, v1.DeleteAttachmentResponse]
 }
@@ -215,6 +226,11 @@ func (c *adminServiceClient) GetBuildLog(ctx context.Context, req *connect.Reque
 	return c.getBuildLog.CallUnary(ctx, req)
 }
 
+// StreamBuildLog calls api.server.v1.AdminService.StreamBuildLog.
+func (c *adminServiceClient) StreamBuildLog(ctx context.Context, req *connect.Request[v1.StreamBuildLogRequest]) (*connect.ServerStreamForClient[v1.StreamBuildLogResponse], error) {
+	return c.streamBuildLog.CallServerStream(ctx, req)
+}
+
 // UploadAttachment calls api.server.v1.AdminService.UploadAttachment.
 func (c *adminServiceClient) UploadAttachment(ctx context.Context, req *connect.Request[v1.UploadAttachmentRequest]) (*connect.Response[v1.UploadAttachmentResponse], error) {
 	return c.uploadAttachment.CallUnary(ctx, req)
@@ -235,6 +251,7 @@ type AdminServiceHandler interface {
 	GetChallenge(context.Context, *connect.Request[v1.GetChallengeRequest]) (*connect.Response[v1.GetChallengeResponse], error)
 	ListBuildLogs(context.Context, *connect.Request[v1.ListBuildLogsRequest]) (*connect.Response[v1.ListBuildLogsResponse], error)
 	GetBuildLog(context.Context, *connect.Request[v1.GetBuildLogRequest]) (*connect.Response[v1.GetBuildLogResponse], error)
+	StreamBuildLog(context.Context, *connect.Request[v1.StreamBuildLogRequest], *connect.ServerStream[v1.StreamBuildLogResponse]) error
 	UploadAttachment(context.Context, *connect.Request[v1.UploadAttachmentRequest]) (*connect.Response[v1.UploadAttachmentResponse], error)
 	DeleteAttachment(context.Context, *connect.Request[v1.DeleteAttachmentRequest]) (*connect.Response[v1.DeleteAttachmentResponse], error)
 }
@@ -294,6 +311,12 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("GetBuildLog")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceStreamBuildLogHandler := connect.NewServerStreamHandler(
+		AdminServiceStreamBuildLogProcedure,
+		svc.StreamBuildLog,
+		connect.WithSchema(adminServiceMethods.ByName("StreamBuildLog")),
+		connect.WithHandlerOptions(opts...),
+	)
 	adminServiceUploadAttachmentHandler := connect.NewUnaryHandler(
 		AdminServiceUploadAttachmentProcedure,
 		svc.UploadAttachment,
@@ -324,6 +347,8 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceListBuildLogsHandler.ServeHTTP(w, r)
 		case AdminServiceGetBuildLogProcedure:
 			adminServiceGetBuildLogHandler.ServeHTTP(w, r)
+		case AdminServiceStreamBuildLogProcedure:
+			adminServiceStreamBuildLogHandler.ServeHTTP(w, r)
 		case AdminServiceUploadAttachmentProcedure:
 			adminServiceUploadAttachmentHandler.ServeHTTP(w, r)
 		case AdminServiceDeleteAttachmentProcedure:
@@ -367,6 +392,10 @@ func (UnimplementedAdminServiceHandler) ListBuildLogs(context.Context, *connect.
 
 func (UnimplementedAdminServiceHandler) GetBuildLog(context.Context, *connect.Request[v1.GetBuildLogRequest]) (*connect.Response[v1.GetBuildLogResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminService.GetBuildLog is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) StreamBuildLog(context.Context, *connect.Request[v1.StreamBuildLogRequest], *connect.ServerStream[v1.StreamBuildLogResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("api.server.v1.AdminService.StreamBuildLog is not implemented"))
 }
 
 func (UnimplementedAdminServiceHandler) UploadAttachment(context.Context, *connect.Request[v1.UploadAttachmentRequest]) (*connect.Response[v1.UploadAttachmentResponse], error) {

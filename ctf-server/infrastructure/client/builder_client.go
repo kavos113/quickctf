@@ -169,6 +169,10 @@ func (c *BuilderClient) SubscribeBuildLogs(ctx context.Context, jobID string, ca
 
 	ch := pubsub.Channel()
 
+	// 定期的にステータスをポーリングするためのティッカー
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -182,6 +186,24 @@ func (c *BuilderClient) SubscribeBuildLogs(ctx context.Context, jobID string, ca
 			if strings.HasPrefix(msg.Payload, "BUILD_COMPLETE:") {
 				return nil
 			}
+		case <-ticker.C:
+			// 定期的にステータスをチェックして、ビルドが完了していないか確認
+			result, err := c.GetBuildResult(ctx, jobID)
+			if err != nil {
+				continue
+			}
+			if result == nil {
+				continue
+			}
+			// ビルドが完了している場合は終了シグナルを送る
+			if result.Status == BuildStatusSuccess {
+				callback("BUILD_COMPLETE:" + BuildStatusSuccess)
+				return nil
+			}
+			if result.Status == BuildStatusFailed {
+				callback("BUILD_COMPLETE:" + BuildStatusFailed)
+				return nil
+			}
 		}
 	}
 }
@@ -193,6 +215,19 @@ func (c *BuilderClient) BuildImage(ctx context.Context, imageTag string, sourceT
 	}
 
 	log.Printf("Build job %s enqueued for image %s", jobID, imageTag)
+
+	return jobID, nil
+}
+
+// BuildImageSync waits for the build to complete and returns the image ID.
+// This is useful for testing or when synchronous behavior is needed.
+func (c *BuilderClient) BuildImageSync(ctx context.Context, imageTag string, sourceTar []byte, challengeID string) (string, error) {
+	jobID, err := c.EnqueueBuild(ctx, imageTag, sourceTar, challengeID)
+	if err != nil {
+		return "", fmt.Errorf("failed to enqueue build: %w", err)
+	}
+
+	log.Printf("Build job %s enqueued for image %s (sync)", jobID, imageTag)
 
 	logsDone := make(chan struct{})
 	go func() {

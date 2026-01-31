@@ -21,6 +21,61 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type BuildStatus int32
+
+const (
+	BuildStatus_BUILD_STATUS_UNSPECIFIED BuildStatus = 0
+	BuildStatus_BUILD_STATUS_PENDING     BuildStatus = 1
+	BuildStatus_BUILD_STATUS_BUILDING    BuildStatus = 2
+	BuildStatus_BUILD_STATUS_SUCCESS     BuildStatus = 3
+	BuildStatus_BUILD_STATUS_FAILED      BuildStatus = 4
+)
+
+// Enum value maps for BuildStatus.
+var (
+	BuildStatus_name = map[int32]string{
+		0: "BUILD_STATUS_UNSPECIFIED",
+		1: "BUILD_STATUS_PENDING",
+		2: "BUILD_STATUS_BUILDING",
+		3: "BUILD_STATUS_SUCCESS",
+		4: "BUILD_STATUS_FAILED",
+	}
+	BuildStatus_value = map[string]int32{
+		"BUILD_STATUS_UNSPECIFIED": 0,
+		"BUILD_STATUS_PENDING":     1,
+		"BUILD_STATUS_BUILDING":    2,
+		"BUILD_STATUS_SUCCESS":     3,
+		"BUILD_STATUS_FAILED":      4,
+	}
+)
+
+func (x BuildStatus) Enum() *BuildStatus {
+	p := new(BuildStatus)
+	*p = x
+	return p
+}
+
+func (x BuildStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (BuildStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_server_v1_admin_proto_enumTypes[0].Descriptor()
+}
+
+func (BuildStatus) Type() protoreflect.EnumType {
+	return &file_api_server_v1_admin_proto_enumTypes[0]
+}
+
+func (x BuildStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use BuildStatus.Descriptor instead.
+func (BuildStatus) EnumDescriptor() ([]byte, []int) {
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{0}
+}
+
 type CreateChallengeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Challenge     *ChallengeRequest      `protobuf:"bytes,1,opt,name=challenge,proto3" json:"challenge,omitempty"`
@@ -585,7 +640,7 @@ type BuildLogSummary struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	JobId         string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	ChallengeId   string                 `protobuf:"bytes,2,opt,name=challenge_id,json=challengeId,proto3" json:"challenge_id,omitempty"`
-	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	Status        BuildStatus            `protobuf:"varint,3,opt,name=status,proto3,enum=api.server.v1.BuildStatus" json:"status,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	CompletedAt   string                 `protobuf:"bytes,5,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -636,11 +691,11 @@ func (x *BuildLogSummary) GetChallengeId() string {
 	return ""
 }
 
-func (x *BuildLogSummary) GetStatus() string {
+func (x *BuildLogSummary) GetStatus() BuildStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ""
+	return BuildStatus_BUILD_STATUS_UNSPECIFIED
 }
 
 func (x *BuildLogSummary) GetCreatedAt() string {
@@ -801,7 +856,7 @@ type GetBuildLogResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	JobId         string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	LogContent    string                 `protobuf:"bytes,2,opt,name=log_content,json=logContent,proto3" json:"log_content,omitempty"`
-	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	Status        BuildStatus            `protobuf:"varint,3,opt,name=status,proto3,enum=api.server.v1.BuildStatus" json:"status,omitempty"`
 	ErrorMessage  string                 `protobuf:"bytes,4,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -851,11 +906,11 @@ func (x *GetBuildLogResponse) GetLogContent() string {
 	return ""
 }
 
-func (x *GetBuildLogResponse) GetStatus() string {
+func (x *GetBuildLogResponse) GetStatus() BuildStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ""
+	return BuildStatus_BUILD_STATUS_UNSPECIFIED
 }
 
 func (x *GetBuildLogResponse) GetErrorMessage() string {
@@ -863,6 +918,110 @@ func (x *GetBuildLogResponse) GetErrorMessage() string {
 		return x.ErrorMessage
 	}
 	return ""
+}
+
+type StreamBuildLogRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	JobId         string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StreamBuildLogRequest) Reset() {
+	*x = StreamBuildLogRequest{}
+	mi := &file_api_server_v1_admin_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamBuildLogRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamBuildLogRequest) ProtoMessage() {}
+
+func (x *StreamBuildLogRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_server_v1_admin_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StreamBuildLogRequest.ProtoReflect.Descriptor instead.
+func (*StreamBuildLogRequest) Descriptor() ([]byte, []int) {
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *StreamBuildLogRequest) GetJobId() string {
+	if x != nil {
+		return x.JobId
+	}
+	return ""
+}
+
+type StreamBuildLogResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	LogLine       string                 `protobuf:"bytes,1,opt,name=log_line,json=logLine,proto3" json:"log_line,omitempty"`
+	Status        BuildStatus            `protobuf:"varint,2,opt,name=status,proto3,enum=api.server.v1.BuildStatus" json:"status,omitempty"`
+	IsComplete    bool                   `protobuf:"varint,3,opt,name=is_complete,json=isComplete,proto3" json:"is_complete,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StreamBuildLogResponse) Reset() {
+	*x = StreamBuildLogResponse{}
+	mi := &file_api_server_v1_admin_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamBuildLogResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamBuildLogResponse) ProtoMessage() {}
+
+func (x *StreamBuildLogResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_server_v1_admin_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StreamBuildLogResponse.ProtoReflect.Descriptor instead.
+func (*StreamBuildLogResponse) Descriptor() ([]byte, []int) {
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *StreamBuildLogResponse) GetLogLine() string {
+	if x != nil {
+		return x.LogLine
+	}
+	return ""
+}
+
+func (x *StreamBuildLogResponse) GetStatus() BuildStatus {
+	if x != nil {
+		return x.Status
+	}
+	return BuildStatus_BUILD_STATUS_UNSPECIFIED
+}
+
+func (x *StreamBuildLogResponse) GetIsComplete() bool {
+	if x != nil {
+		return x.IsComplete
+	}
+	return false
 }
 
 type UploadAttachmentRequest struct {
@@ -876,7 +1035,7 @@ type UploadAttachmentRequest struct {
 
 func (x *UploadAttachmentRequest) Reset() {
 	*x = UploadAttachmentRequest{}
-	mi := &file_api_server_v1_admin_proto_msgTypes[17]
+	mi := &file_api_server_v1_admin_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -888,7 +1047,7 @@ func (x *UploadAttachmentRequest) String() string {
 func (*UploadAttachmentRequest) ProtoMessage() {}
 
 func (x *UploadAttachmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_server_v1_admin_proto_msgTypes[17]
+	mi := &file_api_server_v1_admin_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -901,7 +1060,7 @@ func (x *UploadAttachmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadAttachmentRequest.ProtoReflect.Descriptor instead.
 func (*UploadAttachmentRequest) Descriptor() ([]byte, []int) {
-	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{17}
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *UploadAttachmentRequest) GetChallengeId() string {
@@ -935,7 +1094,7 @@ type UploadAttachmentResponse struct {
 
 func (x *UploadAttachmentResponse) Reset() {
 	*x = UploadAttachmentResponse{}
-	mi := &file_api_server_v1_admin_proto_msgTypes[18]
+	mi := &file_api_server_v1_admin_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -947,7 +1106,7 @@ func (x *UploadAttachmentResponse) String() string {
 func (*UploadAttachmentResponse) ProtoMessage() {}
 
 func (x *UploadAttachmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_server_v1_admin_proto_msgTypes[18]
+	mi := &file_api_server_v1_admin_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -960,7 +1119,7 @@ func (x *UploadAttachmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadAttachmentResponse.ProtoReflect.Descriptor instead.
 func (*UploadAttachmentResponse) Descriptor() ([]byte, []int) {
-	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{18}
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *UploadAttachmentResponse) GetAttachment() *Attachment {
@@ -987,7 +1146,7 @@ type DeleteAttachmentRequest struct {
 
 func (x *DeleteAttachmentRequest) Reset() {
 	*x = DeleteAttachmentRequest{}
-	mi := &file_api_server_v1_admin_proto_msgTypes[19]
+	mi := &file_api_server_v1_admin_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -999,7 +1158,7 @@ func (x *DeleteAttachmentRequest) String() string {
 func (*DeleteAttachmentRequest) ProtoMessage() {}
 
 func (x *DeleteAttachmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_server_v1_admin_proto_msgTypes[19]
+	mi := &file_api_server_v1_admin_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1012,7 +1171,7 @@ func (x *DeleteAttachmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAttachmentRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAttachmentRequest) Descriptor() ([]byte, []int) {
-	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{19}
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *DeleteAttachmentRequest) GetChallengeId() string {
@@ -1038,7 +1197,7 @@ type DeleteAttachmentResponse struct {
 
 func (x *DeleteAttachmentResponse) Reset() {
 	*x = DeleteAttachmentResponse{}
-	mi := &file_api_server_v1_admin_proto_msgTypes[20]
+	mi := &file_api_server_v1_admin_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1050,7 +1209,7 @@ func (x *DeleteAttachmentResponse) String() string {
 func (*DeleteAttachmentResponse) ProtoMessage() {}
 
 func (x *DeleteAttachmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_server_v1_admin_proto_msgTypes[20]
+	mi := &file_api_server_v1_admin_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1063,7 +1222,7 @@ func (x *DeleteAttachmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAttachmentResponse.ProtoReflect.Descriptor instead.
 func (*DeleteAttachmentResponse) Descriptor() ([]byte, []int) {
-	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{20}
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *DeleteAttachmentResponse) GetErrorMessage() string {
@@ -1082,7 +1241,7 @@ type AdminLoginRequest struct {
 
 func (x *AdminLoginRequest) Reset() {
 	*x = AdminLoginRequest{}
-	mi := &file_api_server_v1_admin_proto_msgTypes[21]
+	mi := &file_api_server_v1_admin_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1094,7 +1253,7 @@ func (x *AdminLoginRequest) String() string {
 func (*AdminLoginRequest) ProtoMessage() {}
 
 func (x *AdminLoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_server_v1_admin_proto_msgTypes[21]
+	mi := &file_api_server_v1_admin_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1107,7 +1266,7 @@ func (x *AdminLoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminLoginRequest.ProtoReflect.Descriptor instead.
 func (*AdminLoginRequest) Descriptor() ([]byte, []int) {
-	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{21}
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *AdminLoginRequest) GetPassword() string {
@@ -1125,7 +1284,7 @@ type AdminLoginResponse struct {
 
 func (x *AdminLoginResponse) Reset() {
 	*x = AdminLoginResponse{}
-	mi := &file_api_server_v1_admin_proto_msgTypes[22]
+	mi := &file_api_server_v1_admin_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1137,7 +1296,7 @@ func (x *AdminLoginResponse) String() string {
 func (*AdminLoginResponse) ProtoMessage() {}
 
 func (x *AdminLoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_server_v1_admin_proto_msgTypes[22]
+	mi := &file_api_server_v1_admin_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1150,7 +1309,7 @@ func (x *AdminLoginResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminLoginResponse.ProtoReflect.Descriptor instead.
 func (*AdminLoginResponse) Descriptor() ([]byte, []int) {
-	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{22}
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{24}
 }
 
 type AdminLogoutRequest struct {
@@ -1161,7 +1320,7 @@ type AdminLogoutRequest struct {
 
 func (x *AdminLogoutRequest) Reset() {
 	*x = AdminLogoutRequest{}
-	mi := &file_api_server_v1_admin_proto_msgTypes[23]
+	mi := &file_api_server_v1_admin_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1173,7 +1332,7 @@ func (x *AdminLogoutRequest) String() string {
 func (*AdminLogoutRequest) ProtoMessage() {}
 
 func (x *AdminLogoutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_server_v1_admin_proto_msgTypes[23]
+	mi := &file_api_server_v1_admin_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1186,7 +1345,7 @@ func (x *AdminLogoutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminLogoutRequest.ProtoReflect.Descriptor instead.
 func (*AdminLogoutRequest) Descriptor() ([]byte, []int) {
-	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{23}
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{25}
 }
 
 type AdminLogoutResponse struct {
@@ -1197,7 +1356,7 @@ type AdminLogoutResponse struct {
 
 func (x *AdminLogoutResponse) Reset() {
 	*x = AdminLogoutResponse{}
-	mi := &file_api_server_v1_admin_proto_msgTypes[24]
+	mi := &file_api_server_v1_admin_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1209,7 +1368,7 @@ func (x *AdminLogoutResponse) String() string {
 func (*AdminLogoutResponse) ProtoMessage() {}
 
 func (x *AdminLogoutResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_server_v1_admin_proto_msgTypes[24]
+	mi := &file_api_server_v1_admin_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1222,7 +1381,7 @@ func (x *AdminLogoutResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminLogoutResponse.ProtoReflect.Descriptor instead.
 func (*AdminLogoutResponse) Descriptor() ([]byte, []int) {
-	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{24}
+	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{26}
 }
 
 var File_api_server_v1_admin_proto protoreflect.FileDescriptor
@@ -1260,11 +1419,11 @@ const file_api_server_v1_admin_proto_rawDesc = "" +
 	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\"s\n" +
 	"\x14GetChallengeResponse\x126\n" +
 	"\tchallenge\x18\x01 \x01(\v2\x18.api.server.v1.ChallengeR\tchallenge\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"\xa5\x01\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"\xc1\x01\n" +
 	"\x0fBuildLogSummary\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12!\n" +
-	"\fchallenge_id\x18\x02 \x01(\tR\vchallengeId\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\tR\x06status\x12\x1d\n" +
+	"\fchallenge_id\x18\x02 \x01(\tR\vchallengeId\x122\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x1a.api.server.v1.BuildStatusR\x06status\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\tR\tcreatedAt\x12!\n" +
 	"\fcompleted_at\x18\x05 \x01(\tR\vcompletedAt\"9\n" +
@@ -1274,13 +1433,20 @@ const file_api_server_v1_admin_proto_rawDesc = "" +
 	"\x04logs\x18\x01 \x03(\v2\x1e.api.server.v1.BuildLogSummaryR\x04logs\x12#\n" +
 	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"+\n" +
 	"\x12GetBuildLogRequest\x12\x15\n" +
-	"\x06job_id\x18\x01 \x01(\tR\x05jobId\"\x8a\x01\n" +
+	"\x06job_id\x18\x01 \x01(\tR\x05jobId\"\xa6\x01\n" +
 	"\x13GetBuildLogResponse\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x1f\n" +
 	"\vlog_content\x18\x02 \x01(\tR\n" +
-	"logContent\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x04 \x01(\tR\ferrorMessage\"l\n" +
+	"logContent\x122\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x1a.api.server.v1.BuildStatusR\x06status\x12#\n" +
+	"\rerror_message\x18\x04 \x01(\tR\ferrorMessage\".\n" +
+	"\x15StreamBuildLogRequest\x12\x15\n" +
+	"\x06job_id\x18\x01 \x01(\tR\x05jobId\"\x88\x01\n" +
+	"\x16StreamBuildLogResponse\x12\x19\n" +
+	"\blog_line\x18\x01 \x01(\tR\alogLine\x122\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x1a.api.server.v1.BuildStatusR\x06status\x12\x1f\n" +
+	"\vis_complete\x18\x03 \x01(\bR\n" +
+	"isComplete\"l\n" +
 	"\x17UploadAttachmentRequest\x12!\n" +
 	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x12\x1a\n" +
 	"\bfilename\x18\x02 \x01(\tR\bfilename\x12\x12\n" +
@@ -1299,7 +1465,13 @@ const file_api_server_v1_admin_proto_rawDesc = "" +
 	"\bpassword\x18\x01 \x01(\tR\bpassword\"\x14\n" +
 	"\x12AdminLoginResponse\"\x14\n" +
 	"\x12AdminLogoutRequest\"\x15\n" +
-	"\x13AdminLogoutResponse2\xd9\a\n" +
+	"\x13AdminLogoutResponse*\x93\x01\n" +
+	"\vBuildStatus\x12\x1c\n" +
+	"\x18BUILD_STATUS_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x14BUILD_STATUS_PENDING\x10\x01\x12\x19\n" +
+	"\x15BUILD_STATUS_BUILDING\x10\x02\x12\x18\n" +
+	"\x14BUILD_STATUS_SUCCESS\x10\x03\x12\x17\n" +
+	"\x13BUILD_STATUS_FAILED\x10\x042\xba\b\n" +
 	"\fAdminService\x12`\n" +
 	"\x0fCreateChallenge\x12%.api.server.v1.CreateChallengeRequest\x1a&.api.server.v1.CreateChallengeResponse\x12`\n" +
 	"\x0fUpdateChallenge\x12%.api.server.v1.UpdateChallengeRequest\x1a&.api.server.v1.UpdateChallengeResponse\x12o\n" +
@@ -1308,7 +1480,8 @@ const file_api_server_v1_admin_proto_rawDesc = "" +
 	"\x0eListChallenges\x12$.api.server.v1.ListChallengesRequest\x1a%.api.server.v1.ListChallengesResponse\x12W\n" +
 	"\fGetChallenge\x12\".api.server.v1.GetChallengeRequest\x1a#.api.server.v1.GetChallengeResponse\x12Z\n" +
 	"\rListBuildLogs\x12#.api.server.v1.ListBuildLogsRequest\x1a$.api.server.v1.ListBuildLogsResponse\x12T\n" +
-	"\vGetBuildLog\x12!.api.server.v1.GetBuildLogRequest\x1a\".api.server.v1.GetBuildLogResponse\x12c\n" +
+	"\vGetBuildLog\x12!.api.server.v1.GetBuildLogRequest\x1a\".api.server.v1.GetBuildLogResponse\x12_\n" +
+	"\x0eStreamBuildLog\x12$.api.server.v1.StreamBuildLogRequest\x1a%.api.server.v1.StreamBuildLogResponse0\x01\x12c\n" +
 	"\x10UploadAttachment\x12&.api.server.v1.UploadAttachmentRequest\x1a'.api.server.v1.UploadAttachmentResponse\x12c\n" +
 	"\x10DeleteAttachment\x12&.api.server.v1.DeleteAttachmentRequest\x1a'.api.server.v1.DeleteAttachmentResponse2\xbb\x01\n" +
 	"\x10AdminAuthService\x12Q\n" +
@@ -1330,73 +1503,82 @@ func file_api_server_v1_admin_proto_rawDescGZIP() []byte {
 	return file_api_server_v1_admin_proto_rawDescData
 }
 
-var file_api_server_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_api_server_v1_admin_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_api_server_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_api_server_v1_admin_proto_goTypes = []any{
-	(*CreateChallengeRequest)(nil),       // 0: api.server.v1.CreateChallengeRequest
-	(*CreateChallengeResponse)(nil),      // 1: api.server.v1.CreateChallengeResponse
-	(*UpdateChallengeRequest)(nil),       // 2: api.server.v1.UpdateChallengeRequest
-	(*UpdateChallengeResponse)(nil),      // 3: api.server.v1.UpdateChallengeResponse
-	(*UploadChallengeImageRequest)(nil),  // 4: api.server.v1.UploadChallengeImageRequest
-	(*UploadChallengeImageResponse)(nil), // 5: api.server.v1.UploadChallengeImageResponse
-	(*DeleteChallengeRequest)(nil),       // 6: api.server.v1.DeleteChallengeRequest
-	(*DeleteChallengeResponse)(nil),      // 7: api.server.v1.DeleteChallengeResponse
-	(*ListChallengesRequest)(nil),        // 8: api.server.v1.ListChallengesRequest
-	(*ListChallengesResponse)(nil),       // 9: api.server.v1.ListChallengesResponse
-	(*GetChallengeRequest)(nil),          // 10: api.server.v1.GetChallengeRequest
-	(*GetChallengeResponse)(nil),         // 11: api.server.v1.GetChallengeResponse
-	(*BuildLogSummary)(nil),              // 12: api.server.v1.BuildLogSummary
-	(*ListBuildLogsRequest)(nil),         // 13: api.server.v1.ListBuildLogsRequest
-	(*ListBuildLogsResponse)(nil),        // 14: api.server.v1.ListBuildLogsResponse
-	(*GetBuildLogRequest)(nil),           // 15: api.server.v1.GetBuildLogRequest
-	(*GetBuildLogResponse)(nil),          // 16: api.server.v1.GetBuildLogResponse
-	(*UploadAttachmentRequest)(nil),      // 17: api.server.v1.UploadAttachmentRequest
-	(*UploadAttachmentResponse)(nil),     // 18: api.server.v1.UploadAttachmentResponse
-	(*DeleteAttachmentRequest)(nil),      // 19: api.server.v1.DeleteAttachmentRequest
-	(*DeleteAttachmentResponse)(nil),     // 20: api.server.v1.DeleteAttachmentResponse
-	(*AdminLoginRequest)(nil),            // 21: api.server.v1.AdminLoginRequest
-	(*AdminLoginResponse)(nil),           // 22: api.server.v1.AdminLoginResponse
-	(*AdminLogoutRequest)(nil),           // 23: api.server.v1.AdminLogoutRequest
-	(*AdminLogoutResponse)(nil),          // 24: api.server.v1.AdminLogoutResponse
-	(*ChallengeRequest)(nil),             // 25: api.server.v1.ChallengeRequest
-	(*Challenge)(nil),                    // 26: api.server.v1.Challenge
-	(*Attachment)(nil),                   // 27: api.server.v1.Attachment
+	(BuildStatus)(0),                     // 0: api.server.v1.BuildStatus
+	(*CreateChallengeRequest)(nil),       // 1: api.server.v1.CreateChallengeRequest
+	(*CreateChallengeResponse)(nil),      // 2: api.server.v1.CreateChallengeResponse
+	(*UpdateChallengeRequest)(nil),       // 3: api.server.v1.UpdateChallengeRequest
+	(*UpdateChallengeResponse)(nil),      // 4: api.server.v1.UpdateChallengeResponse
+	(*UploadChallengeImageRequest)(nil),  // 5: api.server.v1.UploadChallengeImageRequest
+	(*UploadChallengeImageResponse)(nil), // 6: api.server.v1.UploadChallengeImageResponse
+	(*DeleteChallengeRequest)(nil),       // 7: api.server.v1.DeleteChallengeRequest
+	(*DeleteChallengeResponse)(nil),      // 8: api.server.v1.DeleteChallengeResponse
+	(*ListChallengesRequest)(nil),        // 9: api.server.v1.ListChallengesRequest
+	(*ListChallengesResponse)(nil),       // 10: api.server.v1.ListChallengesResponse
+	(*GetChallengeRequest)(nil),          // 11: api.server.v1.GetChallengeRequest
+	(*GetChallengeResponse)(nil),         // 12: api.server.v1.GetChallengeResponse
+	(*BuildLogSummary)(nil),              // 13: api.server.v1.BuildLogSummary
+	(*ListBuildLogsRequest)(nil),         // 14: api.server.v1.ListBuildLogsRequest
+	(*ListBuildLogsResponse)(nil),        // 15: api.server.v1.ListBuildLogsResponse
+	(*GetBuildLogRequest)(nil),           // 16: api.server.v1.GetBuildLogRequest
+	(*GetBuildLogResponse)(nil),          // 17: api.server.v1.GetBuildLogResponse
+	(*StreamBuildLogRequest)(nil),        // 18: api.server.v1.StreamBuildLogRequest
+	(*StreamBuildLogResponse)(nil),       // 19: api.server.v1.StreamBuildLogResponse
+	(*UploadAttachmentRequest)(nil),      // 20: api.server.v1.UploadAttachmentRequest
+	(*UploadAttachmentResponse)(nil),     // 21: api.server.v1.UploadAttachmentResponse
+	(*DeleteAttachmentRequest)(nil),      // 22: api.server.v1.DeleteAttachmentRequest
+	(*DeleteAttachmentResponse)(nil),     // 23: api.server.v1.DeleteAttachmentResponse
+	(*AdminLoginRequest)(nil),            // 24: api.server.v1.AdminLoginRequest
+	(*AdminLoginResponse)(nil),           // 25: api.server.v1.AdminLoginResponse
+	(*AdminLogoutRequest)(nil),           // 26: api.server.v1.AdminLogoutRequest
+	(*AdminLogoutResponse)(nil),          // 27: api.server.v1.AdminLogoutResponse
+	(*ChallengeRequest)(nil),             // 28: api.server.v1.ChallengeRequest
+	(*Challenge)(nil),                    // 29: api.server.v1.Challenge
+	(*Attachment)(nil),                   // 30: api.server.v1.Attachment
 }
 var file_api_server_v1_admin_proto_depIdxs = []int32{
-	25, // 0: api.server.v1.CreateChallengeRequest.challenge:type_name -> api.server.v1.ChallengeRequest
-	26, // 1: api.server.v1.UpdateChallengeRequest.challenge:type_name -> api.server.v1.Challenge
-	26, // 2: api.server.v1.ListChallengesResponse.challenges:type_name -> api.server.v1.Challenge
-	26, // 3: api.server.v1.GetChallengeResponse.challenge:type_name -> api.server.v1.Challenge
-	12, // 4: api.server.v1.ListBuildLogsResponse.logs:type_name -> api.server.v1.BuildLogSummary
-	27, // 5: api.server.v1.UploadAttachmentResponse.attachment:type_name -> api.server.v1.Attachment
-	0,  // 6: api.server.v1.AdminService.CreateChallenge:input_type -> api.server.v1.CreateChallengeRequest
-	2,  // 7: api.server.v1.AdminService.UpdateChallenge:input_type -> api.server.v1.UpdateChallengeRequest
-	4,  // 8: api.server.v1.AdminService.UploadChallengeImage:input_type -> api.server.v1.UploadChallengeImageRequest
-	6,  // 9: api.server.v1.AdminService.DeleteChallenge:input_type -> api.server.v1.DeleteChallengeRequest
-	8,  // 10: api.server.v1.AdminService.ListChallenges:input_type -> api.server.v1.ListChallengesRequest
-	10, // 11: api.server.v1.AdminService.GetChallenge:input_type -> api.server.v1.GetChallengeRequest
-	13, // 12: api.server.v1.AdminService.ListBuildLogs:input_type -> api.server.v1.ListBuildLogsRequest
-	15, // 13: api.server.v1.AdminService.GetBuildLog:input_type -> api.server.v1.GetBuildLogRequest
-	17, // 14: api.server.v1.AdminService.UploadAttachment:input_type -> api.server.v1.UploadAttachmentRequest
-	19, // 15: api.server.v1.AdminService.DeleteAttachment:input_type -> api.server.v1.DeleteAttachmentRequest
-	21, // 16: api.server.v1.AdminAuthService.AdminLogin:input_type -> api.server.v1.AdminLoginRequest
-	23, // 17: api.server.v1.AdminAuthService.AdminLogout:input_type -> api.server.v1.AdminLogoutRequest
-	1,  // 18: api.server.v1.AdminService.CreateChallenge:output_type -> api.server.v1.CreateChallengeResponse
-	3,  // 19: api.server.v1.AdminService.UpdateChallenge:output_type -> api.server.v1.UpdateChallengeResponse
-	5,  // 20: api.server.v1.AdminService.UploadChallengeImage:output_type -> api.server.v1.UploadChallengeImageResponse
-	7,  // 21: api.server.v1.AdminService.DeleteChallenge:output_type -> api.server.v1.DeleteChallengeResponse
-	9,  // 22: api.server.v1.AdminService.ListChallenges:output_type -> api.server.v1.ListChallengesResponse
-	11, // 23: api.server.v1.AdminService.GetChallenge:output_type -> api.server.v1.GetChallengeResponse
-	14, // 24: api.server.v1.AdminService.ListBuildLogs:output_type -> api.server.v1.ListBuildLogsResponse
-	16, // 25: api.server.v1.AdminService.GetBuildLog:output_type -> api.server.v1.GetBuildLogResponse
-	18, // 26: api.server.v1.AdminService.UploadAttachment:output_type -> api.server.v1.UploadAttachmentResponse
-	20, // 27: api.server.v1.AdminService.DeleteAttachment:output_type -> api.server.v1.DeleteAttachmentResponse
-	22, // 28: api.server.v1.AdminAuthService.AdminLogin:output_type -> api.server.v1.AdminLoginResponse
-	24, // 29: api.server.v1.AdminAuthService.AdminLogout:output_type -> api.server.v1.AdminLogoutResponse
-	18, // [18:30] is the sub-list for method output_type
-	6,  // [6:18] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	28, // 0: api.server.v1.CreateChallengeRequest.challenge:type_name -> api.server.v1.ChallengeRequest
+	29, // 1: api.server.v1.UpdateChallengeRequest.challenge:type_name -> api.server.v1.Challenge
+	29, // 2: api.server.v1.ListChallengesResponse.challenges:type_name -> api.server.v1.Challenge
+	29, // 3: api.server.v1.GetChallengeResponse.challenge:type_name -> api.server.v1.Challenge
+	0,  // 4: api.server.v1.BuildLogSummary.status:type_name -> api.server.v1.BuildStatus
+	13, // 5: api.server.v1.ListBuildLogsResponse.logs:type_name -> api.server.v1.BuildLogSummary
+	0,  // 6: api.server.v1.GetBuildLogResponse.status:type_name -> api.server.v1.BuildStatus
+	0,  // 7: api.server.v1.StreamBuildLogResponse.status:type_name -> api.server.v1.BuildStatus
+	30, // 8: api.server.v1.UploadAttachmentResponse.attachment:type_name -> api.server.v1.Attachment
+	1,  // 9: api.server.v1.AdminService.CreateChallenge:input_type -> api.server.v1.CreateChallengeRequest
+	3,  // 10: api.server.v1.AdminService.UpdateChallenge:input_type -> api.server.v1.UpdateChallengeRequest
+	5,  // 11: api.server.v1.AdminService.UploadChallengeImage:input_type -> api.server.v1.UploadChallengeImageRequest
+	7,  // 12: api.server.v1.AdminService.DeleteChallenge:input_type -> api.server.v1.DeleteChallengeRequest
+	9,  // 13: api.server.v1.AdminService.ListChallenges:input_type -> api.server.v1.ListChallengesRequest
+	11, // 14: api.server.v1.AdminService.GetChallenge:input_type -> api.server.v1.GetChallengeRequest
+	14, // 15: api.server.v1.AdminService.ListBuildLogs:input_type -> api.server.v1.ListBuildLogsRequest
+	16, // 16: api.server.v1.AdminService.GetBuildLog:input_type -> api.server.v1.GetBuildLogRequest
+	18, // 17: api.server.v1.AdminService.StreamBuildLog:input_type -> api.server.v1.StreamBuildLogRequest
+	20, // 18: api.server.v1.AdminService.UploadAttachment:input_type -> api.server.v1.UploadAttachmentRequest
+	22, // 19: api.server.v1.AdminService.DeleteAttachment:input_type -> api.server.v1.DeleteAttachmentRequest
+	24, // 20: api.server.v1.AdminAuthService.AdminLogin:input_type -> api.server.v1.AdminLoginRequest
+	26, // 21: api.server.v1.AdminAuthService.AdminLogout:input_type -> api.server.v1.AdminLogoutRequest
+	2,  // 22: api.server.v1.AdminService.CreateChallenge:output_type -> api.server.v1.CreateChallengeResponse
+	4,  // 23: api.server.v1.AdminService.UpdateChallenge:output_type -> api.server.v1.UpdateChallengeResponse
+	6,  // 24: api.server.v1.AdminService.UploadChallengeImage:output_type -> api.server.v1.UploadChallengeImageResponse
+	8,  // 25: api.server.v1.AdminService.DeleteChallenge:output_type -> api.server.v1.DeleteChallengeResponse
+	10, // 26: api.server.v1.AdminService.ListChallenges:output_type -> api.server.v1.ListChallengesResponse
+	12, // 27: api.server.v1.AdminService.GetChallenge:output_type -> api.server.v1.GetChallengeResponse
+	15, // 28: api.server.v1.AdminService.ListBuildLogs:output_type -> api.server.v1.ListBuildLogsResponse
+	17, // 29: api.server.v1.AdminService.GetBuildLog:output_type -> api.server.v1.GetBuildLogResponse
+	19, // 30: api.server.v1.AdminService.StreamBuildLog:output_type -> api.server.v1.StreamBuildLogResponse
+	21, // 31: api.server.v1.AdminService.UploadAttachment:output_type -> api.server.v1.UploadAttachmentResponse
+	23, // 32: api.server.v1.AdminService.DeleteAttachment:output_type -> api.server.v1.DeleteAttachmentResponse
+	25, // 33: api.server.v1.AdminAuthService.AdminLogin:output_type -> api.server.v1.AdminLoginResponse
+	27, // 34: api.server.v1.AdminAuthService.AdminLogout:output_type -> api.server.v1.AdminLogoutResponse
+	22, // [22:35] is the sub-list for method output_type
+	9,  // [9:22] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_api_server_v1_admin_proto_init() }
@@ -1410,13 +1592,14 @@ func file_api_server_v1_admin_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_server_v1_admin_proto_rawDesc), len(file_api_server_v1_admin_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   25,
+			NumEnums:      1,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
 		GoTypes:           file_api_server_v1_admin_proto_goTypes,
 		DependencyIndexes: file_api_server_v1_admin_proto_depIdxs,
+		EnumInfos:         file_api_server_v1_admin_proto_enumTypes,
 		MessageInfos:      file_api_server_v1_admin_proto_msgTypes,
 	}.Build()
 	File_api_server_v1_admin_proto = out.File
