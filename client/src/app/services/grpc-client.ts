@@ -1,6 +1,6 @@
 import { Client, createClient } from '@connectrpc/connect';
 import { createConnectTransport } from '@connectrpc/connect-web';
-import { UserAuthService } from '../../gen/api/server/v1/client_pb';
+import { ClientChallengeService, UserAuthService } from '../../gen/api/server/v1/client_pb';
 
 const transport = createConnectTransport({
   baseUrl: '/api',
@@ -8,5 +8,10 @@ const transport = createConnectTransport({
 
 export const userAuthClient: Client<typeof UserAuthService> = createClient(
   UserAuthService,
-  transport
-) 
+  transport,
+);
+
+export const challengeClient: Client<typeof ClientChallengeService> = createClient(
+  ClientChallengeService,
+  transport,
+);

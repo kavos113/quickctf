@@ -1,0 +1,65 @@
+<div class="modal-overlay" (click)="onOverlayClick($event)" (keydown.escape)="onClose()" tabindex="0" role="dialog"
+  aria-modal="true">
+  <div class="modal-content">
+    <button class="close-button" (click)="onClose()" aria-label="閉じる">×</button>
+
+    <div class="challenge-header">
+      <span class="challenge-genre">{{ challenge.genre }}</span>
+      <h2 class="challenge-name">{{ challenge.name }}</h2>
+      <div class="challenge-points">{{ challenge.points }} pts</div>
+    </div>
+
+    <div class="challenge-description">
+      <h3>説明</h3>
+      <p>{{ challenge.description }}</p>
+    </div>
+
+    <div class="instance-section">
+      <h3>インスタンス</h3>
+      @if (instanceStatus()) {
+      <div class="instance-status">
+        <span class="status-badge running">実行中</span>
+        <span class="status-info">{{ instanceStatus() }}</span>
+      </div>
+      <button class="instance-button stop" (click)="stopInstance()" [disabled]="isInstanceLoading()">
+        @if (isInstanceLoading()) {
+        停止中...
+        } @else {
+        インスタンスを停止
+        }
+      </button>
+      } @else {
+      <button class="instance-button start" (click)="startInstance()" [disabled]="isInstanceLoading()">
+        @if (isInstanceLoading()) {
+        起動中...
+        } @else {
+        インスタンスを起動
+        }
+      </button>
+      }
+    </div>
+
+    <div class="flag-section">
+      <h3>フラグを提出</h3>
+      @if (submitResult()) {
+      <div class="submit-result" [class.success]="submitResult()?.type === 'success'"
+        [class.error]="submitResult()?.type === 'error'" [class.wrong]="submitResult()?.type === 'wrong'">
+        {{ submitResult()?.message }}
+      </div>
+      }
+      <form (ngSubmit)="submitFlag()">
+        <div class="flag-input-group">
+          <input type="text" placeholder="flag{...}" [value]="flag()" (input)="updateFlag($event)"
+            [disabled]="isSubmitting()" />
+          <button type="submit" [disabled]="isSubmitting() || !flag()">
+            @if (isSubmitting()) {
+            送信中...
+            } @else {
+            提出
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

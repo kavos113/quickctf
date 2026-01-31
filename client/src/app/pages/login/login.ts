@@ -32,7 +32,7 @@ export class LoginComponent {
     this.isLoading.set(false);
 
     if (result.success) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/challenges']);
     } else {
       this.errorMessage.set(result.error || 'ログインに失敗しました');
     }

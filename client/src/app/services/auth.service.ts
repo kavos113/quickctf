@@ -1,5 +1,4 @@
 import { Injectable, signal } from '@angular/core';
-import { LoginRequest, LogoutRequest, RegisterRequest } from '../../gen/api/server/v1/client_pb';
 import { userAuthClient } from './grpc-client';
 
 export interface AuthState {
