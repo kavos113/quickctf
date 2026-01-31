@@ -91,8 +91,30 @@ func (u *ClientChallengeUsecase) StartInstance(ctx context.Context, userID, chal
 	}
 
 	existingInstance, err := u.instanceRepo.FindByUserAndChallenge(ctx, userID, challengeID)
-	if err == nil && existingInstance.Status == "running" {
-		return "", 0, fmt.Errorf("instance already running")
+	if err == nil {
+		if existingInstance.Status == domain.InstanceStatusRunning {
+			return "", 0, fmt.Errorf("instance already running")
+		}
+
+		// 停止中のインスタンスがある場合は再起動
+		if existingInstance.Status == domain.InstanceStatusStopped {
+			ttlSeconds := int64(3600)
+			connInfo, err := u.managerClient.StartInstance(ctx, existingInstance.ImageTag, existingInstance.InstanceID, ttlSeconds)
+			if err != nil {
+				return "", 0, fmt.Errorf("failed to restart instance: %w", err)
+			}
+
+			existingInstance.Status = domain.InstanceStatusRunning
+			existingInstance.Host = connInfo.Host
+			existingInstance.Port = connInfo.Port
+			existingInstance.ExpiresAt = time.Now().Add(time.Duration(ttlSeconds) * time.Second)
+
+			if err := u.instanceRepo.Update(ctx, existingInstance); err != nil {
+				return "", 0, fmt.Errorf("failed to update instance: %w", err)
+			}
+
+			return connInfo.Host, connInfo.Port, nil
+		}
 	}
 
 	instanceID := fmt.Sprintf("%s-%s", userID[:8], uuid.New().String()[:8])
@@ -109,7 +131,7 @@ func (u *ClientChallengeUsecase) StartInstance(ctx context.Context, userID, chal
 		UserID:      userID,
 		ChallengeID: challengeID,
 		ImageTag:    imageTag,
-		Status:      "running",
+		Status:      domain.InstanceStatusRunning,
 		Host:        connInfo.Host,
 		Port:        connInfo.Port,
 		StartedAt:   time.Now(),

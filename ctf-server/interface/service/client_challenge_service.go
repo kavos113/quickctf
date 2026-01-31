@@ -6,6 +6,7 @@ import (
 
 	"connectrpc.com/connect"
 
+	"github.com/kavos113/quickctf/ctf-server/domain"
 	"github.com/kavos113/quickctf/ctf-server/usecase"
 	pb "github.com/kavos113/quickctf/gen/go/api/server/v1"
 	"github.com/kavos113/quickctf/gen/go/api/server/v1/serverv1connect"
@@ -136,15 +137,13 @@ func (s *ClientChallengeService) GetInstanceStatus(ctx context.Context, req *con
 		}), nil
 	}
 
-	log.Printf("status: %s, host: %s, port: %d", status, host, port)
-
 	var pbStatus pb.GetInstanceStatusResponse_Status
 	switch status {
-	case "STATUS_RUNNING":
+	case domain.InstanceStatusRunning:
 		pbStatus = pb.GetInstanceStatusResponse_STATUS_RUNNING
-	case "STATUS_STOPPED":
+	case domain.InstanceStatusStopped:
 		pbStatus = pb.GetInstanceStatusResponse_STATUS_STOPPED
-	case "STATUS_DESTROYED":
+	case domain.InstanceStatusDestroyed:
 		pbStatus = pb.GetInstanceStatusResponse_STATUS_DESTROYED
 	default:
 		pbStatus = pb.GetInstanceStatusResponse_STATUS_UNSPECIFIED
