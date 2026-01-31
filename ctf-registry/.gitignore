@@ -34,3 +34,4 @@ go.work.sum
 data/
 *.log
 *.db
+ctf-registry

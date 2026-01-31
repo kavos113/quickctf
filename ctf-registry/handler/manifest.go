@@ -52,7 +52,7 @@ func (h *ManifestHandler) PutManifests(c echo.Context) error {
 				return c.String(http.StatusBadRequest, "invalid digest")
 			}
 
-			exist, err := h.bs.IsExistBlob(name, desc.Digest)
+			exist, err := h.ms.IsExistBlob(name, desc.Digest)
 			if err != nil {
 				return c.NoContent(http.StatusInternalServerError)
 			}
@@ -64,7 +64,12 @@ func (h *ManifestHandler) PutManifests(c echo.Context) error {
 
 	d := digest.FromBytes(payload)
 
-	if err := h.bs.SaveBlob(name, d, payload); err != nil {
+	if err := h.bs.SaveBlob(d, payload); err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	// Associate manifest blob with repository
+	if err := h.ms.AddBlob(name, d); err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
@@ -125,7 +130,16 @@ func (h *ManifestHandler) GetManifests(c echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	rawManifest, err := h.bs.ReadBlob(name, d)
+	// Check if manifest is associated with this repository
+	exists, err := h.ms.IsExistBlob(name, d)
+	if err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+	if !exists {
+		return c.NoContent(http.StatusNotFound)
+	}
+
+	rawManifest, err := h.bs.ReadBlob(d)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			return c.NoContent(http.StatusNotFound)
@@ -165,13 +179,17 @@ func (h *ManifestHandler) DeleteManifests(c echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	err = h.bs.DeleteBlob(name, d)
+	// Delete association from store
+	err = h.ms.DeleteBlob(name, d)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			return c.NoContent(http.StatusNotFound)
 		}
 		return c.NoContent(http.StatusInternalServerError)
 	}
+
+	// Note: We don't delete the actual blob from storage here
+	// as it may be referenced by other repositories.
 
 	return c.NoContent(http.StatusAccepted)
 }

@@ -3,10 +3,15 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/kavos113/quickctf/ctf-registry/handler"
+	"github.com/kavos113/quickctf/ctf-registry/storage"
 	"github.com/kavos113/quickctf/ctf-registry/storage/filesystem"
+	"github.com/kavos113/quickctf/ctf-registry/storage/s3"
+	"github.com/kavos113/quickctf/ctf-registry/store"
 	"github.com/kavos113/quickctf/ctf-registry/store/boltstore"
+	"github.com/kavos113/quickctf/ctf-registry/store/dynamostore"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -31,11 +36,32 @@ func main() {
 		},
 	}))
 
-	fs := filesystem.NewStorage()
-	ss := boltstore.NewStore()
+	// Select storage backend based on environment variable
+	var fs storage.Storage
+	storageBackend := os.Getenv("STORAGE_BACKEND")
+	switch storageBackend {
+	case "s3":
+		log.Println("Using S3 storage backend")
+		fs = s3.NewStorage()
+	default:
+		log.Println("Using filesystem storage backend")
+		fs = filesystem.NewStorage()
+	}
 
-	bh := handler.NewBlobHandler(fs)
-	buh := handler.NewBlobUploadHandler(fs)
+	// Select store backend based on environment variable
+	var ss store.Store
+	storeBackend := os.Getenv("STORE_BACKEND")
+	switch storeBackend {
+	case "dynamodb":
+		log.Println("Using DynamoDB store backend")
+		ss = dynamostore.NewStore()
+	default:
+		log.Println("Using BoltDB store backend")
+		ss = boltstore.NewStore()
+	}
+
+	bh := handler.NewBlobHandler(fs, ss)
+	buh := handler.NewBlobUploadHandler(fs, ss)
 	mh := handler.NewManifestHandler(fs, ss)
 	th := handler.NewTagHandler(ss)
 

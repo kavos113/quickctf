@@ -10,16 +10,18 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/kavos113/quickctf/ctf-registry/storage"
+	"github.com/kavos113/quickctf/ctf-registry/store"
 	"github.com/labstack/echo/v4"
 	"github.com/opencontainers/go-digest"
 )
 
 type BlobUploadHandler struct {
 	bs storage.Storage
+	ms store.Store
 }
 
-func NewBlobUploadHandler(s storage.Storage) *BlobUploadHandler {
-	return &BlobUploadHandler{bs: s}
+func NewBlobUploadHandler(s storage.Storage, ms store.Store) *BlobUploadHandler {
+	return &BlobUploadHandler{bs: s, ms: ms}
 }
 
 func (h *BlobUploadHandler) GetBlobUploads(c echo.Context) error {
@@ -59,11 +61,16 @@ func (h *BlobUploadHandler) PostBlobUploads(c echo.Context) error {
 			return c.NoContent(http.StatusInternalServerError)
 		}
 
-		err = h.bs.CommitBlob(name, id.String(), d)
+		err = h.bs.CommitBlob(id.String(), d)
 		if err != nil {
 			if errors.Is(err, storage.ErrNotVerified) {
 				return c.NoContent(http.StatusBadRequest)
 			}
+			return c.NoContent(http.StatusInternalServerError)
+		}
+
+		// Associate blob with repository
+		if err := h.ms.AddBlob(name, d); err != nil {
 			return c.NoContent(http.StatusInternalServerError)
 		}
 
@@ -73,23 +80,58 @@ func (h *BlobUploadHandler) PostBlobUploads(c echo.Context) error {
 
 	mount := c.QueryParam("mount")
 	from := c.QueryParam("from")
+
+	// mount with from parameter - cross-repo mount
 	if mount != "" && from != "" {
-		// mount from another repository
 		md, err := digest.Parse(mount)
 		if err != nil {
 			return c.NoContent(http.StatusBadRequest)
 		}
 
-		if err := h.bs.LinkBlob(name, from, md); err != nil {
-			if errors.Is(err, storage.ErrNotFound) {
-				c.Response().Header().Set(echo.HeaderLocation, fmt.Sprintf("/v2/%s/blobs/uploads/%s", name, id.String()))
-				return c.NoContent(http.StatusAccepted)
-			}
+		// Check if blob exists in source repository
+		exists, err := h.ms.IsExistBlob(from, md)
+		if err != nil {
+			return c.NoContent(http.StatusInternalServerError)
+		}
+		if !exists {
+			// Blob not found in source repo, start regular upload
+			c.Response().Header().Set(echo.HeaderLocation, fmt.Sprintf("/v2/%s/blobs/uploads/%s", name, id.String()))
+			return c.NoContent(http.StatusAccepted)
+		}
+
+		// Link blob to new repository
+		if err := h.ms.LinkBlob(name, md); err != nil {
 			return c.NoContent(http.StatusInternalServerError)
 		}
 
 		c.Response().Header().Set(echo.HeaderLocation, fmt.Sprintf("/v2/%s/blobs/%s", name, md.String()))
 		return c.NoContent(http.StatusCreated)
+	}
+
+	// mount without from parameter - automatic content discovery
+	if mount != "" {
+		md, err := digest.Parse(mount)
+		if err != nil {
+			return c.NoContent(http.StatusBadRequest)
+		}
+
+		// Check if blob exists in storage (automatic content discovery)
+		exists, err := h.bs.IsExistBlob(md)
+		if err != nil {
+			return c.NoContent(http.StatusInternalServerError)
+		}
+		if exists {
+			// Blob exists, link to new repository
+			if err := h.ms.LinkBlob(name, md); err != nil {
+				return c.NoContent(http.StatusInternalServerError)
+			}
+			c.Response().Header().Set(echo.HeaderLocation, fmt.Sprintf("/v2/%s/blobs/%s", name, md.String()))
+			return c.NoContent(http.StatusCreated)
+		}
+
+		// Blob not found, start regular upload
+		c.Response().Header().Set(echo.HeaderLocation, fmt.Sprintf("/v2/%s/blobs/uploads/%s", name, id.String()))
+		return c.NoContent(http.StatusAccepted)
 	}
 
 	c.Response().Header().Set(echo.HeaderLocation, fmt.Sprintf("/v2/%s/blobs/uploads/%s", name, id.String()))
@@ -166,11 +208,16 @@ func (h *BlobUploadHandler) PutBlobUpload(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	err = h.bs.CommitBlob(name, reference, d)
+	err = h.bs.CommitBlob(reference, d)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotVerified) {
 			return c.NoContent(http.StatusBadRequest)
 		}
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	// Associate blob with repository
+	if err := h.ms.AddBlob(name, d); err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 

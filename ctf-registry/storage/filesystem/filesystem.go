@@ -74,7 +74,7 @@ func (s *Storage) UploadBlob(id string, r io.Reader) (int64, error) {
 	return stat.Size(), nil
 }
 
-func (s *Storage) CommitBlob(repoName string, id string, d digest.Digest) error {
+func (s *Storage) CommitBlob(id string, d digest.Digest) error {
 	tmpPath := filepath.Join(uploadDir, id)
 	tmpFile, err := os.Open(tmpPath)
 	if err != nil {
@@ -94,11 +94,14 @@ func (s *Storage) CommitBlob(repoName string, id string, d digest.Digest) error 
 		return storage.ErrNotVerified
 	}
 
-	if err = os.MkdirAll(filepath.Join(blobDir, repoName), 0755); err != nil {
-		return fmt.Errorf("failed to create blob dir: %w", storage.ErrStorageFail)
+	blobPath := filepath.Join(blobDir, d.String())
+
+	// If blob already exists, just delete the upload file
+	if _, err := os.Stat(blobPath); err == nil {
+		_ = os.Remove(tmpPath)
+		return nil
 	}
 
-	blobPath := filepath.Join(blobDir, repoName, d.String())
 	if err := os.Rename(tmpPath, blobPath); err != nil {
 		log.Printf("failed to store blob %s: %+v", blobPath, err)
 		return fmt.Errorf("failed to store blob: %w", storage.ErrStorageFail)
@@ -107,35 +110,37 @@ func (s *Storage) CommitBlob(repoName string, id string, d digest.Digest) error 
 	return nil
 }
 
-func (s *Storage) SaveBlob(repoName string, d digest.Digest, data []byte) error {
-	if err := os.MkdirAll(filepath.Join(blobDir, repoName), 0755); err != nil {
-		return fmt.Errorf("failed to create blob dir: %w", storage.ErrStorageFail)
+func (s *Storage) SaveBlob(d digest.Digest, data []byte) error {
+	blobPath := filepath.Join(blobDir, d.String())
+
+	// If blob already exists, skip
+	if _, err := os.Stat(blobPath); err == nil {
+		return nil
 	}
 
-	manifestPath := filepath.Join(blobDir, repoName, d.String())
-	if err := os.WriteFile(manifestPath, data, 0644); err != nil {
-		return fmt.Errorf("failed to store manifest: %w", storage.ErrStorageFail)
+	if err := os.WriteFile(blobPath, data, 0644); err != nil {
+		return fmt.Errorf("failed to store blob: %w", storage.ErrStorageFail)
 	}
 
 	return nil
 }
 
-func (s *Storage) ReadBlob(repoName string, d digest.Digest) ([]byte, error) {
-	blobPath := filepath.Join(blobDir, repoName, d.String())
+func (s *Storage) ReadBlob(d digest.Digest) ([]byte, error) {
+	blobPath := filepath.Join(blobDir, d.String())
 	data, err := os.ReadFile(blobPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return []byte{}, storage.ErrNotFound
 		}
 
-		return []byte{}, fmt.Errorf("failed to read manifest file: %w", storage.ErrStorageFail)
+		return []byte{}, fmt.Errorf("failed to read blob file: %w", storage.ErrStorageFail)
 	}
 
 	return data, nil
 }
 
-func (s *Storage) ReadBlobToWriter(repoName string, d digest.Digest, w io.Writer) (int64, error) {
-	blobPath := filepath.Join(blobDir, repoName, d.String())
+func (s *Storage) ReadBlobToWriter(d digest.Digest, w io.Writer) (int64, error) {
+	blobPath := filepath.Join(blobDir, d.String())
 	st, err := os.Stat(blobPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -146,7 +151,7 @@ func (s *Storage) ReadBlobToWriter(repoName string, d digest.Digest, w io.Writer
 
 	f, err := os.Open(blobPath)
 	if err != nil {
-		return 0, fmt.Errorf("failed to open upload file: %w", storage.ErrStorageFail)
+		return 0, fmt.Errorf("failed to open blob file: %w", storage.ErrStorageFail)
 	}
 	defer f.Close()
 
@@ -165,8 +170,8 @@ func (s *Storage) ReadBlobToWriter(repoName string, d digest.Digest, w io.Writer
 	return st.Size(), nil
 }
 
-func (s *Storage) IsExistBlob(repoName string, d digest.Digest) (bool, error) {
-	path := filepath.Join(blobDir, repoName, d.String())
+func (s *Storage) IsExistBlob(d digest.Digest) (bool, error) {
+	path := filepath.Join(blobDir, d.String())
 	if _, err := os.Stat(path); err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
@@ -176,37 +181,13 @@ func (s *Storage) IsExistBlob(repoName string, d digest.Digest) (bool, error) {
 	return true, nil
 }
 
-func (s *Storage) DeleteBlob(repoName string, d digest.Digest) error {
-	path := filepath.Join(blobDir, repoName, d.String())
+func (s *Storage) DeleteBlob(d digest.Digest) error {
+	path := filepath.Join(blobDir, d.String())
 	if err := os.Remove(path); err != nil {
 		if os.IsNotExist(err) {
 			return storage.ErrNotFound
 		}
 		return fmt.Errorf("failed to remove blob: %w", storage.ErrStorageFail)
 	}
-	return nil
-}
-
-func (s *Storage) LinkBlob(newRepo string, repo string, d digest.Digest) error {
-	oldPath := filepath.Join(blobDir, repo, d.String())
-	newPath := filepath.Join(blobDir, newRepo, d.String())
-	if _, err := os.Stat(oldPath); err != nil {
-		if os.IsNotExist(err) {
-			return storage.ErrNotFound
-		}
-		return fmt.Errorf("failed to stat blob: %w", storage.ErrStorageFail)
-	}
-
-	if err := os.MkdirAll(filepath.Dir(newPath), 0755); err != nil {
-		return fmt.Errorf("failed to create repository: %w", storage.ErrStorageFail)
-	}
-
-	if err := os.Link(oldPath, newPath); err != nil {
-		if os.IsExist(err) {
-			return nil
-		}
-		return fmt.Errorf("failed to create hard link: %w", storage.ErrStorageFail)
-	}
-
 	return nil
 }

@@ -6,16 +6,18 @@ import (
 	"strconv"
 
 	"github.com/kavos113/quickctf/ctf-registry/storage"
+	"github.com/kavos113/quickctf/ctf-registry/store"
 	"github.com/labstack/echo/v4"
 	"github.com/opencontainers/go-digest"
 )
 
 type BlobHandler struct {
 	bs storage.Storage
+	ms store.Store
 }
 
-func NewBlobHandler(s storage.Storage) *BlobHandler {
-	return &BlobHandler{bs: s}
+func NewBlobHandler(s storage.Storage, ms store.Store) *BlobHandler {
+	return &BlobHandler{bs: s, ms: ms}
 }
 
 func (h *BlobHandler) GetBlobs(c echo.Context) error {
@@ -27,7 +29,16 @@ func (h *BlobHandler) GetBlobs(c echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	size, err := h.bs.ReadBlobToWriter(name, d, c.Response().Writer)
+	// Check if blob is associated with this repository
+	exists, err := h.ms.IsExistBlob(name, d)
+	if err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+	if !exists {
+		return c.NoContent(http.StatusNotFound)
+	}
+
+	size, err := h.bs.ReadBlobToWriter(d, c.Response().Writer)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			return c.NoContent(http.StatusNotFound)
@@ -54,13 +65,18 @@ func (h *BlobHandler) DeleteBlob(c echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	err = h.bs.DeleteBlob(name, d)
+	// Delete association from store
+	err = h.ms.DeleteBlob(name, d)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			return c.NoContent(http.StatusNotFound)
 		}
 		return c.NoContent(http.StatusInternalServerError)
 	}
+
+	// Note: We don't delete the actual blob from storage here
+	// as it may be referenced by other repositories.
+	// A garbage collection process should handle orphaned blobs.
 
 	return c.NoContent(http.StatusAccepted)
 }

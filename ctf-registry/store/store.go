@@ -16,6 +16,10 @@ type Store interface {
 	AddReference(repoName string, d digest.Digest, desc manifest.Descriptor) error
 	GetReferences(repoName string, d digest.Digest, artifactType string) ([]manifest.Descriptor, error)
 
+	// Blob-Repository association
 	AddBlob(repoName string, d digest.Digest) error
 	DeleteBlob(repoName string, d digest.Digest) error
+	IsExistBlob(repoName string, d digest.Digest) (bool, error)
+	// LinkBlob associates an existing blob with a new repository (for cross-repo mount)
+	LinkBlob(newRepo string, d digest.Digest) error
 }

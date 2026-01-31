@@ -226,3 +226,26 @@ func (s Storage) DeleteBlob(repoName string, d digest.Digest) error {
 		return nil
 	})
 }
+
+func (s Storage) IsExistBlob(repoName string, d digest.Digest) (bool, error) {
+	var exists bool
+	err := s.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucketNameRepository)
+		key := []byte(fmt.Sprintf("%s@%s", repoName, d.String()))
+		v := b.Get(key)
+		exists = v != nil
+		return nil
+	})
+	if err != nil {
+		return false, fmt.Errorf("failed to check blob: %w", storage.ErrStorageFail)
+	}
+	return exists, nil
+}
+
+func (s Storage) LinkBlob(newRepo string, d digest.Digest) error {
+	return s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucketNameRepository)
+		key := []byte(fmt.Sprintf("%s@%s", newRepo, d.String()))
+		return b.Put(key, []byte{1})
+	})
+}
