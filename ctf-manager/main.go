@@ -19,6 +19,7 @@ import (
 	"github.com/kavos113/quickctf/ctf-manager/repository"
 	"github.com/kavos113/quickctf/ctf-manager/service"
 	pb "github.com/kavos113/quickctf/gen/go/api/manager/v1"
+	"github.com/kavos113/quickctf/lib/logger"
 )
 
 func main() {
@@ -57,14 +58,12 @@ func main() {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPassword, dbHost, dbPort, dbName)
 
-	// データベース接続
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 	defer db.Close()
 
-	// 接続確認
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -74,16 +73,13 @@ func main() {
 
 	log.Printf("Connected to database: %s", dbName)
 
-	// リポジトリ初期化
 	repo := repository.NewMySQLInstanceRepository(db)
 
-	// スキーマファイルのパス
 	schemaPath := os.Getenv("SCHEMA_PATH")
 	if schemaPath == "" {
 		schemaPath = "../migration/ctf_manager_schema.sql"
 	}
 
-	// テーブルスキーマ初期化
 	if err := repo.InitSchemaFromFile(ctx, schemaPath); err != nil {
 		log.Fatalf("failed to initialize schema: %v", err)
 	}
@@ -97,7 +93,16 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	loggingInterceptor := logger.NewLoggingInterceptor("ctf-manager")
+
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			loggingInterceptor.Unary(),
+		),
+		grpc.ChainStreamInterceptor(
+			loggingInterceptor.Stream(),
+		),
+	)
 
 	managerService, err := service.NewManagerService(runnerURLs, repo)
 	if err != nil {

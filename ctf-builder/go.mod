@@ -4,6 +4,7 @@ go 1.25.6
 
 require (
 	github.com/kavos113/quickctf/gen v0.0.0
+	github.com/kavos113/quickctf/lib v0.0.0-00010101000000-000000000000
 	github.com/moby/moby/client v0.2.2
 	google.golang.org/grpc v1.78.0
 )
@@ -34,4 +35,7 @@ require (
 	google.golang.org/protobuf v1.36.11 // indirect
 )
 
-replace github.com/kavos113/quickctf/gen => ../gen
+replace (
+	github.com/kavos113/quickctf/gen => ../gen
+	github.com/kavos113/quickctf/lib => ../lib
+)

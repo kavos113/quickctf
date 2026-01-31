@@ -18,6 +18,7 @@ import (
 	"github.com/kavos113/quickctf/ctf-server/interface/service"
 	"github.com/kavos113/quickctf/ctf-server/usecase"
 	pb "github.com/kavos113/quickctf/gen/go/api/server/v1"
+	"github.com/kavos113/quickctf/lib/logger"
 )
 
 func main() {
@@ -68,7 +69,7 @@ func main() {
 	clientChallengeService := service.NewClientChallengeService(clientChallengeUsecase)
 
 	authInterceptor := middleware.NewAuthInterceptor(sessionRepo)
-	loggingInterceptor := middleware.NewLoggingInterceptor()
+	loggingInterceptor := logger.NewLoggingInterceptor("ctf-server")
 
 	log.Printf("CTF server starting on port %s", port)
 
@@ -79,8 +80,8 @@ func main() {
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			loggingInterceptor.Unary(),
 			authInterceptor.Unary(),
+			loggingInterceptor.Unary(),
 		),
 		grpc.ChainStreamInterceptor(
 			loggingInterceptor.Stream(),

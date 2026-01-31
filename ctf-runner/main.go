@@ -13,6 +13,7 @@ import (
 
 	"github.com/kavos113/quickctf/ctf-runner/service"
 	pb "github.com/kavos113/quickctf/gen/go/api/runner/v1"
+	"github.com/kavos113/quickctf/lib/logger"
 )
 
 func main() {
@@ -33,7 +34,16 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	loggingInterceptor := logger.NewLoggingInterceptor("ctf-runner")
+
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			loggingInterceptor.Unary(),
+		),
+		grpc.ChainStreamInterceptor(
+			loggingInterceptor.Stream(),
+		),
+	)
 
 	runnerService := service.NewRunnerService(registryURL)
 	pb.RegisterRunnerServiceServer(grpcServer, runnerService)

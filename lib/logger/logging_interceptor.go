@@ -1,8 +1,9 @@
-package middleware
+package logger
 
 import (
 	"context"
-	"log"
+	"log/slog"
+	"os"
 	"time"
 
 	"google.golang.org/grpc"
@@ -12,13 +13,17 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type LoggingInterceptor struct{}
+type LoggingInterceptor struct{
+	service string
+}
 
-func NewLoggingInterceptor() *LoggingInterceptor {
-	return &LoggingInterceptor{}
+func NewLoggingInterceptor(service string) *LoggingInterceptor {
+	return &LoggingInterceptor{service: service}
 }
 
 func (l *LoggingInterceptor) Unary() grpc.UnaryServerInterceptor {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
 	return func(
 		ctx context.Context,
 		req interface{},
@@ -29,12 +34,6 @@ func (l *LoggingInterceptor) Unary() grpc.UnaryServerInterceptor {
 
 		clientIP := getClientIP(ctx)
 		userAgent := getUserAgent(ctx)
-
-		log.Printf("[gRPC] --> %s | client=%s | user-agent=%s",
-			info.FullMethod,
-			clientIP,
-			userAgent,
-		)
 
 		resp, err := handler(ctx, req)
 
@@ -48,18 +47,25 @@ func (l *LoggingInterceptor) Unary() grpc.UnaryServerInterceptor {
 			}
 		}
 
-		log.Printf("[gRPC] <-- %s | status=%s | duration=%v | client=%s",
-			info.FullMethod,
-			statusCode.String(),
-			duration,
-			clientIP,
-		)
+		attrs := []any{
+			slog.String("service", l.service),
+			slog.String("method", info.FullMethod),
+			slog.String("client_ip", clientIP),
+			slog.String("user_agent", userAgent),
+			slog.Time("start_time", start),
+			slog.Duration("duration", duration),
+			slog.String("status_code", statusCode.String()),
+			slog.Any("response", resp),
+		}
+		logger.Info("gRPC Unary Call", attrs...)
 
 		return resp, err
 	}
 }
 
 func (l *LoggingInterceptor) Stream() grpc.StreamServerInterceptor {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
 	return func(
 		srv interface{},
 		ss grpc.ServerStream,
@@ -71,12 +77,6 @@ func (l *LoggingInterceptor) Stream() grpc.StreamServerInterceptor {
 		ctx := ss.Context()
 		clientIP := getClientIP(ctx)
 		userAgent := getUserAgent(ctx)
-
-		log.Printf("[gRPC Stream] --> %s | client=%s | user-agent=%s",
-			info.FullMethod,
-			clientIP,
-			userAgent,
-		)
 
 		err := handler(srv, ss)
 
@@ -90,12 +90,16 @@ func (l *LoggingInterceptor) Stream() grpc.StreamServerInterceptor {
 			}
 		}
 
-		log.Printf("[gRPC Stream] <-- %s | status=%s | duration=%v | client=%s",
-			info.FullMethod,
-			statusCode.String(),
-			duration,
-			clientIP,
-		)
+		attrs := []any{
+			slog.String("service", l.service),
+			slog.String("method", info.FullMethod),
+			slog.String("client_ip", clientIP),
+			slog.String("user_agent", userAgent),
+			slog.Time("start_time", start),
+			slog.Duration("duration", duration),
+			slog.String("status_code", statusCode.String()),
+		}
+		logger.Info("gRPC Stream Call", attrs...)
 
 		return err
 	}

@@ -13,6 +13,7 @@ import (
 
 	"github.com/kavos113/quickctf/ctf-builder/service"
 	pb "github.com/kavos113/quickctf/gen/go/api/builder/v1"
+	"github.com/kavos113/quickctf/lib/logger"
 )
 
 func main() {
@@ -33,7 +34,16 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	loggingInterceptor := logger.NewLoggingInterceptor("ctf-builder")
+
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			loggingInterceptor.Unary(),
+		),
+		grpc.ChainStreamInterceptor(
+			loggingInterceptor.Stream(),
+		),
+	)
 
 	builderService := service.NewBuilderService()
 	pb.RegisterBuilderServiceServer(grpcServer, builderService)
