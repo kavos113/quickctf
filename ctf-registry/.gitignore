@@ -35,3 +35,4 @@ data/
 *.log
 *.db
 ctf-registry
+report.html
