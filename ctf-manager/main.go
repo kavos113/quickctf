@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"net"
@@ -10,7 +8,6 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc"
@@ -34,54 +31,17 @@ func main() {
 	}
 	runnerURLs := strings.Split(runnersEnv, ",")
 
-	// データベース接続設定
-	dbHost := os.Getenv("DB_HOST")
-	if dbHost == "" {
-		dbHost = "localhost"
-	}
-	dbPort := os.Getenv("DB_PORT")
-	if dbPort == "" {
-		dbPort = "3306"
-	}
-	dbUser := os.Getenv("DB_USER")
-	if dbUser == "" {
-		dbUser = "root"
-	}
-	dbPassword := os.Getenv("DB_PASSWORD")
-	if dbPassword == "" {
-		dbPassword = "password"
-	}
-	dbName := os.Getenv("DB_NAME")
-	if dbName == "" {
-		dbName = "ctf_manager_db"
-	}
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPassword, dbHost, dbPort, dbName)
-
-	db, err := sql.Open("mysql", dsn)
+	db, err := repository.Connect(repository.NewConfigFromEnv())
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 	defer db.Close()
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := db.PingContext(ctx); err != nil {
-		log.Fatalf("failed to ping database: %v", err)
-	}
-
-	log.Printf("Connected to database: %s", dbName)
 
 	repo := repository.NewMySQLInstanceRepository(db)
 
 	schemaPath := os.Getenv("SCHEMA_PATH")
 	if schemaPath == "" {
 		schemaPath = "../migration/ctf_manager_schema.sql"
-	}
-
-	if err := repo.InitSchemaFromFile(ctx, schemaPath); err != nil {
-		log.Fatalf("failed to initialize schema: %v", err)
 	}
 
 	log.Printf("Schema initialized from: %s", schemaPath)

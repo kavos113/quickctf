@@ -3,9 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/kavos113/quickctf/ctf-manager/domain"
@@ -26,7 +23,7 @@ func (r *MySQLInstanceRepository) Create(ctx context.Context, instance *domain.I
 		INSERT INTO instances (instance_id, image_tag, runner_url, host, port, state, ttl_seconds, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
-	
+
 	_, err := r.db.ExecContext(ctx, query,
 		instance.InstanceID,
 		instance.ImageTag,
@@ -38,11 +35,11 @@ func (r *MySQLInstanceRepository) Create(ctx context.Context, instance *domain.I
 		instance.CreatedAt,
 		instance.UpdatedAt,
 	)
-	
+
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -52,10 +49,10 @@ func (r *MySQLInstanceRepository) FindByID(ctx context.Context, instanceID strin
 		FROM instances
 		WHERE instance_id = ?
 	`
-	
+
 	var instance domain.Instance
 	var ttlSeconds int64
-	
+
 	err := r.db.QueryRowContext(ctx, query, instanceID).Scan(
 		&instance.InstanceID,
 		&instance.ImageTag,
@@ -67,16 +64,16 @@ func (r *MySQLInstanceRepository) FindByID(ctx context.Context, instanceID strin
 		&instance.CreatedAt,
 		&instance.UpdatedAt,
 	)
-	
+
 	if err == sql.ErrNoRows {
 		return nil, domain.ErrInstanceNotFound
 	}
 	if err != nil {
 		return nil, err
 	}
-	
+
 	instance.TTL = time.Duration(ttlSeconds) * time.Second
-	
+
 	return &instance, nil
 }
 
@@ -86,7 +83,7 @@ func (r *MySQLInstanceRepository) Update(ctx context.Context, instance *domain.I
 		SET image_tag = ?, runner_url = ?, host = ?, port = ?, state = ?, ttl_seconds = ?, updated_at = ?
 		WHERE instance_id = ?
 	`
-	
+
 	result, err := r.db.ExecContext(ctx, query,
 		instance.ImageTag,
 		instance.RunnerURL,
@@ -97,40 +94,40 @@ func (r *MySQLInstanceRepository) Update(ctx context.Context, instance *domain.I
 		instance.UpdatedAt,
 		instance.InstanceID,
 	)
-	
+
 	if err != nil {
 		return err
 	}
-	
+
 	rows, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-	
+
 	if rows == 0 {
 		return domain.ErrInstanceNotFound
 	}
-	
+
 	return nil
 }
 
 func (r *MySQLInstanceRepository) Delete(ctx context.Context, instanceID string) error {
 	query := `DELETE FROM instances WHERE instance_id = ?`
-	
+
 	result, err := r.db.ExecContext(ctx, query, instanceID)
 	if err != nil {
 		return err
 	}
-	
+
 	rows, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-	
+
 	if rows == 0 {
 		return domain.ErrInstanceNotFound
 	}
-	
+
 	return nil
 }
 
@@ -140,18 +137,18 @@ func (r *MySQLInstanceRepository) FindAll(ctx context.Context) ([]*domain.Instan
 		FROM instances
 		ORDER BY created_at DESC
 	`
-	
+
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	var instances []*domain.Instance
 	for rows.Next() {
 		var instance domain.Instance
 		var ttlSeconds int64
-		
+
 		err := rows.Scan(
 			&instance.InstanceID,
 			&instance.ImageTag,
@@ -166,15 +163,15 @@ func (r *MySQLInstanceRepository) FindAll(ctx context.Context) ([]*domain.Instan
 		if err != nil {
 			return nil, err
 		}
-		
+
 		instance.TTL = time.Duration(ttlSeconds) * time.Second
 		instances = append(instances, &instance)
 	}
-	
+
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	
+
 	return instances, nil
 }
 
@@ -185,18 +182,18 @@ func (r *MySQLInstanceRepository) FindByRunnerURL(ctx context.Context, runnerURL
 		WHERE runner_url = ?
 		ORDER BY created_at DESC
 	`
-	
+
 	rows, err := r.db.QueryContext(ctx, query, runnerURL)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	var instances []*domain.Instance
 	for rows.Next() {
 		var instance domain.Instance
 		var ttlSeconds int64
-		
+
 		err := rows.Scan(
 			&instance.InstanceID,
 			&instance.ImageTag,
@@ -211,15 +208,15 @@ func (r *MySQLInstanceRepository) FindByRunnerURL(ctx context.Context, runnerURL
 		if err != nil {
 			return nil, err
 		}
-		
+
 		instance.TTL = time.Duration(ttlSeconds) * time.Second
 		instances = append(instances, &instance)
 	}
-	
+
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	
+
 	return instances, nil
 }
 
@@ -230,18 +227,18 @@ func (r *MySQLInstanceRepository) FindExpired(ctx context.Context) ([]*domain.In
 		WHERE ttl_seconds > 0 AND TIMESTAMPDIFF(SECOND, created_at, NOW()) > ttl_seconds
 		ORDER BY created_at ASC
 	`
-	
+
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	var instances []*domain.Instance
 	for rows.Next() {
 		var instance domain.Instance
 		var ttlSeconds int64
-		
+
 		err := rows.Scan(
 			&instance.InstanceID,
 			&instance.ImageTag,
@@ -256,37 +253,14 @@ func (r *MySQLInstanceRepository) FindExpired(ctx context.Context) ([]*domain.In
 		if err != nil {
 			return nil, err
 		}
-		
+
 		instance.TTL = time.Duration(ttlSeconds) * time.Second
 		instances = append(instances, &instance)
 	}
-	
+
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	
-	return instances, nil
-}
 
-// InitSchemaFromFile はSQLファイルからテーブルスキーマを初期化
-func (r *MySQLInstanceRepository) InitSchemaFromFile(ctx context.Context, schemaPath string) error {
-	schemaSQL, err := os.ReadFile(schemaPath)
-	if err != nil {
-		return fmt.Errorf("failed to read schema file: %w", err)
-	}
-	
-	// セミコロンで分割して複数のステートメントを実行
-	statements := strings.Split(string(schemaSQL), ";")
-	for _, stmt := range statements {
-		stmt = strings.TrimSpace(stmt)
-		if stmt == "" || strings.HasPrefix(stmt, "--") {
-			continue
-		}
-		
-		if _, err := r.db.ExecContext(ctx, stmt); err != nil {
-			return fmt.Errorf("failed to execute statement: %w", err)
-		}
-	}
-	
-	return nil
+	return instances, nil
 }

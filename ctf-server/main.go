@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
@@ -22,8 +21,6 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
-
 	port := os.Getenv("SERVER_PORT")
 	if port == "" {
 		port = "50060"
@@ -35,10 +32,6 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 	defer db.Close()
-
-	if err := repository.InitSchema(ctx, db, dbConfig.SchemaPath); err != nil {
-		log.Fatalf("failed to initialize schema: %v", err)
-	}
 
 	userRepo := repository.NewMySQLUserRepository(db)
 	sessionRepo := repository.NewMySQLSessionRepository(db)

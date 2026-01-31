@@ -8,8 +8,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 type Config struct {
@@ -27,8 +25,8 @@ func NewConfigFromEnv() *Config {
 		Port:       getEnv("DB_PORT", "3306"),
 		User:       getEnv("DB_USER", "root"),
 		Password:   getEnv("DB_PASSWORD", "password"),
-		Database:   getEnv("DB_NAME", "ctf_server_db"),
-		SchemaPath: getEnv("SCHEMA_PATH", "../migration/ctf_server_schema.sql"),
+		Database:   getEnv("DB_NAME", "ctf_manager_db"),
+		SchemaPath: getEnv("SCHEMA_PATH", "../migration/ctf_manager_schema.sql"),
 	}
 	return config
 }
