@@ -53,7 +53,13 @@ message GetInstanceStatusRequest {
 }
 
 message GetInstanceStatusResponse {
-  string status = 1;
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_RUNNING = 1;
+    STATUS_STOPPED = 2;
+    STATUS_DESTROYED = 3;
+  }
+  Status status = 1;
   string host = 2;
   int32 port = 3;
   string error_message = 4;

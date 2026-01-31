@@ -21,6 +21,58 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type GetInstanceStatusResponse_Status int32
+
+const (
+	GetInstanceStatusResponse_STATUS_UNSPECIFIED GetInstanceStatusResponse_Status = 0
+	GetInstanceStatusResponse_STATUS_RUNNING     GetInstanceStatusResponse_Status = 1
+	GetInstanceStatusResponse_STATUS_STOPPED     GetInstanceStatusResponse_Status = 2
+	GetInstanceStatusResponse_STATUS_DESTROYED   GetInstanceStatusResponse_Status = 3
+)
+
+// Enum value maps for GetInstanceStatusResponse_Status.
+var (
+	GetInstanceStatusResponse_Status_name = map[int32]string{
+		0: "STATUS_UNSPECIFIED",
+		1: "STATUS_RUNNING",
+		2: "STATUS_STOPPED",
+		3: "STATUS_DESTROYED",
+	}
+	GetInstanceStatusResponse_Status_value = map[string]int32{
+		"STATUS_UNSPECIFIED": 0,
+		"STATUS_RUNNING":     1,
+		"STATUS_STOPPED":     2,
+		"STATUS_DESTROYED":   3,
+	}
+)
+
+func (x GetInstanceStatusResponse_Status) Enum() *GetInstanceStatusResponse_Status {
+	p := new(GetInstanceStatusResponse_Status)
+	*p = x
+	return p
+}
+
+func (x GetInstanceStatusResponse_Status) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (GetInstanceStatusResponse_Status) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_server_v1_client_proto_enumTypes[0].Descriptor()
+}
+
+func (GetInstanceStatusResponse_Status) Type() protoreflect.EnumType {
+	return &file_api_server_v1_client_proto_enumTypes[0]
+}
+
+func (x GetInstanceStatusResponse_Status) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use GetInstanceStatusResponse_Status.Descriptor instead.
+func (GetInstanceStatusResponse_Status) EnumDescriptor() ([]byte, []int) {
+	return file_api_server_v1_client_proto_rawDescGZIP(), []int{9, 0}
+}
+
 type GetChallengesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -450,11 +502,11 @@ func (x *GetInstanceStatusRequest) GetChallengeId() string {
 }
 
 type GetInstanceStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Status        string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
-	Host          string                 `protobuf:"bytes,2,opt,name=host,proto3" json:"host,omitempty"`
-	Port          int32                  `protobuf:"varint,3,opt,name=port,proto3" json:"port,omitempty"`
-	ErrorMessage  string                 `protobuf:"bytes,4,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	state         protoimpl.MessageState           `protogen:"open.v1"`
+	Status        GetInstanceStatusResponse_Status `protobuf:"varint,1,opt,name=status,proto3,enum=api.server.v1.GetInstanceStatusResponse_Status" json:"status,omitempty"`
+	Host          string                           `protobuf:"bytes,2,opt,name=host,proto3" json:"host,omitempty"`
+	Port          int32                            `protobuf:"varint,3,opt,name=port,proto3" json:"port,omitempty"`
+	ErrorMessage  string                           `protobuf:"bytes,4,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -489,11 +541,11 @@ func (*GetInstanceStatusResponse) Descriptor() ([]byte, []int) {
 	return file_api_server_v1_client_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *GetInstanceStatusResponse) GetStatus() string {
+func (x *GetInstanceStatusResponse) GetStatus() GetInstanceStatusResponse_Status {
 	if x != nil {
 		return x.Status
 	}
-	return ""
+	return GetInstanceStatusResponse_STATUS_UNSPECIFIED
 }
 
 func (x *GetInstanceStatusResponse) GetHost() string {
@@ -843,12 +895,17 @@ const file_api_server_v1_client_proto_rawDesc = "" +
 	"\x14StopInstanceResponse\x12#\n" +
 	"\rerror_message\x18\x01 \x01(\tR\ferrorMessage\"=\n" +
 	"\x18GetInstanceStatusRequest\x12!\n" +
-	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\"\x80\x01\n" +
-	"\x19GetInstanceStatusResponse\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\tR\x06status\x12\x12\n" +
+	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\"\x91\x02\n" +
+	"\x19GetInstanceStatusResponse\x12G\n" +
+	"\x06status\x18\x01 \x01(\x0e2/.api.server.v1.GetInstanceStatusResponse.StatusR\x06status\x12\x12\n" +
 	"\x04host\x18\x02 \x01(\tR\x04host\x12\x12\n" +
 	"\x04port\x18\x03 \x01(\x05R\x04port\x12#\n" +
-	"\rerror_message\x18\x04 \x01(\tR\ferrorMessage\"F\n" +
+	"\rerror_message\x18\x04 \x01(\tR\ferrorMessage\"^\n" +
+	"\x06Status\x12\x16\n" +
+	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x12\n" +
+	"\x0eSTATUS_RUNNING\x10\x01\x12\x12\n" +
+	"\x0eSTATUS_STOPPED\x10\x02\x12\x14\n" +
+	"\x10STATUS_DESTROYED\x10\x03\"F\n" +
 	"\fLoginRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"J\n" +
@@ -890,51 +947,54 @@ func file_api_server_v1_client_proto_rawDescGZIP() []byte {
 	return file_api_server_v1_client_proto_rawDescData
 }
 
+var file_api_server_v1_client_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_api_server_v1_client_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_api_server_v1_client_proto_goTypes = []any{
-	(*GetChallengesRequest)(nil),      // 0: api.server.v1.GetChallengesRequest
-	(*GetChallengesResponse)(nil),     // 1: api.server.v1.GetChallengesResponse
-	(*SubmitFlagRequest)(nil),         // 2: api.server.v1.SubmitFlagRequest
-	(*SubmitFlagResponse)(nil),        // 3: api.server.v1.SubmitFlagResponse
-	(*StartInstanceRequest)(nil),      // 4: api.server.v1.StartInstanceRequest
-	(*StartInstanceResponse)(nil),     // 5: api.server.v1.StartInstanceResponse
-	(*StopInstanceRequest)(nil),       // 6: api.server.v1.StopInstanceRequest
-	(*StopInstanceResponse)(nil),      // 7: api.server.v1.StopInstanceResponse
-	(*GetInstanceStatusRequest)(nil),  // 8: api.server.v1.GetInstanceStatusRequest
-	(*GetInstanceStatusResponse)(nil), // 9: api.server.v1.GetInstanceStatusResponse
-	(*LoginRequest)(nil),              // 10: api.server.v1.LoginRequest
-	(*LoginResponse)(nil),             // 11: api.server.v1.LoginResponse
-	(*RegisterRequest)(nil),           // 12: api.server.v1.RegisterRequest
-	(*RegisterResponse)(nil),          // 13: api.server.v1.RegisterResponse
-	(*LogoutRequest)(nil),             // 14: api.server.v1.LogoutRequest
-	(*LogoutResponse)(nil),            // 15: api.server.v1.LogoutResponse
-	(*Challenge)(nil),                 // 16: api.server.v1.Challenge
-	(*Submission)(nil),                // 17: api.server.v1.Submission
+	(GetInstanceStatusResponse_Status)(0), // 0: api.server.v1.GetInstanceStatusResponse.Status
+	(*GetChallengesRequest)(nil),          // 1: api.server.v1.GetChallengesRequest
+	(*GetChallengesResponse)(nil),         // 2: api.server.v1.GetChallengesResponse
+	(*SubmitFlagRequest)(nil),             // 3: api.server.v1.SubmitFlagRequest
+	(*SubmitFlagResponse)(nil),            // 4: api.server.v1.SubmitFlagResponse
+	(*StartInstanceRequest)(nil),          // 5: api.server.v1.StartInstanceRequest
+	(*StartInstanceResponse)(nil),         // 6: api.server.v1.StartInstanceResponse
+	(*StopInstanceRequest)(nil),           // 7: api.server.v1.StopInstanceRequest
+	(*StopInstanceResponse)(nil),          // 8: api.server.v1.StopInstanceResponse
+	(*GetInstanceStatusRequest)(nil),      // 9: api.server.v1.GetInstanceStatusRequest
+	(*GetInstanceStatusResponse)(nil),     // 10: api.server.v1.GetInstanceStatusResponse
+	(*LoginRequest)(nil),                  // 11: api.server.v1.LoginRequest
+	(*LoginResponse)(nil),                 // 12: api.server.v1.LoginResponse
+	(*RegisterRequest)(nil),               // 13: api.server.v1.RegisterRequest
+	(*RegisterResponse)(nil),              // 14: api.server.v1.RegisterResponse
+	(*LogoutRequest)(nil),                 // 15: api.server.v1.LogoutRequest
+	(*LogoutResponse)(nil),                // 16: api.server.v1.LogoutResponse
+	(*Challenge)(nil),                     // 17: api.server.v1.Challenge
+	(*Submission)(nil),                    // 18: api.server.v1.Submission
 }
 var file_api_server_v1_client_proto_depIdxs = []int32{
-	16, // 0: api.server.v1.GetChallengesResponse.challenges:type_name -> api.server.v1.Challenge
-	17, // 1: api.server.v1.SubmitFlagRequest.submission:type_name -> api.server.v1.Submission
-	0,  // 2: api.server.v1.ClientChallengeService.GetChallenges:input_type -> api.server.v1.GetChallengesRequest
-	2,  // 3: api.server.v1.ClientChallengeService.SubmitFlag:input_type -> api.server.v1.SubmitFlagRequest
-	4,  // 4: api.server.v1.ClientChallengeService.StartInstance:input_type -> api.server.v1.StartInstanceRequest
-	6,  // 5: api.server.v1.ClientChallengeService.StopInstance:input_type -> api.server.v1.StopInstanceRequest
-	8,  // 6: api.server.v1.ClientChallengeService.GetInstanceStatus:input_type -> api.server.v1.GetInstanceStatusRequest
-	10, // 7: api.server.v1.UserAuthService.Login:input_type -> api.server.v1.LoginRequest
-	12, // 8: api.server.v1.UserAuthService.Register:input_type -> api.server.v1.RegisterRequest
-	14, // 9: api.server.v1.UserAuthService.Logout:input_type -> api.server.v1.LogoutRequest
-	1,  // 10: api.server.v1.ClientChallengeService.GetChallenges:output_type -> api.server.v1.GetChallengesResponse
-	3,  // 11: api.server.v1.ClientChallengeService.SubmitFlag:output_type -> api.server.v1.SubmitFlagResponse
-	5,  // 12: api.server.v1.ClientChallengeService.StartInstance:output_type -> api.server.v1.StartInstanceResponse
-	7,  // 13: api.server.v1.ClientChallengeService.StopInstance:output_type -> api.server.v1.StopInstanceResponse
-	9,  // 14: api.server.v1.ClientChallengeService.GetInstanceStatus:output_type -> api.server.v1.GetInstanceStatusResponse
-	11, // 15: api.server.v1.UserAuthService.Login:output_type -> api.server.v1.LoginResponse
-	13, // 16: api.server.v1.UserAuthService.Register:output_type -> api.server.v1.RegisterResponse
-	15, // 17: api.server.v1.UserAuthService.Logout:output_type -> api.server.v1.LogoutResponse
-	10, // [10:18] is the sub-list for method output_type
-	2,  // [2:10] is the sub-list for method input_type
-	2,  // [2:2] is the sub-list for extension type_name
-	2,  // [2:2] is the sub-list for extension extendee
-	0,  // [0:2] is the sub-list for field type_name
+	17, // 0: api.server.v1.GetChallengesResponse.challenges:type_name -> api.server.v1.Challenge
+	18, // 1: api.server.v1.SubmitFlagRequest.submission:type_name -> api.server.v1.Submission
+	0,  // 2: api.server.v1.GetInstanceStatusResponse.status:type_name -> api.server.v1.GetInstanceStatusResponse.Status
+	1,  // 3: api.server.v1.ClientChallengeService.GetChallenges:input_type -> api.server.v1.GetChallengesRequest
+	3,  // 4: api.server.v1.ClientChallengeService.SubmitFlag:input_type -> api.server.v1.SubmitFlagRequest
+	5,  // 5: api.server.v1.ClientChallengeService.StartInstance:input_type -> api.server.v1.StartInstanceRequest
+	7,  // 6: api.server.v1.ClientChallengeService.StopInstance:input_type -> api.server.v1.StopInstanceRequest
+	9,  // 7: api.server.v1.ClientChallengeService.GetInstanceStatus:input_type -> api.server.v1.GetInstanceStatusRequest
+	11, // 8: api.server.v1.UserAuthService.Login:input_type -> api.server.v1.LoginRequest
+	13, // 9: api.server.v1.UserAuthService.Register:input_type -> api.server.v1.RegisterRequest
+	15, // 10: api.server.v1.UserAuthService.Logout:input_type -> api.server.v1.LogoutRequest
+	2,  // 11: api.server.v1.ClientChallengeService.GetChallenges:output_type -> api.server.v1.GetChallengesResponse
+	4,  // 12: api.server.v1.ClientChallengeService.SubmitFlag:output_type -> api.server.v1.SubmitFlagResponse
+	6,  // 13: api.server.v1.ClientChallengeService.StartInstance:output_type -> api.server.v1.StartInstanceResponse
+	8,  // 14: api.server.v1.ClientChallengeService.StopInstance:output_type -> api.server.v1.StopInstanceResponse
+	10, // 15: api.server.v1.ClientChallengeService.GetInstanceStatus:output_type -> api.server.v1.GetInstanceStatusResponse
+	12, // 16: api.server.v1.UserAuthService.Login:output_type -> api.server.v1.LoginResponse
+	14, // 17: api.server.v1.UserAuthService.Register:output_type -> api.server.v1.RegisterResponse
+	16, // 18: api.server.v1.UserAuthService.Logout:output_type -> api.server.v1.LogoutResponse
+	11, // [11:19] is the sub-list for method output_type
+	3,  // [3:11] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_api_server_v1_client_proto_init() }
@@ -948,13 +1008,14 @@ func file_api_server_v1_client_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_server_v1_client_proto_rawDesc), len(file_api_server_v1_client_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
 		GoTypes:           file_api_server_v1_client_proto_goTypes,
 		DependencyIndexes: file_api_server_v1_client_proto_depIdxs,
+		EnumInfos:         file_api_server_v1_client_proto_enumTypes,
 		MessageInfos:      file_api_server_v1_client_proto_msgTypes,
 	}.Build()
 	File_api_server_v1_client_proto = out.File

@@ -2,6 +2,7 @@ import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '
 import { FormsModule } from '@angular/forms';
 import { Challenge } from '../../../../gen/api/server/v1/model_pb';
 import { ChallengeService } from '../../../services/challenge.service';
+import { GetInstanceStatusResponse_Status } from '../../../../gen/api/server/v1/client_pb';
 
 interface InstanceConnectionInfo {
   host: string;
@@ -26,7 +27,7 @@ export class ChallengeDetailComponent implements OnInit {
     message: string;
   } | null>(null);
   isSubmitting = signal(false);
-  instanceStatus = signal<string | null>(null);
+  instanceStatus = signal<GetInstanceStatusResponse_Status | null>(null);
   isInstanceLoading = signal(false);
   instanceConnectionInfo = signal<InstanceConnectionInfo | null>(null);
 
@@ -105,5 +106,9 @@ export class ChallengeDetailComponent implements OnInit {
 
   onClose(): void {
     this.closeModal.emit();
+  }
+
+  isRunning(): boolean {
+    return this.instanceStatus() === GetInstanceStatusResponse_Status.RUNNING;
   }
 }

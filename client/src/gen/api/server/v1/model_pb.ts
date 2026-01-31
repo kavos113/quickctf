@@ -2,23 +2,20 @@
 // @generated from file api/server/v1/model.proto (package api.server.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage } from '@bufbuild/protobuf/codegenv2';
-import { fileDesc, messageDesc } from '@bufbuild/protobuf/codegenv2';
-import type { Message } from '@bufbuild/protobuf';
+import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
+import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file api/server/v1/model.proto.
  */
-export const file_api_server_v1_model: GenFile =
-  /*@__PURE__*/
-  fileDesc(
-    'ChlhcGkvc2VydmVyL3YxL21vZGVsLnByb3RvEg1hcGkuc2VydmVyLnYxInEKCUNoYWxsZW5nZRIUCgxjaGFsbGVuZ2VfaWQYASABKAkSDAoEbmFtZRgCIAEoCRITCgtkZXNjcmlwdGlvbhgDIAEoCRIMCgRmbGFnGAQgASgJEg4KBnBvaW50cxgFIAEoBRINCgVnZW5yZRgGIAEoCSJiChBDaGFsbGVuZ2VSZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkSDAoEZmxhZxgDIAEoCRIOCgZwb2ludHMYBCABKAUSDQoFZ2VucmUYBSABKAkiXgoKU3VibWlzc2lvbhIUCgxjaGFsbGVuZ2VfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRIWCg5zdWJtaXR0ZWRfZmxhZxgDIAEoCRIRCgl0aW1lc3RhbXAYBCABKANCsQEKEWNvbS5hcGkuc2VydmVyLnYxQgpNb2RlbFByb3RvUAFaOmdpdGh1Yi5jb20va2F2b3MxMTMvcXVpY2tjdGYvZ2VuL2dvL2FwaS9zZXJ2ZXIvdjE7c2VydmVydjGiAgNBU1iqAg1BcGkuU2VydmVyLlYxygINQXBpXFNlcnZlclxWMeICGUFwaVxTZXJ2ZXJcVjFcR1BCTWV0YWRhdGHqAg9BcGk6OlNlcnZlcjo6VjFiBnByb3RvMw',
-  );
+export const file_api_server_v1_model: GenFile = /*@__PURE__*/
+  fileDesc("ChlhcGkvc2VydmVyL3YxL21vZGVsLnByb3RvEg1hcGkuc2VydmVyLnYxInEKCUNoYWxsZW5nZRIUCgxjaGFsbGVuZ2VfaWQYASABKAkSDAoEbmFtZRgCIAEoCRITCgtkZXNjcmlwdGlvbhgDIAEoCRIMCgRmbGFnGAQgASgJEg4KBnBvaW50cxgFIAEoBRINCgVnZW5yZRgGIAEoCSJiChBDaGFsbGVuZ2VSZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkSDAoEZmxhZxgDIAEoCRIOCgZwb2ludHMYBCABKAUSDQoFZ2VucmUYBSABKAkiXgoKU3VibWlzc2lvbhIUCgxjaGFsbGVuZ2VfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRIWCg5zdWJtaXR0ZWRfZmxhZxgDIAEoCRIRCgl0aW1lc3RhbXAYBCABKANCsQEKEWNvbS5hcGkuc2VydmVyLnYxQgpNb2RlbFByb3RvUAFaOmdpdGh1Yi5jb20va2F2b3MxMTMvcXVpY2tjdGYvZ2VuL2dvL2FwaS9zZXJ2ZXIvdjE7c2VydmVydjGiAgNBU1iqAg1BcGkuU2VydmVyLlYxygINQXBpXFNlcnZlclxWMeICGUFwaVxTZXJ2ZXJcVjFcR1BCTWV0YWRhdGHqAg9BcGk6OlNlcnZlcjo6VjFiBnByb3RvMw");
 
 /**
  * @generated from message api.server.v1.Challenge
  */
-export type Challenge = Message<'api.server.v1.Challenge'> & {
+export type Challenge = Message<"api.server.v1.Challenge"> & {
   /**
    * @generated from field: string challenge_id = 1;
    */
@@ -54,14 +51,13 @@ export type Challenge = Message<'api.server.v1.Challenge'> & {
  * Describes the message api.server.v1.Challenge.
  * Use `create(ChallengeSchema)` to create a new message.
  */
-export const ChallengeSchema: GenMessage<Challenge> =
-  /*@__PURE__*/
+export const ChallengeSchema: GenMessage<Challenge> = /*@__PURE__*/
   messageDesc(file_api_server_v1_model, 0);
 
 /**
  * @generated from message api.server.v1.ChallengeRequest
  */
-export type ChallengeRequest = Message<'api.server.v1.ChallengeRequest'> & {
+export type ChallengeRequest = Message<"api.server.v1.ChallengeRequest"> & {
   /**
    * @generated from field: string name = 1;
    */
@@ -92,14 +88,13 @@ export type ChallengeRequest = Message<'api.server.v1.ChallengeRequest'> & {
  * Describes the message api.server.v1.ChallengeRequest.
  * Use `create(ChallengeRequestSchema)` to create a new message.
  */
-export const ChallengeRequestSchema: GenMessage<ChallengeRequest> =
-  /*@__PURE__*/
+export const ChallengeRequestSchema: GenMessage<ChallengeRequest> = /*@__PURE__*/
   messageDesc(file_api_server_v1_model, 1);
 
 /**
  * @generated from message api.server.v1.Submission
  */
-export type Submission = Message<'api.server.v1.Submission'> & {
+export type Submission = Message<"api.server.v1.Submission"> & {
   /**
    * @generated from field: string challenge_id = 1;
    */
@@ -125,6 +120,6 @@ export type Submission = Message<'api.server.v1.Submission'> & {
  * Describes the message api.server.v1.Submission.
  * Use `create(SubmissionSchema)` to create a new message.
  */
-export const SubmissionSchema: GenMessage<Submission> =
-  /*@__PURE__*/
+export const SubmissionSchema: GenMessage<Submission> = /*@__PURE__*/
   messageDesc(file_api_server_v1_model, 2);
+

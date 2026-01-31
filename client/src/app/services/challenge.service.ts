@@ -3,6 +3,7 @@ import { create } from '@bufbuild/protobuf';
 import {
   GetChallengesRequestSchema,
   GetInstanceStatusRequestSchema,
+  GetInstanceStatusResponse_Status,
   StartInstanceRequestSchema,
   StopInstanceRequestSchema,
   SubmitFlagRequestSchema,
@@ -113,7 +114,7 @@ export class ChallengeService {
 
   async getInstanceStatus(
     challengeId: string,
-  ): Promise<{ success: boolean; status?: string; host?: string; port?: number; error?: string }> {
+  ): Promise<{ success: boolean; status?: GetInstanceStatusResponse_Status; host?: string; port?: number; error?: string }> {
     try {
       const request = create(GetInstanceStatusRequestSchema, { challengeId });
       const response = await challengeClient.getInstanceStatus(request);

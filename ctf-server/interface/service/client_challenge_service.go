@@ -136,8 +136,20 @@ func (s *ClientChallengeService) GetInstanceStatus(ctx context.Context, req *con
 		}), nil
 	}
 
+	var pbStatus pb.GetInstanceStatusResponse_Status
+	switch status {
+	case "STATUS_RUNNING":
+		pbStatus = pb.GetInstanceStatusResponse_STATUS_RUNNING
+	case "STATUS_STOPPED":
+		pbStatus = pb.GetInstanceStatusResponse_STATUS_STOPPED
+	case "STATUS_DESTROYED":
+		pbStatus = pb.GetInstanceStatusResponse_STATUS_DESTROYED
+	default:
+		pbStatus = pb.GetInstanceStatusResponse_STATUS_UNSPECIFIED
+	}
+
 	return connect.NewResponse(&pb.GetInstanceStatusResponse{
-		Status: string(status),
+		Status: pbStatus,
 		Host:   host,
 		Port:   port,
 	}), nil
