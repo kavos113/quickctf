@@ -42,7 +42,7 @@ services:
     privileged: true
     environment:
       BUILDER_PORT: "50051"
-      REGISTRY_URL: "ctf-registry:5000"
+      REGISTRY_URL: "localhost:5000"
     ports:
       - "50051:50051"
     volumes:
@@ -60,7 +60,7 @@ services:
     privileged: true
     environment:
       RUNNER_PORT: "50053"
-      REGISTRY_URL: "ctf-registry:5000"
+      REGISTRY_URL: "localhost:5000"
     ports:
       - "50053:50053"
     volumes:

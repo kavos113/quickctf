@@ -12,7 +12,7 @@ COPY ctf-builder/ .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /ctf-builder
 
-FROM docker:dind
+FROM alpine:latest
 
 COPY --from=builder /ctf-builder /usr/local/bin/
 

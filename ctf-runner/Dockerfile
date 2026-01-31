@@ -12,7 +12,7 @@ COPY ctf-runner/ .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /ctf-runner
 
-FROM docker:dind
+FROM alpine:latest
 
 COPY --from=builder /ctf-runner /usr/local/bin/
 
