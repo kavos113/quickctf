@@ -839,8 +839,8 @@ const file_api_server_v1_client_proto_rawDesc = "" +
 	"\x0fUserAuthService\x12B\n" +
 	"\x05Login\x12\x1b.api.server.v1.LoginRequest\x1a\x1c.api.server.v1.LoginResponse\x12K\n" +
 	"\bRegister\x12\x1e.api.server.v1.RegisterRequest\x1a\x1f.api.server.v1.RegisterResponse\x12E\n" +
-	"\x06Logout\x12\x1c.api.server.v1.LogoutRequest\x1a\x1d.api.server.v1.LogoutResponseB\xaf\x01\n" +
-	"\x11com.api.server.v1B\vClientProtoP\x01Z7github.com/kavos113/quickctf/gen/api/server/v1;serverv1\xa2\x02\x03ASX\xaa\x02\rApi.Server.V1\xca\x02\rApi\\Server\\V1\xe2\x02\x19Api\\Server\\V1\\GPBMetadata\xea\x02\x0fApi::Server::V1b\x06proto3"
+	"\x06Logout\x12\x1c.api.server.v1.LogoutRequest\x1a\x1d.api.server.v1.LogoutResponseB\xb2\x01\n" +
+	"\x11com.api.server.v1B\vClientProtoP\x01Z:github.com/kavos113/quickctf/gen/go/api/server/v1;serverv1\xa2\x02\x03ASX\xaa\x02\rApi.Server.V1\xca\x02\rApi\\Server\\V1\xe2\x02\x19Api\\Server\\V1\\GPBMetadata\xea\x02\x0fApi::Server::V1b\x06proto3"
 
 var (
 	file_api_server_v1_client_proto_rawDescOnce sync.Once

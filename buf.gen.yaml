@@ -3,7 +3,7 @@ managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: github.com/kavos113/quickctf/gen
+      value: github.com/kavos113/quickctf/gen/go
 plugins:
   - local: ["go", "tool", "protoc-gen-go"]
     out: gen/go

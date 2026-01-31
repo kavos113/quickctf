@@ -662,8 +662,8 @@ const file_api_runner_v1_runner_proto_rawDesc = "" +
 	"\fStopInstance\x12\".api.runner.v1.StopInstanceRequest\x1a#.api.runner.v1.StopInstanceResponse\x12`\n" +
 	"\x0fDestroyInstance\x12%.api.runner.v1.DestroyInstanceRequest\x1a&.api.runner.v1.DestroyInstanceResponse\x12f\n" +
 	"\x11GetInstanceStatus\x12'.api.runner.v1.GetInstanceStatusRequest\x1a(.api.runner.v1.GetInstanceStatusResponse\x12k\n" +
-	"\x12StreamInstanceLogs\x12(.api.runner.v1.StreamInstanceLogsRequest\x1a).api.runner.v1.StreamInstanceLogsResponse0\x01B\xaf\x01\n" +
-	"\x11com.api.runner.v1B\vRunnerProtoP\x01Z7github.com/kavos113/quickctf/gen/api/runner/v1;runnerv1\xa2\x02\x03ARX\xaa\x02\rApi.Runner.V1\xca\x02\rApi\\Runner\\V1\xe2\x02\x19Api\\Runner\\V1\\GPBMetadata\xea\x02\x0fApi::Runner::V1b\x06proto3"
+	"\x12StreamInstanceLogs\x12(.api.runner.v1.StreamInstanceLogsRequest\x1a).api.runner.v1.StreamInstanceLogsResponse0\x01B\xb2\x01\n" +
+	"\x11com.api.runner.v1B\vRunnerProtoP\x01Z:github.com/kavos113/quickctf/gen/go/api/runner/v1;runnerv1\xa2\x02\x03ARX\xaa\x02\rApi.Runner.V1\xca\x02\rApi\\Runner\\V1\xe2\x02\x19Api\\Runner\\V1\\GPBMetadata\xea\x02\x0fApi::Runner::V1b\x06proto3"
 
 var (
 	file_api_runner_v1_runner_proto_rawDescOnce sync.Once

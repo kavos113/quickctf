@@ -181,9 +181,9 @@ const file_api_server_v1_model_proto_rawDesc = "" +
 	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12%\n" +
 	"\x0esubmitted_flag\x18\x03 \x01(\tR\rsubmittedFlag\x12\x1c\n" +
-	"\ttimestamp\x18\x04 \x01(\x03R\ttimestampB\xae\x01\n" +
+	"\ttimestamp\x18\x04 \x01(\x03R\ttimestampB\xb1\x01\n" +
 	"\x11com.api.server.v1B\n" +
-	"ModelProtoP\x01Z7github.com/kavos113/quickctf/gen/api/server/v1;serverv1\xa2\x02\x03ASX\xaa\x02\rApi.Server.V1\xca\x02\rApi\\Server\\V1\xe2\x02\x19Api\\Server\\V1\\GPBMetadata\xea\x02\x0fApi::Server::V1b\x06proto3"
+	"ModelProtoP\x01Z:github.com/kavos113/quickctf/gen/go/api/server/v1;serverv1\xa2\x02\x03ASX\xaa\x02\rApi.Server.V1\xca\x02\rApi\\Server\\V1\xe2\x02\x19Api\\Server\\V1\\GPBMetadata\xea\x02\x0fApi::Server::V1b\x06proto3"
 
 var (
 	file_api_server_v1_model_proto_rawDescOnce sync.Once

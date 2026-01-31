@@ -682,9 +682,9 @@ const file_api_server_v1_admin_proto_rawDesc = "" +
 	"\x10AdminAuthService\x12Q\n" +
 	"\n" +
 	"AdminLogin\x12 .api.server.v1.AdminLoginRequest\x1a!.api.server.v1.AdminLoginResponse\x12T\n" +
-	"\vAdminLogout\x12!.api.server.v1.AdminLogoutRequest\x1a\".api.server.v1.AdminLogoutResponseB\xae\x01\n" +
+	"\vAdminLogout\x12!.api.server.v1.AdminLogoutRequest\x1a\".api.server.v1.AdminLogoutResponseB\xb1\x01\n" +
 	"\x11com.api.server.v1B\n" +
-	"AdminProtoP\x01Z7github.com/kavos113/quickctf/gen/api/server/v1;serverv1\xa2\x02\x03ASX\xaa\x02\rApi.Server.V1\xca\x02\rApi\\Server\\V1\xe2\x02\x19Api\\Server\\V1\\GPBMetadata\xea\x02\x0fApi::Server::V1b\x06proto3"
+	"AdminProtoP\x01Z:github.com/kavos113/quickctf/gen/go/api/server/v1;serverv1\xa2\x02\x03ASX\xaa\x02\rApi.Server.V1\xca\x02\rApi\\Server\\V1\xe2\x02\x19Api\\Server\\V1\\GPBMetadata\xea\x02\x0fApi::Server::V1b\x06proto3"
 
 var (
 	file_api_server_v1_admin_proto_rawDescOnce sync.Once

@@ -672,8 +672,8 @@ const file_api_manager_v1_manager_proto_rawDesc = "" +
 	"\fStopInstance\x12#.api.manager.v1.StopInstanceRequest\x1a$.api.manager.v1.StopInstanceResponse\x12b\n" +
 	"\x0fDestroyInstance\x12&.api.manager.v1.DestroyInstanceRequest\x1a'.api.manager.v1.DestroyInstanceResponse\x12h\n" +
 	"\x11GetInstanceStatus\x12(.api.manager.v1.GetInstanceStatusRequest\x1a).api.manager.v1.GetInstanceStatusResponse\x12m\n" +
-	"\x12StreamInstanceLogs\x12).api.manager.v1.StreamInstanceLogsRequest\x1a*.api.manager.v1.StreamInstanceLogsResponse0\x01B\xb7\x01\n" +
-	"\x12com.api.manager.v1B\fManagerProtoP\x01Z9github.com/kavos113/quickctf/gen/api/manager/v1;managerv1\xa2\x02\x03AMX\xaa\x02\x0eApi.Manager.V1\xca\x02\x0eApi\\Manager\\V1\xe2\x02\x1aApi\\Manager\\V1\\GPBMetadata\xea\x02\x10Api::Manager::V1b\x06proto3"
+	"\x12StreamInstanceLogs\x12).api.manager.v1.StreamInstanceLogsRequest\x1a*.api.manager.v1.StreamInstanceLogsResponse0\x01B\xba\x01\n" +
+	"\x12com.api.manager.v1B\fManagerProtoP\x01Z<github.com/kavos113/quickctf/gen/go/api/manager/v1;managerv1\xa2\x02\x03AMX\xaa\x02\x0eApi.Manager.V1\xca\x02\x0eApi\\Manager\\V1\xe2\x02\x1aApi\\Manager\\V1\\GPBMetadata\xea\x02\x10Api::Manager::V1b\x06proto3"
 
 var (
 	file_api_manager_v1_manager_proto_rawDescOnce sync.Once

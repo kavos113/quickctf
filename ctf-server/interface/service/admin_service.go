@@ -3,13 +3,16 @@ package service
 import (
 	"context"
 
+	"connectrpc.com/connect"
+
 	"github.com/kavos113/quickctf/ctf-server/domain"
 	"github.com/kavos113/quickctf/ctf-server/usecase"
 	pb "github.com/kavos113/quickctf/gen/go/api/server/v1"
+	"github.com/kavos113/quickctf/gen/go/api/server/v1/serverv1connect"
 )
 
 type AdminService struct {
-	pb.UnimplementedAdminServiceServer
+	serverv1connect.UnimplementedAdminServiceHandler
 	adminUsecase *usecase.AdminServiceUsecase
 }
 
@@ -19,109 +22,109 @@ func NewAdminService(adminUsecase *usecase.AdminServiceUsecase) *AdminService {
 	}
 }
 
-func (s *AdminService) CreateChallenge(ctx context.Context, req *pb.CreateChallengeRequest) (*pb.CreateChallengeResponse, error) {
+func (s *AdminService) CreateChallenge(ctx context.Context, req *connect.Request[pb.CreateChallengeRequest]) (*connect.Response[pb.CreateChallengeResponse], error) {
 	_, err := requireAdminSession(ctx)
 	if err != nil {
-		return &pb.CreateChallengeResponse{
+		return connect.NewResponse(&pb.CreateChallengeResponse{
 			ErrorMessage: err.Error(),
-		}, nil
+		}), nil
 	}
 
 	challenge := &domain.Challenge{
-		Name:        req.Challenge.Name,
-		Description: req.Challenge.Description,
-		Flag:        req.Challenge.Flag,
-		Points:      int(req.Challenge.Points),
-		Genre:       req.Challenge.Genre,
+		Name:        req.Msg.Challenge.Name,
+		Description: req.Msg.Challenge.Description,
+		Flag:        req.Msg.Challenge.Flag,
+		Points:      int(req.Msg.Challenge.Points),
+		Genre:       req.Msg.Challenge.Genre,
 	}
 
 	challengeID, err := s.adminUsecase.CreateChallenge(ctx, challenge)
 	if err != nil {
-		return &pb.CreateChallengeResponse{
+		return connect.NewResponse(&pb.CreateChallengeResponse{
 			ErrorMessage: err.Error(),
-		}, nil
+		}), nil
 	}
 
-	return &pb.CreateChallengeResponse{
+	return connect.NewResponse(&pb.CreateChallengeResponse{
 		ChallengeId: challengeID,
-	}, nil
+	}), nil
 }
 
-func (s *AdminService) UpdateChallenge(ctx context.Context, req *pb.UpdateChallengeRequest) (*pb.UpdateChallengeResponse, error) {
+func (s *AdminService) UpdateChallenge(ctx context.Context, req *connect.Request[pb.UpdateChallengeRequest]) (*connect.Response[pb.UpdateChallengeResponse], error) {
 	_, err := requireAdminSession(ctx)
 	if err != nil {
-		return &pb.UpdateChallengeResponse{
+		return connect.NewResponse(&pb.UpdateChallengeResponse{
 			ErrorMessage: err.Error(),
-		}, nil
+		}), nil
 	}
 
 	challenge := &domain.Challenge{
-		Name:        req.Challenge.Name,
-		Description: req.Challenge.Description,
-		Flag:        req.Challenge.Flag,
-		Points:      int(req.Challenge.Points),
-		Genre:       req.Challenge.Genre,
+		Name:        req.Msg.Challenge.Name,
+		Description: req.Msg.Challenge.Description,
+		Flag:        req.Msg.Challenge.Flag,
+		Points:      int(req.Msg.Challenge.Points),
+		Genre:       req.Msg.Challenge.Genre,
 	}
 
-	err = s.adminUsecase.UpdateChallenge(ctx, req.ChallengeId, challenge)
+	err = s.adminUsecase.UpdateChallenge(ctx, req.Msg.ChallengeId, challenge)
 	if err != nil {
-		return &pb.UpdateChallengeResponse{
+		return connect.NewResponse(&pb.UpdateChallengeResponse{
 			ErrorMessage: err.Error(),
-		}, nil
+		}), nil
 	}
 
-	return &pb.UpdateChallengeResponse{}, nil
+	return connect.NewResponse(&pb.UpdateChallengeResponse{}), nil
 }
 
-func (s *AdminService) UploadChallengeImage(ctx context.Context, req *pb.UploadChallengeImageRequest) (*pb.UploadChallengeImageResponse, error) {
+func (s *AdminService) UploadChallengeImage(ctx context.Context, req *connect.Request[pb.UploadChallengeImageRequest]) (*connect.Response[pb.UploadChallengeImageResponse], error) {
 	_, err := requireAdminSession(ctx)
 	if err != nil {
-		return &pb.UploadChallengeImageResponse{
+		return connect.NewResponse(&pb.UploadChallengeImageResponse{
 			ErrorMessage: err.Error(),
-		}, nil
+		}), nil
 	}
 
-	err = s.adminUsecase.UploadChallengeImage(ctx, req.ChallengeId, req.ImageData)
+	err = s.adminUsecase.UploadChallengeImage(ctx, req.Msg.ChallengeId, req.Msg.ImageData)
 	if err != nil {
-		return &pb.UploadChallengeImageResponse{
+		return connect.NewResponse(&pb.UploadChallengeImageResponse{
 			ErrorMessage: err.Error(),
-		}, nil
+		}), nil
 	}
 
-	return &pb.UploadChallengeImageResponse{}, nil
+	return connect.NewResponse(&pb.UploadChallengeImageResponse{}), nil
 }
 
-func (s *AdminService) DeleteChallenge(ctx context.Context, req *pb.DeleteChallengeRequest) (*pb.DeleteChallengeResponse, error) {
+func (s *AdminService) DeleteChallenge(ctx context.Context, req *connect.Request[pb.DeleteChallengeRequest]) (*connect.Response[pb.DeleteChallengeResponse], error) {
 	_, err := requireAdminSession(ctx)
 	if err != nil {
-		return &pb.DeleteChallengeResponse{
+		return connect.NewResponse(&pb.DeleteChallengeResponse{
 			ErrorMessage: err.Error(),
-		}, nil
+		}), nil
 	}
 
-	err = s.adminUsecase.DeleteChallenge(ctx, req.ChallengeId)
+	err = s.adminUsecase.DeleteChallenge(ctx, req.Msg.ChallengeId)
 	if err != nil {
-		return &pb.DeleteChallengeResponse{
+		return connect.NewResponse(&pb.DeleteChallengeResponse{
 			ErrorMessage: err.Error(),
-		}, nil
+		}), nil
 	}
 
-	return &pb.DeleteChallengeResponse{}, nil
+	return connect.NewResponse(&pb.DeleteChallengeResponse{}), nil
 }
 
-func (s *AdminService) ListChallenges(ctx context.Context, req *pb.ListChallengesRequest) (*pb.ListChallengesResponse, error) {
+func (s *AdminService) ListChallenges(ctx context.Context, req *connect.Request[pb.ListChallengesRequest]) (*connect.Response[pb.ListChallengesResponse], error) {
 	_, err := requireAdminSession(ctx)
 	if err != nil {
-		return &pb.ListChallengesResponse{
+		return connect.NewResponse(&pb.ListChallengesResponse{
 			ErrorMessage: err.Error(),
-		}, nil
+		}), nil
 	}
 
 	challenges, err := s.adminUsecase.ListChallenges(ctx)
 	if err != nil {
-		return &pb.ListChallengesResponse{
+		return connect.NewResponse(&pb.ListChallengesResponse{
 			ErrorMessage: err.Error(),
-		}, nil
+		}), nil
 	}
 
 	pbChallenges := make([]*pb.Challenge, 0, len(challenges))
@@ -135,7 +138,7 @@ func (s *AdminService) ListChallenges(ctx context.Context, req *pb.ListChallenge
 		})
 	}
 
-	return &pb.ListChallengesResponse{
+	return connect.NewResponse(&pb.ListChallengesResponse{
 		Challenges: pbChallenges,
-	}, nil
+	}), nil
 }

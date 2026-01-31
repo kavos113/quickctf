@@ -4,59 +4,54 @@ import (
 	"context"
 	"log"
 
+	"connectrpc.com/connect"
+
 	"github.com/kavos113/quickctf/ctf-server/usecase"
 	pb "github.com/kavos113/quickctf/gen/go/api/server/v1"
+	"github.com/kavos113/quickctf/gen/go/api/server/v1/serverv1connect"
 )
 
-// AdminAuthService は管理者認証サービスの実装
 type AdminAuthService struct {
-	pb.UnimplementedAdminAuthServiceServer
+	serverv1connect.UnimplementedAdminAuthServiceHandler
 	usecase *usecase.AdminAuthUsecase
 }
 
-// NewAdminAuthService は新しいAdminAuthServiceを作成
 func NewAdminAuthService(usecase *usecase.AdminAuthUsecase) *AdminAuthService {
 	return &AdminAuthService{
 		usecase: usecase,
 	}
 }
 
-// AdminLogin はアクティベーションコードでadmin権限を付与
-func (s *AdminAuthService) AdminLogin(ctx context.Context, req *pb.AdminLoginRequest) (*pb.AdminLoginResponse, error) {
-	// コンテキストからセッションを取得
+func (s *AdminAuthService) AdminLogin(ctx context.Context, req *connect.Request[pb.AdminLoginRequest]) (*connect.Response[pb.AdminLoginResponse], error) {
 	session, err := getSessionFromContext(ctx)
 	if err != nil {
 		log.Printf("Failed to get session from context: %v", err)
-		return &pb.AdminLoginResponse{}, nil
+		return connect.NewResponse(&pb.AdminLoginResponse{}), nil
 	}
 
-	// アクティベーションコードで管理者権限を付与
-	err = s.usecase.ActivateAdminWithSession(ctx, session, req.Password)
+	err = s.usecase.ActivateAdminWithSession(ctx, session, req.Msg.Password)
 	if err != nil {
 		log.Printf("Failed to activate admin: %v", err)
-		return &pb.AdminLoginResponse{}, nil
+		return connect.NewResponse(&pb.AdminLoginResponse{}), nil
 	}
 
 	log.Printf("Admin activated for user: %s", session.UserID)
-	return &pb.AdminLoginResponse{}, nil
+	return connect.NewResponse(&pb.AdminLoginResponse{}), nil
 }
 
-// AdminLogout はadmin権限を解除
-func (s *AdminAuthService) AdminLogout(ctx context.Context, req *pb.AdminLogoutRequest) (*pb.AdminLogoutResponse, error) {
-	// コンテキストからセッションを取得
+func (s *AdminAuthService) AdminLogout(ctx context.Context, req *connect.Request[pb.AdminLogoutRequest]) (*connect.Response[pb.AdminLogoutResponse], error) {
 	session, err := getSessionFromContext(ctx)
 	if err != nil {
 		log.Printf("Failed to get session from context: %v", err)
-		return &pb.AdminLogoutResponse{}, nil
+		return connect.NewResponse(&pb.AdminLogoutResponse{}), nil
 	}
 
-	// admin権限を解除
 	err = s.usecase.DeactivateAdminWithSession(ctx, session)
 	if err != nil {
 		log.Printf("Failed to deactivate admin: %v", err)
-		return &pb.AdminLogoutResponse{}, nil
+		return connect.NewResponse(&pb.AdminLogoutResponse{}), nil
 	}
 
 	log.Printf("Admin deactivated for user: %s", session.UserID)
-	return &pb.AdminLogoutResponse{}, nil
+	return connect.NewResponse(&pb.AdminLogoutResponse{}), nil
 }

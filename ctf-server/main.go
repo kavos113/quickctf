@@ -1,22 +1,25 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
-	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"connectrpc.com/connect"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 
 	"github.com/kavos113/quickctf/ctf-server/infrastructure/client"
 	"github.com/kavos113/quickctf/ctf-server/infrastructure/repository"
 	"github.com/kavos113/quickctf/ctf-server/interface/middleware"
 	"github.com/kavos113/quickctf/ctf-server/interface/service"
 	"github.com/kavos113/quickctf/ctf-server/usecase"
-	pb "github.com/kavos113/quickctf/gen/go/api/server/v1"
+	"github.com/kavos113/quickctf/gen/go/api/server/v1/serverv1connect"
 	"github.com/kavos113/quickctf/lib/logger"
 )
 
@@ -62,31 +65,32 @@ func main() {
 	clientChallengeService := service.NewClientChallengeService(clientChallengeUsecase)
 
 	authInterceptor := middleware.NewAuthInterceptor(sessionRepo)
-	loggingInterceptor := logger.NewLoggingInterceptor("ctf-server")
+	loggingInterceptor := logger.NewConnectLoggingInterceptor("ctf-server")
+
+	interceptors := connect.WithInterceptors(authInterceptor, loggingInterceptor)
 
 	log.Printf("CTF server starting on port %s", port)
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+	mux := http.NewServeMux()
+
+	path, handler := serverv1connect.NewUserAuthServiceHandler(userAuthService, interceptors)
+	mux.Handle(path, handler)
+
+	path, handler = serverv1connect.NewAdminAuthServiceHandler(adminAuthService, interceptors)
+	mux.Handle(path, handler)
+
+	path, handler = serverv1connect.NewAdminServiceHandler(adminService, interceptors)
+	mux.Handle(path, handler)
+
+	path, handler = serverv1connect.NewClientChallengeServiceHandler(clientChallengeService, interceptors)
+	mux.Handle(path, handler)
+
+	corsHandler := corsMiddleware(mux)
+
+	server := &http.Server{
+		Addr:    fmt.Sprintf(":%s", port),
+		Handler: h2c.NewHandler(corsHandler, &http2.Server{}),
 	}
-
-	grpcServer := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(
-			authInterceptor.Unary(),
-			loggingInterceptor.Unary(),
-		),
-		grpc.ChainStreamInterceptor(
-			loggingInterceptor.Stream(),
-		),
-	)
-
-	pb.RegisterUserAuthServiceServer(grpcServer, userAuthService)
-	pb.RegisterAdminAuthServiceServer(grpcServer, adminAuthService)
-	pb.RegisterAdminServiceServer(grpcServer, adminService)
-	pb.RegisterClientChallengeServiceServer(grpcServer, clientChallengeService)
-
-	reflection.Register(grpcServer)
 
 	log.Printf("CTF server listening on port %s", port)
 
@@ -97,10 +101,28 @@ func main() {
 	go func() {
 		<-sigChan
 		log.Println("Shutting down gracefully...")
-		grpcServer.GracefulStop()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		server.Shutdown(ctx)
 	}()
 
-	if err := grpcServer.Serve(lis); err != nil {
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("failed to serve: %v", err)
 	}
+}
+
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, Connect-Protocol-Version")
+		w.Header().Set("Access-Control-Expose-Headers", "Connect-Protocol-Version")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

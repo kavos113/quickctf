@@ -4,12 +4,15 @@ import (
 	"context"
 	"log"
 
+	"connectrpc.com/connect"
+
 	"github.com/kavos113/quickctf/ctf-server/usecase"
 	pb "github.com/kavos113/quickctf/gen/go/api/server/v1"
+	"github.com/kavos113/quickctf/gen/go/api/server/v1/serverv1connect"
 )
 
 type ClientChallengeService struct {
-	pb.UnimplementedClientChallengeServiceServer
+	serverv1connect.UnimplementedClientChallengeServiceHandler
 	usecase *usecase.ClientChallengeUsecase
 }
 
@@ -19,13 +22,13 @@ func NewClientChallengeService(usecase *usecase.ClientChallengeUsecase) *ClientC
 	}
 }
 
-func (s *ClientChallengeService) GetChallenges(ctx context.Context, req *pb.GetChallengesRequest) (*pb.GetChallengesResponse, error) {
+func (s *ClientChallengeService) GetChallenges(ctx context.Context, req *connect.Request[pb.GetChallengesRequest]) (*connect.Response[pb.GetChallengesResponse], error) {
 	challenges, err := s.usecase.GetChallenges(ctx)
 	if err != nil {
 		log.Printf("Failed to get challenges: %v", err)
-		return &pb.GetChallengesResponse{
+		return connect.NewResponse(&pb.GetChallengesResponse{
 			ErrorMessage: "failed to get challenges",
-		}, nil
+		}), nil
 	}
 
 	pbChallenges := make([]*pb.Challenge, 0, len(challenges))
@@ -39,97 +42,97 @@ func (s *ClientChallengeService) GetChallenges(ctx context.Context, req *pb.GetC
 		})
 	}
 
-	return &pb.GetChallengesResponse{
+	return connect.NewResponse(&pb.GetChallengesResponse{
 		Challenges: pbChallenges,
-	}, nil
+	}), nil
 }
 
-func (s *ClientChallengeService) SubmitFlag(ctx context.Context, req *pb.SubmitFlagRequest) (*pb.SubmitFlagResponse, error) {
+func (s *ClientChallengeService) SubmitFlag(ctx context.Context, req *connect.Request[pb.SubmitFlagRequest]) (*connect.Response[pb.SubmitFlagResponse], error) {
 	userID, err := getUserIDFromContext(ctx)
 	if err != nil {
 		log.Printf("Failed to get user ID from context: %v", err)
-		return &pb.SubmitFlagResponse{
+		return connect.NewResponse(&pb.SubmitFlagResponse{
 			ErrorMessage: "authentication required",
-		}, nil
+		}), nil
 	}
 
 	isCorrect, pointsAwarded, err := s.usecase.SubmitFlag(
 		ctx,
 		userID,
-		req.Submission.ChallengeId,
-		req.Submission.SubmittedFlag,
+		req.Msg.Submission.ChallengeId,
+		req.Msg.Submission.SubmittedFlag,
 	)
 	if err != nil {
 		log.Printf("Failed to submit flag: %v", err)
-		return &pb.SubmitFlagResponse{
+		return connect.NewResponse(&pb.SubmitFlagResponse{
 			ErrorMessage: "failed to submit flag",
-		}, nil
+		}), nil
 	}
 
-	return &pb.SubmitFlagResponse{
+	return connect.NewResponse(&pb.SubmitFlagResponse{
 		Correct:       isCorrect,
 		PointsAwarded: int32(pointsAwarded),
-	}, nil
+	}), nil
 }
 
-func (s *ClientChallengeService) StartInstance(ctx context.Context, req *pb.StartInstanceRequest) (*pb.StartInstanceResponse, error) {
+func (s *ClientChallengeService) StartInstance(ctx context.Context, req *connect.Request[pb.StartInstanceRequest]) (*connect.Response[pb.StartInstanceResponse], error) {
 	userID, err := getUserIDFromContext(ctx)
 	if err != nil {
 		log.Printf("Failed to get user ID from context: %v", err)
-		return &pb.StartInstanceResponse{
+		return connect.NewResponse(&pb.StartInstanceResponse{
 			ErrorMessage: "authentication required",
-		}, nil
+		}), nil
 	}
 
-	err = s.usecase.StartInstance(ctx, userID, req.ChallengeId)
+	err = s.usecase.StartInstance(ctx, userID, req.Msg.ChallengeId)
 	if err != nil {
 		log.Printf("Failed to start instance: %v", err)
-		return &pb.StartInstanceResponse{
+		return connect.NewResponse(&pb.StartInstanceResponse{
 			ErrorMessage: "failed to start instance",
-		}, nil
+		}), nil
 	}
 
-	return &pb.StartInstanceResponse{}, nil
+	return connect.NewResponse(&pb.StartInstanceResponse{}), nil
 }
 
-func (s *ClientChallengeService) StopInstance(ctx context.Context, req *pb.StopInstanceRequest) (*pb.StopInstanceResponse, error) {
+func (s *ClientChallengeService) StopInstance(ctx context.Context, req *connect.Request[pb.StopInstanceRequest]) (*connect.Response[pb.StopInstanceResponse], error) {
 	userID, err := getUserIDFromContext(ctx)
 	if err != nil {
 		log.Printf("Failed to get user ID from context: %v", err)
-		return &pb.StopInstanceResponse{
+		return connect.NewResponse(&pb.StopInstanceResponse{
 			ErrorMessage: "authentication required",
-		}, nil
+		}), nil
 	}
 
-	err = s.usecase.StopInstance(ctx, userID, req.ChallengeId)
+	err = s.usecase.StopInstance(ctx, userID, req.Msg.ChallengeId)
 	if err != nil {
 		log.Printf("Failed to stop instance: %v", err)
-		return &pb.StopInstanceResponse{
+		return connect.NewResponse(&pb.StopInstanceResponse{
 			ErrorMessage: "failed to stop instance",
-		}, nil
+		}), nil
 	}
 
-	return &pb.StopInstanceResponse{}, nil
+	return connect.NewResponse(&pb.StopInstanceResponse{}), nil
 }
 
-func (s *ClientChallengeService) GetInstanceStatus(ctx context.Context, req *pb.GetInstanceStatusRequest) (*pb.GetInstanceStatusResponse, error) {
+func (s *ClientChallengeService) GetInstanceStatus(ctx context.Context, req *connect.Request[pb.GetInstanceStatusRequest]) (*connect.Response[pb.GetInstanceStatusResponse], error) {
 	userID, err := getUserIDFromContext(ctx)
 	if err != nil {
 		log.Printf("Failed to get user ID from context: %v", err)
-		return &pb.GetInstanceStatusResponse{
+		return connect.NewResponse(&pb.GetInstanceStatusResponse{
 			ErrorMessage: "authentication required",
-		}, nil
+		}), nil
 	}
 
-	status, err := s.usecase.GetInstanceStatus(ctx, userID, req.ChallengeId)
+	status, err := s.usecase.GetInstanceStatus(ctx, userID, req.Msg.ChallengeId)
 	if err != nil {
 		log.Printf("Failed to get instance status: %v", err)
-		return &pb.GetInstanceStatusResponse{
+		return connect.NewResponse(&pb.GetInstanceStatusResponse{
 			ErrorMessage: "failed to get instance status",
-		}, nil
+		}), nil
 	}
 
-	return &pb.GetInstanceStatusResponse{
+	return connect.NewResponse(&pb.GetInstanceStatusResponse{
 		Status: string(status),
-	}, nil
+	}), nil
 }

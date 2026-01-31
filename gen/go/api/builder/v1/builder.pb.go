@@ -235,8 +235,8 @@ const file_api_builder_v1_builder_proto_rawDesc = "" +
 	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage2g\n" +
 	"\x0eBuilderService\x12U\n" +
 	"\n" +
-	"BuildImage\x12!.api.builder.v1.BuildImageRequest\x1a\".api.builder.v1.BuildImageResponse0\x01B\xb7\x01\n" +
-	"\x12com.api.builder.v1B\fBuilderProtoP\x01Z9github.com/kavos113/quickctf/gen/api/builder/v1;builderv1\xa2\x02\x03ABX\xaa\x02\x0eApi.Builder.V1\xca\x02\x0eApi\\Builder\\V1\xe2\x02\x1aApi\\Builder\\V1\\GPBMetadata\xea\x02\x10Api::Builder::V1b\x06proto3"
+	"BuildImage\x12!.api.builder.v1.BuildImageRequest\x1a\".api.builder.v1.BuildImageResponse0\x01B\xba\x01\n" +
+	"\x12com.api.builder.v1B\fBuilderProtoP\x01Z<github.com/kavos113/quickctf/gen/go/api/builder/v1;builderv1\xa2\x02\x03ABX\xaa\x02\x0eApi.Builder.V1\xca\x02\x0eApi\\Builder\\V1\xe2\x02\x1aApi\\Builder\\V1\\GPBMetadata\xea\x02\x10Api::Builder::V1b\x06proto3"
 
 var (
 	file_api_builder_v1_builder_proto_rawDescOnce sync.Once
