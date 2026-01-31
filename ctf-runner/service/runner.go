@@ -231,7 +231,3 @@ func (s *RunnerService) pullImage(ctx context.Context, imageName string) error {
 
 	return nil
 }
-
-func (s *RunnerService) Cleanup() {
-	log.Println("Runner cleanup called")
-}

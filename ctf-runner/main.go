@@ -59,7 +59,6 @@ func main() {
 	go func() {
 		<-sigChan
 		log.Println("Shutting down gracefully...")
-		runnerService.Cleanup()
 		grpcServer.GracefulStop()
 	}()
 

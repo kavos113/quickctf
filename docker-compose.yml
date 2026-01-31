@@ -83,7 +83,7 @@ services:
       DB_NAME: "ctf_manager_db"
       SCHEMA_PATH: "/root/migration/ctf_manager_schema.sql"
       MANAGER_PORT: "50052"
-      RUNNER_ADDRESS: "ctf-runner:50053"
+      RUNNER_URLS: "ctf-runner:50053"
     ports:
       - "50052:50052"
     depends_on:

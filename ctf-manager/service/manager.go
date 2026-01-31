@@ -34,7 +34,7 @@ func NewManagerService(runnerURLs []string, repo domain.InstanceRepository) (*Ma
 	runners := make([]*RunnerClient, 0, len(runnerURLs))
 
 	for _, url := range runnerURLs {
-		conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.NewClient(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Printf("Failed to connect to runner %s: %v", url, err)
 			continue
@@ -90,7 +90,6 @@ func (s *ManagerService) getRunnerByURL(url string) *RunnerClient {
 }
 
 func (s *ManagerService) StartInstance(ctx context.Context, req *managerPb.StartInstanceRequest) (*managerPb.StartInstanceResponse, error) {
-	// 既に同じインスタンスIDが存在する場合はエラー
 	_, err := s.repo.FindByID(ctx, req.InstanceId)
 	if err == nil {
 		return &managerPb.StartInstanceResponse{
