@@ -114,21 +114,6 @@ services:
     networks:
       - ctf-network
 
-  gateway:
-    build:
-      context: .
-      dockerfile: gateway/Dockerfile
-    container_name: ctf-gateway
-    environment:
-      GATEWAY_PORT: "8080"
-      SERVER_ADDRESS: "ctf-server:50060"
-    ports:
-      - "8080:8080"
-    depends_on:
-      - ctf-server
-    networks:
-      - ctf-network
-
 networks:
   ctf-network:
     driver: bridge
