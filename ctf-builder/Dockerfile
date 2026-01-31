@@ -16,6 +16,4 @@ FROM alpine:latest
 
 COPY --from=builder /ctf-builder /usr/local/bin/
 
-EXPOSE 50051
-
 CMD ["ctf-builder"]

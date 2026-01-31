@@ -1,27 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
-	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-
+	"github.com/kavos113/quickctf/ctf-builder/queue"
 	"github.com/kavos113/quickctf/ctf-builder/service"
-	pb "github.com/kavos113/quickctf/gen/go/api/builder/v1"
-	"github.com/kavos113/quickctf/lib/logger"
 )
 
 func main() {
-	port := os.Getenv("BUILDER_PORT")
-	if port == "" {
-		port = "50051"
-	}
-
 	registryURL := os.Getenv("CTF_REGISTRY_URL")
 	if registryURL == "" {
 		registryURL = "localhost:5000"
@@ -29,28 +19,17 @@ func main() {
 
 	log.Printf("CTF Registry URL: %s", registryURL)
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
+	redisClient, err := queue.NewRedisClient()
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatalf("Failed to connect to Redis: %v", err)
 	}
+	defer redisClient.Close()
 
-	loggingInterceptor := logger.NewLoggingInterceptor("ctf-builder")
+	log.Println("Connected to Redis")
 
-	grpcServer := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(
-			loggingInterceptor.Unary(),
-		),
-		grpc.ChainStreamInterceptor(
-			loggingInterceptor.Stream(),
-		),
-	)
+	worker := service.NewBuildWorker(redisClient)
 
-	builderService := service.NewBuilderService()
-	pb.RegisterBuilderServiceServer(grpcServer, builderService)
-
-	reflection.Register(grpcServer)
-
-	log.Printf("Builder service listening on port %s", port)
+	ctx, cancel := context.WithCancel(context.Background())
 
 	// Graceful shutdown
 	sigChan := make(chan os.Signal, 1)
@@ -59,10 +38,8 @@ func main() {
 	go func() {
 		<-sigChan
 		log.Println("Shutting down gracefully...")
-		grpcServer.GracefulStop()
+		cancel()
 	}()
 
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+	worker.Start(ctx)
 }

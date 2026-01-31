@@ -19,6 +19,21 @@ services:
     networks:
       - ctf-network
 
+  redis:
+    image: redis:7-alpine
+    container_name: ctf-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ctf-network
+
   ctf-registry:
     build:
       context: ./ctf-registry
@@ -41,14 +56,15 @@ services:
     container_name: ctf-builder
     privileged: true
     environment:
-      BUILDER_PORT: "50051"
-      REGISTRY_URL: "localhost:5000"
-    ports:
-      - "50051:50051"
+      CTF_REGISTRY_URL: "localhost:5000"
+      REDIS_ADDRESS: "redis:6379"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
-      - ctf-registry
+      redis:
+        condition: service_healthy
+      ctf-registry:
+        condition: service_started
     networks:
       - ctf-network
 
@@ -107,13 +123,15 @@ services:
       DB_PASSWORD: "rootpassword"
       DB_NAME: "ctf_server_db"
       SCHEMA_PATH: "/root/migration/ctf_server_schema.sql"
-      BUILDER_ADDRESS: "ctf-builder:50051"
+      REDIS_ADDRESS: "redis:6379"
       MANAGER_ADDRESS: "ctf-manager:50052"
       ADMIN_ACTIVATION_CODE: "admin_secret_code"
     ports:
       - "50060:50060"
     depends_on:
       mysql:
+        condition: service_healthy
+      redis:
         condition: service_healthy
       ctf-builder:
         condition: service_started
@@ -128,4 +146,5 @@ networks:
 
 volumes:
   mysql_data:
+  redis_data:
   registry_data:
