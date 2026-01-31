@@ -26,15 +26,7 @@ export class AdminChallengesComponent implements OnInit {
   }
 
   editChallenge(challenge: Challenge): void {
-    this.router.navigate(['/admin/challenges/edit'], {
-      queryParams: {
-        name: challenge.name,
-        description: challenge.description,
-        flag: challenge.flag,
-        points: challenge.points,
-        genre: challenge.genre,
-      },
-    });
+    this.router.navigate(['/admin/challenges/edit', challenge.challengeId]);
   }
 
   async deleteChallenge(challenge: Challenge): Promise<void> {
@@ -42,7 +34,7 @@ export class AdminChallengesComponent implements OnInit {
       return;
     }
 
-    const result = await this.adminService.deleteChallenge(challenge.name);
+    const result = await this.adminService.deleteChallenge(challenge.challengeId);
     if (result.success) {
       await this.adminService.loadChallenges();
     } else {

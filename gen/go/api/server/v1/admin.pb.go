@@ -23,7 +23,7 @@ const (
 
 type CreateChallengeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Challenge     *Challenge             `protobuf:"bytes,1,opt,name=challenge,proto3" json:"challenge,omitempty"`
+	Challenge     *ChallengeRequest      `protobuf:"bytes,1,opt,name=challenge,proto3" json:"challenge,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,7 +58,7 @@ func (*CreateChallengeRequest) Descriptor() ([]byte, []int) {
 	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CreateChallengeRequest) GetChallenge() *Challenge {
+func (x *CreateChallengeRequest) GetChallenge() *ChallengeRequest {
 	if x != nil {
 		return x.Challenge
 	}
@@ -119,8 +119,7 @@ func (x *CreateChallengeResponse) GetErrorMessage() string {
 
 type UpdateChallengeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ChallengeId   string                 `protobuf:"bytes,1,opt,name=challenge_id,json=challengeId,proto3" json:"challenge_id,omitempty"`
-	Challenge     *Challenge             `protobuf:"bytes,2,opt,name=challenge,proto3" json:"challenge,omitempty"`
+	Challenge     *Challenge             `protobuf:"bytes,1,opt,name=challenge,proto3" json:"challenge,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -153,13 +152,6 @@ func (x *UpdateChallengeRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UpdateChallengeRequest.ProtoReflect.Descriptor instead.
 func (*UpdateChallengeRequest) Descriptor() ([]byte, []int) {
 	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *UpdateChallengeRequest) GetChallengeId() string {
-	if x != nil {
-		return x.ChallengeId
-	}
-	return ""
 }
 
 func (x *UpdateChallengeRequest) GetChallenge() *Challenge {
@@ -641,15 +633,14 @@ var File_api_server_v1_admin_proto protoreflect.FileDescriptor
 
 const file_api_server_v1_admin_proto_rawDesc = "" +
 	"\n" +
-	"\x19api/server/v1/admin.proto\x12\rapi.server.v1\x1a\x19api/server/v1/model.proto\"P\n" +
-	"\x16CreateChallengeRequest\x126\n" +
-	"\tchallenge\x18\x01 \x01(\v2\x18.api.server.v1.ChallengeR\tchallenge\"a\n" +
+	"\x19api/server/v1/admin.proto\x12\rapi.server.v1\x1a\x19api/server/v1/model.proto\"W\n" +
+	"\x16CreateChallengeRequest\x12=\n" +
+	"\tchallenge\x18\x01 \x01(\v2\x1f.api.server.v1.ChallengeRequestR\tchallenge\"a\n" +
 	"\x17CreateChallengeResponse\x12!\n" +
 	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"s\n" +
-	"\x16UpdateChallengeRequest\x12!\n" +
-	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x126\n" +
-	"\tchallenge\x18\x02 \x01(\v2\x18.api.server.v1.ChallengeR\tchallenge\">\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"P\n" +
+	"\x16UpdateChallengeRequest\x126\n" +
+	"\tchallenge\x18\x01 \x01(\v2\x18.api.server.v1.ChallengeR\tchallenge\">\n" +
 	"\x17UpdateChallengeResponse\x12#\n" +
 	"\rerror_message\x18\x01 \x01(\tR\ferrorMessage\"_\n" +
 	"\x1bUploadChallengeImageRequest\x12!\n" +
@@ -714,12 +705,13 @@ var file_api_server_v1_admin_proto_goTypes = []any{
 	(*AdminLoginResponse)(nil),           // 11: api.server.v1.AdminLoginResponse
 	(*AdminLogoutRequest)(nil),           // 12: api.server.v1.AdminLogoutRequest
 	(*AdminLogoutResponse)(nil),          // 13: api.server.v1.AdminLogoutResponse
-	(*Challenge)(nil),                    // 14: api.server.v1.Challenge
+	(*ChallengeRequest)(nil),             // 14: api.server.v1.ChallengeRequest
+	(*Challenge)(nil),                    // 15: api.server.v1.Challenge
 }
 var file_api_server_v1_admin_proto_depIdxs = []int32{
-	14, // 0: api.server.v1.CreateChallengeRequest.challenge:type_name -> api.server.v1.Challenge
-	14, // 1: api.server.v1.UpdateChallengeRequest.challenge:type_name -> api.server.v1.Challenge
-	14, // 2: api.server.v1.ListChallengesResponse.challenges:type_name -> api.server.v1.Challenge
+	14, // 0: api.server.v1.CreateChallengeRequest.challenge:type_name -> api.server.v1.ChallengeRequest
+	15, // 1: api.server.v1.UpdateChallengeRequest.challenge:type_name -> api.server.v1.Challenge
+	15, // 2: api.server.v1.ListChallengesResponse.challenges:type_name -> api.server.v1.Challenge
 	0,  // 3: api.server.v1.AdminService.CreateChallenge:input_type -> api.server.v1.CreateChallengeRequest
 	2,  // 4: api.server.v1.AdminService.UpdateChallenge:input_type -> api.server.v1.UpdateChallengeRequest
 	4,  // 5: api.server.v1.AdminService.UploadChallengeImage:input_type -> api.server.v1.UploadChallengeImageRequest

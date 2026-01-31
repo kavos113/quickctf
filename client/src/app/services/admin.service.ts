@@ -7,7 +7,11 @@ import {
   UpdateChallengeRequestSchema,
   UploadChallengeImageRequestSchema,
 } from '../../gen/api/server/v1/admin_pb';
-import { Challenge, ChallengeSchema } from '../../gen/api/server/v1/model_pb';
+import {
+  Challenge,
+  ChallengeRequestSchema,
+  ChallengeSchema,
+} from '../../gen/api/server/v1/model_pb';
 import { adminAuthClient, adminClient } from './grpc-client';
 
 const ADMIN_KEY = 'is_admin';
@@ -91,7 +95,7 @@ export class AdminService {
     genre: string;
   }): Promise<{ success: boolean; challengeId?: string; error?: string }> {
     try {
-      const challengeMsg = create(ChallengeSchema, {
+      const challengeMsg = create(ChallengeRequestSchema, {
         name: challenge.name,
         description: challenge.description,
         flag: challenge.flag,
@@ -125,6 +129,7 @@ export class AdminService {
   ): Promise<{ success: boolean; error?: string }> {
     try {
       const challengeMsg = create(ChallengeSchema, {
+        challengeId: challengeId,
         name: challenge.name,
         description: challenge.description,
         flag: challenge.flag,
@@ -133,7 +138,6 @@ export class AdminService {
       });
 
       const request = create(UpdateChallengeRequestSchema, {
-        challengeId,
         challenge: challengeMsg,
       });
       const response = await adminClient.updateChallenge(request);

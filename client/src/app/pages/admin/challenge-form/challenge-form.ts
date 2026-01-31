@@ -20,26 +20,49 @@ export class ChallengeFormComponent implements OnInit {
   readonly selectedFile = signal<File | null>(null);
   readonly uploadProgress = signal(0);
 
+  challengeId = '';
   name = '';
   description = '';
   flag = '';
   points = 100;
   genre = '';
 
-  private originalName = '';
-
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      if (params['name']) {
+    this.route.params.subscribe((params) => {
+      const challengeId = params['challengeId'];
+      if (challengeId) {
         this.isEditMode.set(true);
-        this.originalName = params['name'];
-        this.name = params['name'] || '';
-        this.description = params['description'] || '';
-        this.flag = params['flag'] || '';
-        this.points = Number(params['points']) || 100;
-        this.genre = params['genre'] || '';
+        this.challengeId = challengeId;
+        this.loadChallengeData(challengeId);
       }
     });
+  }
+
+  private loadChallengeData(challengeId: string): void {
+    const challenges = this.adminService.challenges();
+    const challenge = challenges.find((c) => c.challengeId === challengeId);
+
+    if (challenge) {
+      this.name = challenge.name;
+      this.description = challenge.description;
+      this.flag = challenge.flag;
+      this.points = challenge.points;
+      this.genre = challenge.genre;
+    } else {
+      this.adminService.loadChallenges().then(() => {
+        const reloadedChallenges = this.adminService.challenges();
+        const foundChallenge = reloadedChallenges.find((c) => c.challengeId === challengeId);
+        if (foundChallenge) {
+          this.name = foundChallenge.name;
+          this.description = foundChallenge.description;
+          this.flag = foundChallenge.flag;
+          this.points = foundChallenge.points;
+          this.genre = foundChallenge.genre;
+        } else {
+          this.error.set('問題が見つかりません');
+        }
+      });
+    }
   }
 
   async onSubmit(): Promise<void> {
@@ -63,11 +86,11 @@ export class ChallengeFormComponent implements OnInit {
 
     if (this.isEditMode()) {
       const updateResult = await this.adminService.updateChallenge(
-        this.originalName,
+        this.challengeId,
         challengeData,
       );
       result = updateResult;
-      challengeId = this.originalName; // 編集モードでは元の名前をIDとして使用
+      challengeId = this.challengeId;
     } else {
       const createResult = await this.adminService.createChallenge(challengeData);
       result = createResult;
@@ -75,7 +98,6 @@ export class ChallengeFormComponent implements OnInit {
     }
 
     if (result.success && challengeId && this.selectedFile()) {
-      // イメージファイルをアップロード
       this.uploadProgress.set(10);
       const uploadResult = await this.adminService.uploadChallengeImage(
         challengeId,
@@ -145,7 +167,6 @@ export class ChallengeFormComponent implements OnInit {
   removeFile(): void {
     this.selectedFile.set(null);
     this.uploadProgress.set(0);
-    // ファイル入力をリセット
     const fileInput = document.getElementById('imageFile') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';

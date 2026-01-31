@@ -13,7 +13,7 @@ service AdminService {
 }
 
 message CreateChallengeRequest {
-  Challenge challenge = 1;
+  ChallengeRequest challenge = 1;
 }
 
 message CreateChallengeResponse {
@@ -22,8 +22,7 @@ message CreateChallengeResponse {
 }
 
 message UpdateChallengeRequest {
-  string challenge_id = 1;
-  Challenge challenge = 2;
+  Challenge challenge = 1;
 }
 
 message UpdateChallengeResponse {

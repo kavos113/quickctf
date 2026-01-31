@@ -18,6 +18,10 @@ export const routes: Routes = [
     component: ChallengeFormComponent,
     canActivate: [adminGuard],
   },
-  { path: 'admin/challenges/edit', component: ChallengeFormComponent, canActivate: [adminGuard] },
+  {
+    path: 'admin/challenges/edit/:challengeId',
+    component: ChallengeFormComponent,
+    canActivate: [adminGuard],
+  },
   { path: '', redirectTo: '/challenges', pathMatch: 'full' },
 ];

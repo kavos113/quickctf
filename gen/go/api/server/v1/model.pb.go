@@ -23,11 +23,12 @@ const (
 
 type Challenge struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Flag          string                 `protobuf:"bytes,3,opt,name=flag,proto3" json:"flag,omitempty"`
-	Points        int32                  `protobuf:"varint,4,opt,name=points,proto3" json:"points,omitempty"`
-	Genre         string                 `protobuf:"bytes,5,opt,name=genre,proto3" json:"genre,omitempty"`
+	ChallengeId   string                 `protobuf:"bytes,1,opt,name=challenge_id,json=challengeId,proto3" json:"challenge_id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Flag          string                 `protobuf:"bytes,4,opt,name=flag,proto3" json:"flag,omitempty"`
+	Points        int32                  `protobuf:"varint,5,opt,name=points,proto3" json:"points,omitempty"`
+	Genre         string                 `protobuf:"bytes,6,opt,name=genre,proto3" json:"genre,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -60,6 +61,13 @@ func (x *Challenge) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Challenge.ProtoReflect.Descriptor instead.
 func (*Challenge) Descriptor() ([]byte, []int) {
 	return file_api_server_v1_model_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Challenge) GetChallengeId() string {
+	if x != nil {
+		return x.ChallengeId
+	}
+	return ""
 }
 
 func (x *Challenge) GetName() string {
@@ -97,6 +105,82 @@ func (x *Challenge) GetGenre() string {
 	return ""
 }
 
+type ChallengeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Flag          string                 `protobuf:"bytes,3,opt,name=flag,proto3" json:"flag,omitempty"`
+	Points        int32                  `protobuf:"varint,4,opt,name=points,proto3" json:"points,omitempty"`
+	Genre         string                 `protobuf:"bytes,5,opt,name=genre,proto3" json:"genre,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChallengeRequest) Reset() {
+	*x = ChallengeRequest{}
+	mi := &file_api_server_v1_model_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChallengeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChallengeRequest) ProtoMessage() {}
+
+func (x *ChallengeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_server_v1_model_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChallengeRequest.ProtoReflect.Descriptor instead.
+func (*ChallengeRequest) Descriptor() ([]byte, []int) {
+	return file_api_server_v1_model_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ChallengeRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ChallengeRequest) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *ChallengeRequest) GetFlag() string {
+	if x != nil {
+		return x.Flag
+	}
+	return ""
+}
+
+func (x *ChallengeRequest) GetPoints() int32 {
+	if x != nil {
+		return x.Points
+	}
+	return 0
+}
+
+func (x *ChallengeRequest) GetGenre() string {
+	if x != nil {
+		return x.Genre
+	}
+	return ""
+}
+
 type Submission struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ChallengeId   string                 `protobuf:"bytes,1,opt,name=challenge_id,json=challengeId,proto3" json:"challenge_id,omitempty"`
@@ -109,7 +193,7 @@ type Submission struct {
 
 func (x *Submission) Reset() {
 	*x = Submission{}
-	mi := &file_api_server_v1_model_proto_msgTypes[1]
+	mi := &file_api_server_v1_model_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -121,7 +205,7 @@ func (x *Submission) String() string {
 func (*Submission) ProtoMessage() {}
 
 func (x *Submission) ProtoReflect() protoreflect.Message {
-	mi := &file_api_server_v1_model_proto_msgTypes[1]
+	mi := &file_api_server_v1_model_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -134,7 +218,7 @@ func (x *Submission) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Submission.ProtoReflect.Descriptor instead.
 func (*Submission) Descriptor() ([]byte, []int) {
-	return file_api_server_v1_model_proto_rawDescGZIP(), []int{1}
+	return file_api_server_v1_model_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Submission) GetChallengeId() string {
@@ -169,8 +253,15 @@ var File_api_server_v1_model_proto protoreflect.FileDescriptor
 
 const file_api_server_v1_model_proto_rawDesc = "" +
 	"\n" +
-	"\x19api/server/v1/model.proto\x12\rapi.server.v1\"\x83\x01\n" +
-	"\tChallenge\x12\x12\n" +
+	"\x19api/server/v1/model.proto\x12\rapi.server.v1\"\xa6\x01\n" +
+	"\tChallenge\x12!\n" +
+	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x12\n" +
+	"\x04flag\x18\x04 \x01(\tR\x04flag\x12\x16\n" +
+	"\x06points\x18\x05 \x01(\x05R\x06points\x12\x14\n" +
+	"\x05genre\x18\x06 \x01(\tR\x05genre\"\x8a\x01\n" +
+	"\x10ChallengeRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x12\n" +
 	"\x04flag\x18\x03 \x01(\tR\x04flag\x12\x16\n" +
@@ -197,10 +288,11 @@ func file_api_server_v1_model_proto_rawDescGZIP() []byte {
 	return file_api_server_v1_model_proto_rawDescData
 }
 
-var file_api_server_v1_model_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_api_server_v1_model_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_api_server_v1_model_proto_goTypes = []any{
-	(*Challenge)(nil),  // 0: api.server.v1.Challenge
-	(*Submission)(nil), // 1: api.server.v1.Submission
+	(*Challenge)(nil),        // 0: api.server.v1.Challenge
+	(*ChallengeRequest)(nil), // 1: api.server.v1.ChallengeRequest
+	(*Submission)(nil),       // 2: api.server.v1.Submission
 }
 var file_api_server_v1_model_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -221,7 +313,7 @@ func file_api_server_v1_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_server_v1_model_proto_rawDesc), len(file_api_server_v1_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

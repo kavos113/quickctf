@@ -12,13 +12,56 @@ import type { Message } from '@bufbuild/protobuf';
 export const file_api_server_v1_model: GenFile =
   /*@__PURE__*/
   fileDesc(
-    'ChlhcGkvc2VydmVyL3YxL21vZGVsLnByb3RvEg1hcGkuc2VydmVyLnYxIlsKCUNoYWxsZW5nZRIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEgwKBGZsYWcYAyABKAkSDgoGcG9pbnRzGAQgASgFEg0KBWdlbnJlGAUgASgJIl4KClN1Ym1pc3Npb24SFAoMY2hhbGxlbmdlX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSFgoOc3VibWl0dGVkX2ZsYWcYAyABKAkSEQoJdGltZXN0YW1wGAQgASgDQrEBChFjb20uYXBpLnNlcnZlci52MUIKTW9kZWxQcm90b1ABWjpnaXRodWIuY29tL2thdm9zMTEzL3F1aWNrY3RmL2dlbi9nby9hcGkvc2VydmVyL3YxO3NlcnZlcnYxogIDQVNYqgINQXBpLlNlcnZlci5WMcoCDUFwaVxTZXJ2ZXJcVjHiAhlBcGlcU2VydmVyXFYxXEdQQk1ldGFkYXRh6gIPQXBpOjpTZXJ2ZXI6OlYxYgZwcm90bzM',
+    'ChlhcGkvc2VydmVyL3YxL21vZGVsLnByb3RvEg1hcGkuc2VydmVyLnYxInEKCUNoYWxsZW5nZRIUCgxjaGFsbGVuZ2VfaWQYASABKAkSDAoEbmFtZRgCIAEoCRITCgtkZXNjcmlwdGlvbhgDIAEoCRIMCgRmbGFnGAQgASgJEg4KBnBvaW50cxgFIAEoBRINCgVnZW5yZRgGIAEoCSJiChBDaGFsbGVuZ2VSZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkSDAoEZmxhZxgDIAEoCRIOCgZwb2ludHMYBCABKAUSDQoFZ2VucmUYBSABKAkiXgoKU3VibWlzc2lvbhIUCgxjaGFsbGVuZ2VfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRIWCg5zdWJtaXR0ZWRfZmxhZxgDIAEoCRIRCgl0aW1lc3RhbXAYBCABKANCsQEKEWNvbS5hcGkuc2VydmVyLnYxQgpNb2RlbFByb3RvUAFaOmdpdGh1Yi5jb20va2F2b3MxMTMvcXVpY2tjdGYvZ2VuL2dvL2FwaS9zZXJ2ZXIvdjE7c2VydmVydjGiAgNBU1iqAg1BcGkuU2VydmVyLlYxygINQXBpXFNlcnZlclxWMeICGUFwaVxTZXJ2ZXJcVjFcR1BCTWV0YWRhdGHqAg9BcGk6OlNlcnZlcjo6VjFiBnByb3RvMw',
   );
 
 /**
  * @generated from message api.server.v1.Challenge
  */
 export type Challenge = Message<'api.server.v1.Challenge'> & {
+  /**
+   * @generated from field: string challenge_id = 1;
+   */
+  challengeId: string;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string description = 3;
+   */
+  description: string;
+
+  /**
+   * @generated from field: string flag = 4;
+   */
+  flag: string;
+
+  /**
+   * @generated from field: int32 points = 5;
+   */
+  points: number;
+
+  /**
+   * @generated from field: string genre = 6;
+   */
+  genre: string;
+};
+
+/**
+ * Describes the message api.server.v1.Challenge.
+ * Use `create(ChallengeSchema)` to create a new message.
+ */
+export const ChallengeSchema: GenMessage<Challenge> =
+  /*@__PURE__*/
+  messageDesc(file_api_server_v1_model, 0);
+
+/**
+ * @generated from message api.server.v1.ChallengeRequest
+ */
+export type ChallengeRequest = Message<'api.server.v1.ChallengeRequest'> & {
   /**
    * @generated from field: string name = 1;
    */
@@ -46,12 +89,12 @@ export type Challenge = Message<'api.server.v1.Challenge'> & {
 };
 
 /**
- * Describes the message api.server.v1.Challenge.
- * Use `create(ChallengeSchema)` to create a new message.
+ * Describes the message api.server.v1.ChallengeRequest.
+ * Use `create(ChallengeRequestSchema)` to create a new message.
  */
-export const ChallengeSchema: GenMessage<Challenge> =
+export const ChallengeRequestSchema: GenMessage<ChallengeRequest> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_model, 0);
+  messageDesc(file_api_server_v1_model, 1);
 
 /**
  * @generated from message api.server.v1.Submission
@@ -84,4 +127,4 @@ export type Submission = Message<'api.server.v1.Submission'> & {
  */
 export const SubmissionSchema: GenMessage<Submission> =
   /*@__PURE__*/
-  messageDesc(file_api_server_v1_model, 1);
+  messageDesc(file_api_server_v1_model, 2);

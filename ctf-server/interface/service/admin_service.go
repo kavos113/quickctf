@@ -66,7 +66,7 @@ func (s *AdminService) UpdateChallenge(ctx context.Context, req *connect.Request
 		Genre:       req.Msg.Challenge.Genre,
 	}
 
-	err = s.adminUsecase.UpdateChallenge(ctx, req.Msg.ChallengeId, challenge)
+	err = s.adminUsecase.UpdateChallenge(ctx, req.Msg.Challenge.ChallengeId, challenge)
 	if err != nil {
 		return connect.NewResponse(&pb.UpdateChallengeResponse{
 			ErrorMessage: err.Error(),
@@ -130,6 +130,7 @@ func (s *AdminService) ListChallenges(ctx context.Context, req *connect.Request[
 	pbChallenges := make([]*pb.Challenge, 0, len(challenges))
 	for _, c := range challenges {
 		pbChallenges = append(pbChallenges, &pb.Challenge{
+			ChallengeId: c.ChallengeID,
 			Name:        c.Name,
 			Description: c.Description,
 			Flag:        c.Flag,
