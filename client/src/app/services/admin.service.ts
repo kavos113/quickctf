@@ -5,6 +5,7 @@ import {
   DeleteChallengeRequestSchema,
   ListChallengesRequestSchema,
   UpdateChallengeRequestSchema,
+  UploadChallengeImageRequestSchema,
 } from '../../gen/api/server/v1/admin_pb';
 import { Challenge, ChallengeSchema } from '../../gen/api/server/v1/model_pb';
 import { adminAuthClient, adminClient } from './grpc-client';
@@ -161,6 +162,31 @@ export class AdminService {
     } catch (err) {
       console.error('Failed to delete challenge:', err);
       return { success: false, error: '問題の削除に失敗しました' };
+    }
+  }
+
+  async uploadChallengeImage(
+    challengeId: string,
+    file: File,
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const imageData = new Uint8Array(arrayBuffer);
+
+      const request = create(UploadChallengeImageRequestSchema, {
+        challengeId,
+        imageData,
+      });
+      const response = await adminClient.uploadChallengeImage(request);
+
+      if (response.errorMessage) {
+        return { success: false, error: response.errorMessage };
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error('Failed to upload challenge image:', err);
+      return { success: false, error: 'イメージのアップロードに失敗しました' };
     }
   }
 }

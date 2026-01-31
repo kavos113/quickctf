@@ -1,121 +1,121 @@
 .admin-activate-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 1rem;
-    background: var(--gradient-bg-alt);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  background: var(--gradient-bg-alt);
 }
 
 .admin-activate-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 2rem;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: var(--shadow);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow);
 }
 
 .admin-activate-card h1 {
-    color: var(--accent-primary);
-    text-align: center;
-    margin-bottom: 0.5rem;
-    font-size: 1.5rem;
+  color: var(--accent-primary);
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
 }
 
 .description {
-    color: var(--text-muted);
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
-    display: block;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
+  display: block;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .form-group input {
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    color: var(--text-primary);
-    font-size: 1rem;
-    transition: border-color 0.2s;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
-    outline: none;
-    border-color: var(--accent-primary);
+  outline: none;
+  border-color: var(--accent-primary);
 }
 
 .form-group input:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .button-group {
-    display: flex;
-    gap: 1rem;
+  display: flex;
+  gap: 1rem;
 }
 
 .btn-primary,
 .btn-secondary {
-    flex: 1;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .btn-primary {
-    background: var(--accent-primary);
-    color: var(--bg-card);
-    font-weight: bold;
+  background: var(--accent-primary);
+  color: var(--bg-card);
+  font-weight: bold;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: var(--accent-primary-hover);
-    transform: translateY(-2px);
+  background: var(--accent-primary-hover);
+  transform: translateY(-2px);
 }
 
 .btn-primary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
-    background: var(--border-color);
-    color: var(--text-secondary);
+  background: var(--border-color);
+  color: var(--text-secondary);
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: var(--bg-input);
+  background: var(--bg-input);
 }
 
 .btn-secondary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .error-message {
-    background: rgba(255, 107, 107, 0.1);
-    border: 1px solid var(--accent-danger-hover);
-    color: var(--accent-danger-hover);
-    padding: 0.75rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    text-align: center;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid var(--accent-danger-hover);
+  color: var(--accent-danger-hover);
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  text-align: center;
 }

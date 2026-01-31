@@ -17,6 +17,8 @@ export class ChallengeFormComponent implements OnInit {
   readonly isEditMode = signal(false);
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly selectedFile = signal<File | null>(null);
+  readonly uploadProgress = signal(0);
 
   name = '';
   description = '';
@@ -56,11 +58,36 @@ export class ChallengeFormComponent implements OnInit {
       genre: this.genre,
     };
 
-    let result;
+    let challengeId: string | undefined;
+    let result: { success: boolean; challengeId?: string; error?: string };
+
     if (this.isEditMode()) {
-      result = await this.adminService.updateChallenge(this.originalName, challengeData);
+      const updateResult = await this.adminService.updateChallenge(
+        this.originalName,
+        challengeData,
+      );
+      result = updateResult;
+      challengeId = this.originalName; // 編集モードでは元の名前をIDとして使用
     } else {
-      result = await this.adminService.createChallenge(challengeData);
+      const createResult = await this.adminService.createChallenge(challengeData);
+      result = createResult;
+      challengeId = createResult.challengeId;
+    }
+
+    if (result.success && challengeId && this.selectedFile()) {
+      // イメージファイルをアップロード
+      this.uploadProgress.set(10);
+      const uploadResult = await this.adminService.uploadChallengeImage(
+        challengeId,
+        this.selectedFile()!,
+      );
+      this.uploadProgress.set(100);
+
+      if (!uploadResult.success) {
+        this.isLoading.set(false);
+        this.error.set(uploadResult.error || 'イメージのアップロードに失敗しました');
+        return;
+      }
     }
 
     this.isLoading.set(false);
@@ -94,6 +121,43 @@ export class ChallengeFormComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      if (this.isValidTarFile(file)) {
+        this.selectedFile.set(file);
+        this.error.set(null);
+      } else {
+        this.error.set('tar, tar.gz, または tgz ファイルを選択してください');
+      }
+    }
+  }
+
+  private isValidTarFile(file: File): boolean {
+    const validExtensions = ['.tar', '.tar.gz', '.tgz'];
+    const fileName = file.name.toLowerCase();
+    return validExtensions.some((ext) => fileName.endsWith(ext));
+  }
+
+  removeFile(): void {
+    this.selectedFile.set(null);
+    this.uploadProgress.set(0);
+    // ファイル入力をリセット
+    const fileInput = document.getElementById('imageFile') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   cancel(): void {

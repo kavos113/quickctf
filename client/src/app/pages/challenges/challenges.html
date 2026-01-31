@@ -6,16 +6,16 @@
         <span class="username">{{ username() }}</span>
         <button class="theme-toggle" (click)="themeService.toggleTheme()" title="テーマ切り替え">
           @if (themeService.isDark()) {
-          ☀️
+            ☀️
           } @else {
-          🌙
+            🌙
           }
         </button>
         <button class="admin-button" (click)="goToAdmin()">
           @if (adminService.isAdmin()) {
-          管理画面
+            管理画面
           } @else {
-          管理者
+            管理者
           }
         </button>
         <button class="logout-button" (click)="logout()">ログアウト</button>
@@ -25,42 +25,50 @@
 
   <main class="main-content">
     @if (isLoading()) {
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>読み込み中...</p>
-    </div>
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>読み込み中...</p>
+      </div>
     } @else if (error()) {
-    <div class="error-message">
-      <p>{{ error() }}</p>
-      <button (click)="challengeService.loadChallenges()">再読み込み</button>
-    </div>
+      <div class="error-message">
+        <p>{{ error() }}</p>
+        <button (click)="challengeService.loadChallenges()">再読み込み</button>
+      </div>
     } @else {
-    <div class="genre-filter">
-      <button class="genre-button" [class.active]="selectedGenre() === null" (click)="selectGenre(null)">
-        すべて
-      </button>
-      @for (genre of genres; track genre) {
-      <button class="genre-button" [class.active]="selectedGenre() === genre" (click)="selectGenre(genre)">
-        {{ genre }}
-      </button>
-      }
-    </div>
+      <div class="genre-filter">
+        <button
+          class="genre-button"
+          [class.active]="selectedGenre() === null"
+          (click)="selectGenre(null)"
+        >
+          すべて
+        </button>
+        @for (genre of genres; track genre) {
+          <button
+            class="genre-button"
+            [class.active]="selectedGenre() === genre"
+            (click)="selectGenre(genre)"
+          >
+            {{ genre }}
+          </button>
+        }
+      </div>
 
-    <div class="challenges-grid">
-      @for (challenge of filteredChallenges; track challenge.name) {
-      <button class="challenge-card" (click)="openChallenge(challenge)">
-        <div class="challenge-genre">{{ challenge.genre }}</div>
-        <h3 class="challenge-name">{{ challenge.name }}</h3>
-        <div class="challenge-points">{{ challenge.points }} pts</div>
-      </button>
-      } @empty {
-      <p class="no-challenges">問題がありません</p>
-      }
-    </div>
+      <div class="challenges-grid">
+        @for (challenge of filteredChallenges; track challenge.name) {
+          <button class="challenge-card" (click)="openChallenge(challenge)">
+            <div class="challenge-genre">{{ challenge.genre }}</div>
+            <h3 class="challenge-name">{{ challenge.name }}</h3>
+            <div class="challenge-points">{{ challenge.points }} pts</div>
+          </button>
+        } @empty {
+          <p class="no-challenges">問題がありません</p>
+        }
+      </div>
     }
   </main>
 
   @if (selectedChallenge()) {
-  <app-challenge-detail [challenge]="selectedChallenge()!" (closeModal)="closeChallenge()" />
+    <app-challenge-detail [challenge]="selectedChallenge()!" (closeModal)="closeChallenge()" />
   }
 </div>

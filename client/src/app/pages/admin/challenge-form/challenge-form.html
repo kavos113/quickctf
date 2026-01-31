@@ -1,84 +1,119 @@
 <div class="challenge-form-container">
-  <div class="challenge-form-card">
-    <h1>{{ isEditMode() ? '問題を編集' : '新規問題作成' }}</h1>
+  <div class="challenge-form-wrapper">
+    <!-- 左側：フォーム -->
+    <div class="challenge-form-card">
+      <h1>{{ isEditMode() ? '問題を編集' : '新規問題作成' }}</h1>
 
-    <form (ngSubmit)="onSubmit()">
-      @if (error()) {
+      <form (ngSubmit)="onSubmit()">
+        @if (error()) {
         <div class="error-message">{{ error() }}</div>
-      }
+        }
 
-      <div class="form-group">
-        <label for="name">問題名 <span class="required">*</span></label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          [(ngModel)]="name"
-          placeholder="問題名を入力"
-          [disabled]="isLoading()"
-        />
-      </div>
+        <div class="form-group">
+          <label for="name">問題名 <span class="required">*</span></label>
+          <input type="text" id="name" name="name" [(ngModel)]="name" placeholder="問題名を入力" [disabled]="isLoading()" />
+        </div>
 
-      <div class="form-group">
-        <label for="genre">ジャンル <span class="required">*</span></label>
-        <input
-          type="text"
-          id="genre"
-          name="genre"
-          [(ngModel)]="genre"
-          placeholder="例: Web, Crypto, Pwn, Rev, Misc"
-          [disabled]="isLoading()"
-        />
-      </div>
+        <div class="form-group">
+          <label for="genre">ジャンル <span class="required">*</span></label>
+          <input type="text" id="genre" name="genre" [(ngModel)]="genre" placeholder="例: Web, Crypto, Pwn, Rev, Misc"
+            [disabled]="isLoading()" />
+        </div>
 
-      <div class="form-group">
-        <label for="points">ポイント <span class="required">*</span></label>
-        <input
-          type="number"
-          id="points"
-          name="points"
-          [(ngModel)]="points"
-          min="1"
-          [disabled]="isLoading()"
-        />
-      </div>
+        <div class="form-group">
+          <label for="points">ポイント <span class="required">*</span></label>
+          <input type="number" id="points" name="points" [(ngModel)]="points" min="1" [disabled]="isLoading()" />
+        </div>
 
-      <div class="form-group">
-        <label for="flag">フラグ <span class="required">*</span></label>
-        <input
-          type="text"
-          id="flag"
-          name="flag"
-          [(ngModel)]="flag"
-          placeholder="例: flag{example_flag}"
-          [disabled]="isLoading()"
-        />
-      </div>
+        <div class="form-group">
+          <label for="flag">フラグ <span class="required">*</span></label>
+          <input type="text" id="flag" name="flag" [(ngModel)]="flag" placeholder="例: flag{example_flag}"
+            [disabled]="isLoading()" />
+        </div>
 
-      <div class="form-group">
-        <label for="description">説明 <span class="required">*</span></label>
-        <textarea
-          id="description"
-          name="description"
-          [(ngModel)]="description"
-          placeholder="問題の説明を入力"
-          rows="6"
-          [disabled]="isLoading()"
-        ></textarea>
-      </div>
+        <div class="form-group">
+          <label for="description">説明 <span class="required">*</span></label>
+          <textarea id="description" name="description" [(ngModel)]="description"
+            placeholder="問題の説明を入力（Markdownのような記法が使えます）" rows="8" [disabled]="isLoading()"></textarea>
+        </div>
 
-      <div class="button-group">
-        <button type="button" class="btn-secondary" (click)="cancel()" [disabled]="isLoading()">
-          キャンセル
-        </button>
-        <button type="submit" class="btn-primary" [disabled]="isLoading()">
-          @if (isLoading()) {
-            <span>保存中...</span>
-          } @else {
-            <span>{{ isEditMode() ? '更新' : '作成' }}</span>
-          }
-        </button>
-      </div>
+        <div class="form-group">
+          <label for="imageFile">問題イメージ (tar)</label>
+          <div class="file-upload-wrapper">
+            <input type="file" id="imageFile" accept=".tar,.tar.gz,.tgz" (change)="onFileSelected($event)"
+              [disabled]="isLoading()" />
+            <div class="file-upload-area" [class.has-file]="selectedFile()">
+              @if (selectedFile()) {
+              <span class="file-name">📦 {{ selectedFile()?.name }}</span>
+              <button type="button" class="remove-file" (click)="removeFile()">✕</button>
+              } @else {
+              <span class="upload-text">クリックまたはドラッグ＆ドロップでtarファイルを選択</span>
+              }
+            </div>
+          </div>
+          @if (uploadProgress() > 0 && uploadProgress() < 100) { <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="uploadProgress()"></div>
+        </div>
+        }
+    </div>
+
+    <div class="button-group">
+      <button type="button" class="btn-secondary" (click)="cancel()" [disabled]="isLoading()">
+        キャンセル
+      </button>
+      <button type="submit" class="btn-primary" [disabled]="isLoading()">
+        @if (isLoading()) {
+        <span>保存中...</span>
+        } @else {
+        <span>{{ isEditMode() ? '更新' : '作成' }}</span>
+        }
+      </button>
+    </div>
     </form>
   </div>
+
+  <!-- 右側：プレビュー -->
+  <div class="challenge-preview-card">
+    <h2>プレビュー</h2>
+
+    <div class="preview-content">
+      <div class="preview-header">
+        @if (genre) {
+        <span class="preview-genre">{{ genre }}</span>
+        }
+        <h3 class="preview-name">{{ name || '問題名' }}</h3>
+        <div class="preview-points">{{ points }} pts</div>
+      </div>
+
+      <div class="preview-description">
+        <h4>説明</h4>
+        <div class="preview-description-content">
+          @if (description) {
+          <p>{{ description }}</p>
+          } @else {
+          <p class="placeholder-text">問題の説明がここに表示されます</p>
+          }
+        </div>
+      </div>
+
+      @if (flag) {
+      <div class="preview-flag">
+        <h4>フラグ</h4>
+        <code>{{ flag }}</code>
+      </div>
+      }
+
+      @if (selectedFile()) {
+      <div class="preview-image">
+        <h4>問題イメージ</h4>
+        <div class="image-info">
+          <span class="file-icon">📦</span>
+          <span>{{ selectedFile()?.name }}</span>
+          <span class="file-size">({{ formatFileSize(selectedFile()?.size || 0) }})</span>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>
 </div>
