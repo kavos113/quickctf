@@ -63,7 +63,7 @@ func main() {
 	userAuthUsecase := usecase.NewUserAuthUsecase(userRepo, sessionRepo)
 	adminAuthUsecase := usecase.NewAdminAuthUsecase(sessionRepo)
 	adminServiceUsecase := usecase.NewAdminServiceUsecase(challengeRepo, attachmentRepo, sessionRepo, builderClient, storageClient)
-	clientChallengeUsecase := usecase.NewClientChallengeUsecase(challengeRepo, submissionRepo, instanceRepo, managerClient)
+	clientChallengeUsecase := usecase.NewClientChallengeUsecase(challengeRepo, submissionRepo, instanceRepo, attachmentRepo, managerClient, storageClient)
 
 	userAuthService := service.NewUserAuthService(userAuthUsecase)
 	adminAuthService := service.NewAdminAuthService(adminAuthUsecase)
