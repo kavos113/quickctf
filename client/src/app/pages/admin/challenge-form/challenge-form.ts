@@ -85,10 +85,7 @@ export class ChallengeFormComponent implements OnInit {
     let result: { success: boolean; challengeId?: string; error?: string };
 
     if (this.isEditMode()) {
-      const updateResult = await this.adminService.updateChallenge(
-        this.challengeId,
-        challengeData,
-      );
+      const updateResult = await this.adminService.updateChallenge(this.challengeId, challengeData);
       result = updateResult;
       challengeId = this.challengeId;
     } else {

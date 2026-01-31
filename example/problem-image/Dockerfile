@@ -15,6 +15,6 @@ RUN chmod 555 ./example && \
     chmod 444 /etc/xinetd.d/ctf && \
     chmod 555 ./init.sh
 USER user
-EXPOSE 39092
+EXPOSE 80
 
 CMD ["./init.sh"]

@@ -84,15 +84,15 @@ func (u *ClientChallengeUsecase) SubmitFlag(ctx context.Context, userID, challen
 	return isCorrect, pointsAwarded, nil
 }
 
-func (u *ClientChallengeUsecase) StartInstance(ctx context.Context, userID, challengeID string) error {
+func (u *ClientChallengeUsecase) StartInstance(ctx context.Context, userID, challengeID string) (string, int32, error) {
 	challenge, err := u.challengeRepo.FindByID(ctx, challengeID)
 	if err != nil {
-		return err
+		return "", 0, err
 	}
 
 	existingInstance, err := u.instanceRepo.FindByUserAndChallenge(ctx, userID, challengeID)
 	if err == nil && existingInstance.Status == "running" {
-		return fmt.Errorf("instance already running")
+		return "", 0, fmt.Errorf("instance already running")
 	}
 
 	instanceID := fmt.Sprintf("%s-%s", userID[:8], uuid.New().String()[:8])
@@ -101,7 +101,7 @@ func (u *ClientChallengeUsecase) StartInstance(ctx context.Context, userID, chal
 
 	connInfo, err := u.managerClient.StartInstance(ctx, imageTag, instanceID, ttlSeconds)
 	if err != nil {
-		return fmt.Errorf("failed to start instance: %w", err)
+		return "", 0, fmt.Errorf("failed to start instance: %w", err)
 	}
 
 	instance := &domain.Instance{
@@ -117,10 +117,10 @@ func (u *ClientChallengeUsecase) StartInstance(ctx context.Context, userID, chal
 	}
 
 	if err := u.instanceRepo.Create(ctx, instance); err != nil {
-		return fmt.Errorf("failed to save instance: %w", err)
+		return "", 0, fmt.Errorf("failed to save instance: %w", err)
 	}
 
-	return nil
+	return connInfo.Host, connInfo.Port, nil
 }
 
 func (u *ClientChallengeUsecase) StopInstance(ctx context.Context, userID, challengeID string) error {
@@ -150,23 +150,23 @@ func (u *ClientChallengeUsecase) StopInstance(ctx context.Context, userID, chall
 	return nil
 }
 
-func (u *ClientChallengeUsecase) GetInstanceStatus(ctx context.Context, userID, challengeID string) (domain.InstanceStatus, error) {
+func (u *ClientChallengeUsecase) GetInstanceStatus(ctx context.Context, userID, challengeID string) (domain.InstanceStatus, string, int32, error) {
 	_, err := u.challengeRepo.FindByID(ctx, challengeID)
 	if err != nil {
-		return "", err
+		return "", "", 0, err
 	}
 
 	instance, err := u.instanceRepo.FindByUserAndChallenge(ctx, userID, challengeID)
 	if err != nil {
 		if err == domain.ErrInstanceNotFound {
-			return "not_started", nil
+			return "not_started", "", 0, nil
 		}
-		return "", fmt.Errorf("failed to get instance: %w", err)
+		return "", "", 0, fmt.Errorf("failed to get instance: %w", err)
 	}
 
 	status, err := u.managerClient.GetInstanceStatus(ctx, instance.InstanceID)
 	if err != nil {
-		return instance.Status, nil
+		return instance.Status, instance.Host, instance.Port, nil
 	}
 
 	if status != instance.Status {
@@ -174,5 +174,5 @@ func (u *ClientChallengeUsecase) GetInstanceStatus(ctx context.Context, userID, 
 		u.instanceRepo.Update(ctx, instance)
 	}
 
-	return status, nil
+	return status, instance.Host, instance.Port, nil
 }

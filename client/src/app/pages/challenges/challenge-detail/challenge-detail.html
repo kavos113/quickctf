@@ -27,6 +27,27 @@
           <span class="status-badge running">実行中</span>
           <span class="status-info">{{ instanceStatus() }}</span>
         </div>
+        <div class="instance-access">
+          <div>
+            web:
+            <a
+              class="code-block"
+              href="http://{{ instanceConnectionInfo()?.host }}:{{
+                instanceConnectionInfo()?.port
+              }}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              http://{{ instanceConnectionInfo()?.host }}:{{ instanceConnectionInfo()?.port }}
+            </a>
+          </div>
+          <div>
+            pwn:
+            <span class="code-block">
+              nc {{ instanceConnectionInfo()?.host }} {{ instanceConnectionInfo()?.port }}
+            </span>
+          </div>
+        </div>
         <button
           class="instance-button stop"
           (click)="stopInstance()"

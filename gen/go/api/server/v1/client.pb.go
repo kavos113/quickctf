@@ -259,7 +259,9 @@ func (x *StartInstanceRequest) GetChallengeId() string {
 
 type StartInstanceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ErrorMessage  string                 `protobuf:"bytes,1,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	Host          string                 `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
+	Port          int32                  `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
+	ErrorMessage  string                 `protobuf:"bytes,3,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -292,6 +294,20 @@ func (x *StartInstanceResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use StartInstanceResponse.ProtoReflect.Descriptor instead.
 func (*StartInstanceResponse) Descriptor() ([]byte, []int) {
 	return file_api_server_v1_client_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *StartInstanceResponse) GetHost() string {
+	if x != nil {
+		return x.Host
+	}
+	return ""
+}
+
+func (x *StartInstanceResponse) GetPort() int32 {
+	if x != nil {
+		return x.Port
+	}
+	return 0
 }
 
 func (x *StartInstanceResponse) GetErrorMessage() string {
@@ -436,7 +452,9 @@ func (x *GetInstanceStatusRequest) GetChallengeId() string {
 type GetInstanceStatusResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Status        string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
-	ErrorMessage  string                 `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	Host          string                 `protobuf:"bytes,2,opt,name=host,proto3" json:"host,omitempty"`
+	Port          int32                  `protobuf:"varint,3,opt,name=port,proto3" json:"port,omitempty"`
+	ErrorMessage  string                 `protobuf:"bytes,4,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -476,6 +494,20 @@ func (x *GetInstanceStatusResponse) GetStatus() string {
 		return x.Status
 	}
 	return ""
+}
+
+func (x *GetInstanceStatusResponse) GetHost() string {
+	if x != nil {
+		return x.Host
+	}
+	return ""
+}
+
+func (x *GetInstanceStatusResponse) GetPort() int32 {
+	if x != nil {
+		return x.Port
+	}
+	return 0
 }
 
 func (x *GetInstanceStatusResponse) GetErrorMessage() string {
@@ -801,18 +833,22 @@ const file_api_server_v1_client_proto_rawDesc = "" +
 	"\x0epoints_awarded\x18\x02 \x01(\x05R\rpointsAwarded\x12#\n" +
 	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"9\n" +
 	"\x14StartInstanceRequest\x12!\n" +
-	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\"<\n" +
-	"\x15StartInstanceResponse\x12#\n" +
-	"\rerror_message\x18\x01 \x01(\tR\ferrorMessage\"8\n" +
+	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\"d\n" +
+	"\x15StartInstanceResponse\x12\x12\n" +
+	"\x04host\x18\x01 \x01(\tR\x04host\x12\x12\n" +
+	"\x04port\x18\x02 \x01(\x05R\x04port\x12#\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"8\n" +
 	"\x13StopInstanceRequest\x12!\n" +
 	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\";\n" +
 	"\x14StopInstanceResponse\x12#\n" +
 	"\rerror_message\x18\x01 \x01(\tR\ferrorMessage\"=\n" +
 	"\x18GetInstanceStatusRequest\x12!\n" +
-	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\"X\n" +
+	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\"\x80\x01\n" +
 	"\x19GetInstanceStatusResponse\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"F\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\x12\x12\n" +
+	"\x04host\x18\x02 \x01(\tR\x04host\x12\x12\n" +
+	"\x04port\x18\x03 \x01(\x05R\x04port\x12#\n" +
+	"\rerror_message\x18\x04 \x01(\tR\ferrorMessage\"F\n" +
 	"\fLoginRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"J\n" +

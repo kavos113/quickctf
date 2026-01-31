@@ -1,7 +1,12 @@
-import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Challenge } from '../../../../gen/api/server/v1/model_pb';
 import { ChallengeService } from '../../../services/challenge.service';
+
+interface InstanceConnectionInfo {
+  host: string;
+  port: number;
+}
 
 @Component({
   selector: 'app-challenge-detail',
@@ -9,7 +14,7 @@ import { ChallengeService } from '../../../services/challenge.service';
   templateUrl: './challenge-detail.html',
   styleUrl: './challenge-detail.css',
 })
-export class ChallengeDetailComponent {
+export class ChallengeDetailComponent implements OnInit {
   private readonly challengeService = inject(ChallengeService);
 
   @Input({ required: true }) challenge!: Challenge;
@@ -23,6 +28,11 @@ export class ChallengeDetailComponent {
   isSubmitting = signal(false);
   instanceStatus = signal<string | null>(null);
   isInstanceLoading = signal(false);
+  instanceConnectionInfo = signal<InstanceConnectionInfo | null>(null);
+
+  async ngOnInit(): Promise<void> {
+    await this.checkInstanceStatus();
+  }
 
   async submitFlag(): Promise<void> {
     if (!this.flag() || this.isSubmitting()) return;
@@ -55,6 +65,7 @@ export class ChallengeDetailComponent {
     this.isInstanceLoading.set(false);
 
     if (result.success) {
+      this.instanceConnectionInfo.set({ host: result.host || '', port: result.port || 0 });
       await this.checkInstanceStatus();
     }
   }
@@ -73,6 +84,11 @@ export class ChallengeDetailComponent {
     const result = await this.challengeService.getInstanceStatus(this.challenge.challengeId);
     if (result.success) {
       this.instanceStatus.set(result.status || null);
+      if (result.status && result.host && result.port) {
+        this.instanceConnectionInfo.set({ host: result.host, port: result.port });
+      } else {
+        this.instanceConnectionInfo.set(null);
+      }
     }
   }
 

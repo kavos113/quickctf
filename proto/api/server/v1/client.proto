@@ -35,7 +35,9 @@ message StartInstanceRequest {
 }
 
 message StartInstanceResponse {
-  string error_message = 1;
+  string host = 1;
+  int32 port = 2;
+  string error_message = 3;
 }
 
 message StopInstanceRequest {
@@ -52,7 +54,9 @@ message GetInstanceStatusRequest {
 
 message GetInstanceStatusResponse {
   string status = 1;
-  string error_message = 2;
+  string host = 2;
+  int32 port = 3;
+  string error_message = 4;
 }
 
 service UserAuthService {

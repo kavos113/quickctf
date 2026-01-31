@@ -85,7 +85,7 @@ func (s *ClientChallengeService) StartInstance(ctx context.Context, req *connect
 		}), nil
 	}
 
-	err = s.usecase.StartInstance(ctx, userID, req.Msg.ChallengeId)
+	host, port, err := s.usecase.StartInstance(ctx, userID, req.Msg.ChallengeId)
 	if err != nil {
 		log.Printf("Failed to start instance: %v", err)
 		return connect.NewResponse(&pb.StartInstanceResponse{
@@ -93,7 +93,10 @@ func (s *ClientChallengeService) StartInstance(ctx context.Context, req *connect
 		}), nil
 	}
 
-	return connect.NewResponse(&pb.StartInstanceResponse{}), nil
+	return connect.NewResponse(&pb.StartInstanceResponse{
+		Host: host,
+		Port: port,
+	}), nil
 }
 
 func (s *ClientChallengeService) StopInstance(ctx context.Context, req *connect.Request[pb.StopInstanceRequest]) (*connect.Response[pb.StopInstanceResponse], error) {
@@ -125,7 +128,7 @@ func (s *ClientChallengeService) GetInstanceStatus(ctx context.Context, req *con
 		}), nil
 	}
 
-	status, err := s.usecase.GetInstanceStatus(ctx, userID, req.Msg.ChallengeId)
+	status, host, port, err := s.usecase.GetInstanceStatus(ctx, userID, req.Msg.ChallengeId)
 	if err != nil {
 		log.Printf("Failed to get instance status: %v", err)
 		return connect.NewResponse(&pb.GetInstanceStatusResponse{
@@ -135,5 +138,7 @@ func (s *ClientChallengeService) GetInstanceStatus(ctx context.Context, req *con
 
 	return connect.NewResponse(&pb.GetInstanceStatusResponse{
 		Status: string(status),
+		Host:   host,
+		Port:   port,
 	}), nil
 }

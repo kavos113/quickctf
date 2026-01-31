@@ -74,7 +74,12 @@ export class ChallengeService {
     }
   }
 
-  async startInstance(challengeId: string): Promise<{ success: boolean; error?: string }> {
+  async startInstance(challengeId: string): Promise<{
+    success: boolean;
+    host?: string;
+    port?: number;
+    error?: string;
+  }> {
     try {
       const request = create(StartInstanceRequestSchema, { challengeId });
       const response = await challengeClient.startInstance(request);
@@ -83,7 +88,7 @@ export class ChallengeService {
         return { success: false, error: response.errorMessage };
       }
 
-      return { success: true };
+      return { success: true, host: response.host, port: response.port };
     } catch (err) {
       console.error('Failed to start instance:', err);
       return { success: false, error: 'インスタンスの起動に失敗しました' };
@@ -108,7 +113,7 @@ export class ChallengeService {
 
   async getInstanceStatus(
     challengeId: string,
-  ): Promise<{ success: boolean; status?: string; error?: string }> {
+  ): Promise<{ success: boolean; status?: string; host?: string; port?: number; error?: string }> {
     try {
       const request = create(GetInstanceStatusRequestSchema, { challengeId });
       const response = await challengeClient.getInstanceStatus(request);
@@ -117,7 +122,7 @@ export class ChallengeService {
         return { success: false, error: response.errorMessage };
       }
 
-      return { success: true, status: response.status };
+      return { success: true, status: response.status, host: response.host, port: response.port };
     } catch (err) {
       console.error('Failed to get instance status:', err);
       return { success: false, error: 'ステータスの取得に失敗しました' };

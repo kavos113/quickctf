@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/netip"
 
 	pb "github.com/kavos113/quickctf/gen/go/api/runner/v1"
 	"github.com/moby/moby/api/types/container"
@@ -40,13 +41,24 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 		}, nil
 	}
 
-	containerConfig := &container.Config{
-		Image: fullImageName,
+	containerPort, _ := network.ParsePort("80/tcp")
+	hostConfig := &container.HostConfig{
+		PortBindings: network.PortMap{
+			containerPort: []network.PortBinding{
+				{
+					HostIP:   netip.MustParseAddr("0.0.0.0"),
+					HostPort: "0", // 自動割り当て
+				},
+			},
+		},
+		AutoRemove: false,
 	}
 
-	hostConfig := &container.HostConfig{
-		PublishAllPorts: true,
-		AutoRemove:      false,
+	containerConfig := &container.Config{
+		Image: fullImageName,
+		ExposedPorts: network.PortSet{
+			containerPort: struct{}{},
+		},
 	}
 
 	networkConfig := &network.NetworkingConfig{}
@@ -85,11 +97,12 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 
 	var hostPort int32
 	if containerJSON.Container.NetworkSettings != nil {
-		port, _ := network.ParsePort("80/tcp")
-		if bindings, ok := containerJSON.Container.NetworkSettings.Ports[port]; ok && len(bindings) > 0 {
+		if bindings, ok := containerJSON.Container.NetworkSettings.Ports[containerPort]; ok && len(bindings) > 0 {
 			fmt.Sscanf(bindings[0].HostPort, "%d", &hostPort)
 		}
 	}
+
+	log.Printf("Started container %s for instance %s on host port %d", resp.ID, req.InstanceId, hostPort)
 
 	return &pb.StartInstanceResponse{
 		Status: "success",
