@@ -8,19 +8,22 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/kavos113/quickctf/ctf-builder/queue"
+	"github.com/kavos113/quickctf/ctf-builder/storage"
 	"github.com/moby/moby/client"
 )
 
 type BuildWorker struct {
 	dockerClient *client.Client
 	redisClient  *queue.RedisClient
+	s3Client     *storage.S3Client
 	registryURL  string
 }
 
-func NewBuildWorker(redisClient *queue.RedisClient) *BuildWorker {
+func NewBuildWorker(redisClient *queue.RedisClient, s3Client *storage.S3Client) *BuildWorker {
 	cli, err := client.New(client.FromEnv, client.WithAPIVersionFromEnv())
 	if err != nil {
 		log.Fatalf("failed to create docker client: %v", err)
@@ -34,6 +37,7 @@ func NewBuildWorker(redisClient *queue.RedisClient) *BuildWorker {
 	return &BuildWorker{
 		dockerClient: cli,
 		redisClient:  redisClient,
+		s3Client:     s3Client,
 		registryURL:  registryURL,
 	}
 }
@@ -64,15 +68,23 @@ func (w *BuildWorker) Start(ctx context.Context) {
 }
 
 func (w *BuildWorker) processJob(ctx context.Context, job *queue.BuildJob) {
+	var logBuilder strings.Builder
+	logBuilder.WriteString(fmt.Sprintf("=== Build started at %s ===\n", time.Now().Format(time.RFC3339)))
+	logBuilder.WriteString(fmt.Sprintf("Job ID: %s\n", job.JobID))
+	logBuilder.WriteString(fmt.Sprintf("Image Tag: %s\n", job.ImageTag))
+	logBuilder.WriteString("===================================\n\n")
+
 	result := &queue.BuildResult{
 		JobID:  job.JobID,
 		Status: queue.BuildStatusBuilding,
 	}
 	w.redisClient.SetBuildResult(ctx, result)
 
-	imageID, err := w.buildImage(ctx, job)
+	imageID, err := w.buildImage(ctx, job, &logBuilder)
 	if err != nil {
 		log.Printf("Build failed for job %s: %v", job.JobID, err)
+		logBuilder.WriteString(fmt.Sprintf("\n=== Build failed: %s ===\n", err.Error()))
+
 		result = &queue.BuildResult{
 			JobID:        job.JobID,
 			Status:       queue.BuildStatusFailed,
@@ -81,12 +93,19 @@ func (w *BuildWorker) processJob(ctx context.Context, job *queue.BuildJob) {
 		}
 		w.redisClient.SetBuildResult(ctx, result)
 		w.redisClient.PublishLog(ctx, job.JobID, fmt.Sprintf("BUILD_COMPLETE:failed:%s", err.Error()))
+
+		// Save log to S3
+		w.saveBuildLog(ctx, job.JobID, logBuilder.String())
 		return
 	}
 
+	logBuilder.WriteString(fmt.Sprintf("\nPushing image to registry %s...\n", w.registryURL))
 	w.redisClient.PublishLog(ctx, job.JobID, fmt.Sprintf("Pushing image to registry %s...\n", w.registryURL))
-	if err := w.pushImage(ctx, job); err != nil {
+
+	if err := w.pushImage(ctx, job, &logBuilder); err != nil {
 		log.Printf("Push failed for job %s: %v", job.JobID, err)
+		logBuilder.WriteString(fmt.Sprintf("\n=== Push failed: %s ===\n", err.Error()))
+
 		result = &queue.BuildResult{
 			JobID:        job.JobID,
 			ImageID:      imageID,
@@ -96,10 +115,16 @@ func (w *BuildWorker) processJob(ctx context.Context, job *queue.BuildJob) {
 		}
 		w.redisClient.SetBuildResult(ctx, result)
 		w.redisClient.PublishLog(ctx, job.JobID, fmt.Sprintf("BUILD_COMPLETE:failed:push failed: %v", err))
+
+		// Save log to S3
+		w.saveBuildLog(ctx, job.JobID, logBuilder.String())
 		return
 	}
 
 	log.Printf("Build succeeded for job %s, image ID: %s", job.JobID, imageID)
+	logBuilder.WriteString(fmt.Sprintf("\n=== Build completed successfully at %s ===\n", time.Now().Format(time.RFC3339)))
+	logBuilder.WriteString(fmt.Sprintf("Image ID: %s\n", imageID))
+
 	result = &queue.BuildResult{
 		JobID:       job.JobID,
 		ImageID:     imageID,
@@ -108,9 +133,25 @@ func (w *BuildWorker) processJob(ctx context.Context, job *queue.BuildJob) {
 	}
 	w.redisClient.SetBuildResult(ctx, result)
 	w.redisClient.PublishLog(ctx, job.JobID, fmt.Sprintf("BUILD_COMPLETE:success:%s", imageID))
+
+	// Save log to S3
+	w.saveBuildLog(ctx, job.JobID, logBuilder.String())
 }
 
-func (w *BuildWorker) buildImage(ctx context.Context, job *queue.BuildJob) (string, error) {
+func (w *BuildWorker) saveBuildLog(ctx context.Context, jobID, logContent string) {
+	if w.s3Client == nil {
+		log.Printf("S3 client not configured, skipping log save for job %s", jobID)
+		return
+	}
+
+	if err := w.s3Client.SaveBuildLog(ctx, jobID, logContent); err != nil {
+		log.Printf("Failed to save build log to S3 for job %s: %v", jobID, err)
+	} else {
+		log.Printf("Build log saved to S3 for job %s", jobID)
+	}
+}
+
+func (w *BuildWorker) buildImage(ctx context.Context, job *queue.BuildJob, logBuilder *strings.Builder) (string, error) {
 	buildOptions := client.ImageBuildOptions{
 		Tags:        []string{job.ImageTag},
 		Dockerfile:  "Dockerfile",
@@ -147,10 +188,12 @@ func (w *BuildWorker) buildImage(ctx context.Context, job *queue.BuildJob) (stri
 
 		if message.Error != "" {
 			buildError = message.Error
+			logBuilder.WriteString(message.Error)
 			w.redisClient.PublishLog(ctx, job.JobID, message.Error)
 		}
 
 		if message.Stream != "" {
+			logBuilder.WriteString(message.Stream)
 			w.redisClient.PublishLog(ctx, job.JobID, message.Stream)
 		}
 
@@ -166,7 +209,7 @@ func (w *BuildWorker) buildImage(ctx context.Context, job *queue.BuildJob) (stri
 	return imageID, nil
 }
 
-func (w *BuildWorker) pushImage(ctx context.Context, job *queue.BuildJob) error {
+func (w *BuildWorker) pushImage(ctx context.Context, job *queue.BuildJob, logBuilder *strings.Builder) error {
 	registryTag := fmt.Sprintf("%s/%s", w.registryURL, job.ImageTag)
 
 	tagOptions := client.ImageTagOptions{
@@ -208,6 +251,7 @@ func (w *BuildWorker) pushImage(ctx context.Context, job *queue.BuildJob) error 
 			if message.Progress != "" {
 				logLine = fmt.Sprintf("%s %s", message.Status, message.Progress)
 			}
+			logBuilder.WriteString(logLine + "\n")
 			w.redisClient.PublishLog(ctx, job.JobID, logLine+"\n")
 		}
 	}
