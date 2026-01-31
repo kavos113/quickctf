@@ -17,5 +17,9 @@ plugins:
     out: gen/go
     opt:
       - paths=source_relative
+  - remote: buf.build/bufbuild/es:v1.10.0
+    out: client/src/gen
+  - remote: buf.build/connectrpc/es:v1.6.1
+    out: client/src/gen
 inputs:
   - directory: proto
