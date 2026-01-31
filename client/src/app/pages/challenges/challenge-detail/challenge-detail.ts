@@ -27,7 +27,7 @@ export class ChallengeDetailComponent implements OnInit {
     message: string;
   } | null>(null);
   isSubmitting = signal(false);
-  instanceStatus = signal<GetInstanceStatusResponse_Status | null>(null);
+  instanceStatus = signal<GetInstanceStatusResponse_Status>(GetInstanceStatusResponse_Status.UNSPECIFIED);
   isInstanceLoading = signal(false);
   instanceConnectionInfo = signal<InstanceConnectionInfo | null>(null);
 
@@ -77,14 +77,14 @@ export class ChallengeDetailComponent implements OnInit {
     this.isInstanceLoading.set(false);
 
     if (result.success) {
-      this.instanceStatus.set(null);
+      this.instanceStatus.set(GetInstanceStatusResponse_Status.STOPPED);
     }
   }
 
   async checkInstanceStatus(): Promise<void> {
     const result = await this.challengeService.getInstanceStatus(this.challenge.challengeId);
     if (result.success) {
-      this.instanceStatus.set(result.status || null);
+      this.instanceStatus.set(result.status || GetInstanceStatusResponse_Status.UNSPECIFIED);
       if (result.status && result.host && result.port) {
         this.instanceConnectionInfo.set({ host: result.host, port: result.port });
       } else {
@@ -109,6 +109,7 @@ export class ChallengeDetailComponent implements OnInit {
   }
 
   isRunning(): boolean {
+    console.log(this.instanceStatus());
     return this.instanceStatus() === GetInstanceStatusResponse_Status.RUNNING;
   }
 }

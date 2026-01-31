@@ -123,6 +123,8 @@ export class ChallengeService {
         return { success: false, error: response.errorMessage };
       }
 
+      console.log('Instance status response:', response);
+
       return { success: true, status: response.status, host: response.host, port: response.port };
     } catch (err) {
       console.error('Failed to get instance status:', err);

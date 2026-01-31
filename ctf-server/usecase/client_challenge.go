@@ -153,20 +153,27 @@ func (u *ClientChallengeUsecase) StopInstance(ctx context.Context, userID, chall
 func (u *ClientChallengeUsecase) GetInstanceStatus(ctx context.Context, userID, challengeID string) (domain.InstanceStatus, string, int32, error) {
 	_, err := u.challengeRepo.FindByID(ctx, challengeID)
 	if err != nil {
-		return "", "", 0, err
+		return domain.InstanceStatusUnknown, "", 0, err
 	}
 
 	instance, err := u.instanceRepo.FindByUserAndChallenge(ctx, userID, challengeID)
 	if err != nil {
 		if err == domain.ErrInstanceNotFound {
-			return "not_started", "", 0, nil
+			return domain.InstanceStatusUnknown, "", 0, nil
 		}
-		return "", "", 0, fmt.Errorf("failed to get instance: %w", err)
+		return domain.InstanceStatusUnknown, "", 0, fmt.Errorf("failed to get instance: %w", err)
 	}
 
 	status, err := u.managerClient.GetInstanceStatus(ctx, instance.InstanceID)
 	if err != nil {
 		return instance.Status, instance.Host, instance.Port, nil
+	}
+
+	if status == domain.InstanceStatusDestroyed {
+		if err := u.instanceRepo.Delete(ctx, instance.InstanceID); err != nil {
+			return domain.InstanceStatusUnknown, "", 0, nil
+		}
+		return domain.InstanceStatusUnknown, "", 0, nil
 	}
 
 	if status != instance.Status {

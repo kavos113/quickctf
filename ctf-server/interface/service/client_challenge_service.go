@@ -136,6 +136,8 @@ func (s *ClientChallengeService) GetInstanceStatus(ctx context.Context, req *con
 		}), nil
 	}
 
+	log.Printf("status: %s, host: %s, port: %d", status, host, port)
+
 	var pbStatus pb.GetInstanceStatusResponse_Status
 	switch status {
 	case "STATUS_RUNNING":
