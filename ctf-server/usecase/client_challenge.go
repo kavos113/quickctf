@@ -14,20 +14,26 @@ type ClientChallengeUsecase struct {
 	challengeRepo  domain.ChallengeRepository
 	submissionRepo domain.SubmissionRepository
 	instanceRepo   domain.InstanceRepository
+	attachmentRepo domain.AttachmentRepository
 	managerClient  *client.ManagerClient
+	storageClient  *client.StorageClient
 }
 
 func NewClientChallengeUsecase(
 	challengeRepo domain.ChallengeRepository,
 	submissionRepo domain.SubmissionRepository,
 	instanceRepo domain.InstanceRepository,
+	attachmentRepo domain.AttachmentRepository,
 	managerClient *client.ManagerClient,
+	storageClient *client.StorageClient,
 ) *ClientChallengeUsecase {
 	return &ClientChallengeUsecase{
 		challengeRepo:  challengeRepo,
 		submissionRepo: submissionRepo,
 		instanceRepo:   instanceRepo,
+		attachmentRepo: attachmentRepo,
 		managerClient:  managerClient,
+		storageClient:  storageClient,
 	}
 }
 
@@ -204,4 +210,18 @@ func (u *ClientChallengeUsecase) GetInstanceStatus(ctx context.Context, userID, 
 	}
 
 	return status, instance.Host, instance.Port, nil
+}
+
+func (u *ClientChallengeUsecase) GetAttachmentURL(ctx context.Context, attachmentID string) (string, error) {
+	attachment, err := u.attachmentRepo.FindByID(ctx, attachmentID)
+	if err != nil {
+		return "", err
+	}
+
+	url, err := u.storageClient.GetPresignedURL(ctx, attachment.S3Key)
+	if err != nil {
+		return "", fmt.Errorf("failed to get attachment URL: %w", err)
+	}
+
+	return url, nil
 }

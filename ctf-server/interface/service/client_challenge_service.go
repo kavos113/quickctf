@@ -34,6 +34,21 @@ func (s *ClientChallengeService) GetChallenges(ctx context.Context, req *connect
 
 	pbChallenges := make([]*pb.Challenge, 0, len(challenges))
 	for _, c := range challenges {
+		pbAttachments := make([]*pb.Attachment, 0, len(c.Attachments))
+		for _, a := range c.Attachments {
+			url, err := s.usecase.GetAttachmentURL(ctx, a.AttachmentID)
+			if err != nil {
+				log.Printf("Failed to get attachment URL for attachment %s: %v", a.AttachmentID, err)
+				continue
+			}
+			pbAttachments = append(pbAttachments, &pb.Attachment{
+				AttachmentId: a.AttachmentID,
+				Filename:     a.Filename,
+				Size:         a.Size,
+				Url:          url,
+			})
+		}
+
 		pbChallenges = append(pbChallenges, &pb.Challenge{
 			ChallengeId: c.ChallengeID,
 			Name:        c.Name,
@@ -41,6 +56,7 @@ func (s *ClientChallengeService) GetChallenges(ctx context.Context, req *connect
 			Flag:        c.Flag, // フラグは空文字列になっている
 			Points:      int32(c.Points),
 			Genre:       c.Genre,
+			Attachments: pbAttachments,
 		})
 	}
 
