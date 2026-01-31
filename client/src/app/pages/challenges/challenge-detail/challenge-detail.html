@@ -1,5 +1,11 @@
-<div class="modal-overlay" (click)="onOverlayClick($event)" (keydown.escape)="onClose()" tabindex="0" role="dialog"
-  aria-modal="true">
+<div
+  class="modal-overlay"
+  (click)="onOverlayClick($event)"
+  (keydown.escape)="onClose()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
   <div class="modal-content">
     <button class="close-button" (click)="onClose()" aria-label="閉じる">×</button>
 
@@ -17,45 +23,62 @@
     <div class="instance-section">
       <h3>インスタンス</h3>
       @if (instanceStatus()) {
-      <div class="instance-status">
-        <span class="status-badge running">実行中</span>
-        <span class="status-info">{{ instanceStatus() }}</span>
-      </div>
-      <button class="instance-button stop" (click)="stopInstance()" [disabled]="isInstanceLoading()">
-        @if (isInstanceLoading()) {
-        停止中...
-        } @else {
-        インスタンスを停止
-        }
-      </button>
+        <div class="instance-status">
+          <span class="status-badge running">実行中</span>
+          <span class="status-info">{{ instanceStatus() }}</span>
+        </div>
+        <button
+          class="instance-button stop"
+          (click)="stopInstance()"
+          [disabled]="isInstanceLoading()"
+        >
+          @if (isInstanceLoading()) {
+            停止中...
+          } @else {
+            インスタンスを停止
+          }
+        </button>
       } @else {
-      <button class="instance-button start" (click)="startInstance()" [disabled]="isInstanceLoading()">
-        @if (isInstanceLoading()) {
-        起動中...
-        } @else {
-        インスタンスを起動
-        }
-      </button>
+        <button
+          class="instance-button start"
+          (click)="startInstance()"
+          [disabled]="isInstanceLoading()"
+        >
+          @if (isInstanceLoading()) {
+            起動中...
+          } @else {
+            インスタンスを起動
+          }
+        </button>
       }
     </div>
 
     <div class="flag-section">
       <h3>フラグを提出</h3>
       @if (submitResult()) {
-      <div class="submit-result" [class.success]="submitResult()?.type === 'success'"
-        [class.error]="submitResult()?.type === 'error'" [class.wrong]="submitResult()?.type === 'wrong'">
-        {{ submitResult()?.message }}
-      </div>
+        <div
+          class="submit-result"
+          [class.success]="submitResult()?.type === 'success'"
+          [class.error]="submitResult()?.type === 'error'"
+          [class.wrong]="submitResult()?.type === 'wrong'"
+        >
+          {{ submitResult()?.message }}
+        </div>
       }
       <form (ngSubmit)="submitFlag()">
         <div class="flag-input-group">
-          <input type="text" placeholder="flag{...}" [value]="flag()" (input)="updateFlag($event)"
-            [disabled]="isSubmitting()" />
+          <input
+            type="text"
+            placeholder="flag{...}"
+            [value]="flag()"
+            (input)="updateFlag($event)"
+            [disabled]="isSubmitting()"
+          />
           <button type="submit" [disabled]="isSubmitting() || !flag()">
             @if (isSubmitting()) {
-            送信中...
+              送信中...
             } @else {
-            提出
+              提出
             }
           </button>
         </div>
