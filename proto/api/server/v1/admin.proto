@@ -38,7 +38,8 @@ message UploadChallengeImageRequest {
 }
 
 message UploadChallengeImageResponse {
-  string error_message = 1;
+  string job_id = 1;
+  string error_message = 2;
 }
 
 message DeleteChallengeRequest {

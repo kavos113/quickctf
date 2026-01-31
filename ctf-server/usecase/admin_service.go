@@ -56,20 +56,20 @@ func (u *AdminServiceUsecase) ListChallenges(ctx context.Context) ([]*domain.Cha
 	return challenges, nil
 }
 
-func (u *AdminServiceUsecase) UploadChallengeImage(ctx context.Context, challengeID string, imageTar []byte) error {
+func (u *AdminServiceUsecase) UploadChallengeImage(ctx context.Context, challengeID string, imageTar []byte) (string, error) {
 	challenge, err := u.challengeRepo.FindByID(ctx, challengeID)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	imageTag := fmt.Sprintf("ctf-%s:%s", challenge.Name, challengeID[:8])
 
-	_, err = u.builderClient.BuildImage(ctx, imageTag, imageTar, challengeID)
+	jobID, err := u.builderClient.BuildImage(ctx, imageTag, imageTar, challengeID)
 	if err != nil {
-		return fmt.Errorf("failed to build image: %w", err)
+		return "", fmt.Errorf("failed to build image: %w", err)
 	}
 
-	return nil
+	return jobID, nil
 }
 
 func (u *AdminServiceUsecase) GetChallenge(ctx context.Context, challengeID string) (*domain.Challenge, error) {

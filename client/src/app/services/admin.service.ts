@@ -176,7 +176,7 @@ export class AdminService {
   async uploadChallengeImage(
     challengeId: string,
     file: File,
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; jobId?: string; error?: string }> {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const imageData = new Uint8Array(arrayBuffer);
@@ -191,7 +191,7 @@ export class AdminService {
         return { success: false, error: response.errorMessage };
       }
 
-      return { success: true };
+      return { success: true, jobId: response.jobId };
     } catch (err) {
       console.error('Failed to upload challenge image:', err);
       return { success: false, error: 'イメージのアップロードに失敗しました' };

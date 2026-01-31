@@ -107,6 +107,13 @@ export class ChallengeFormComponent implements OnInit {
         this.error.set(uploadResult.error || 'イメージのアップロードに失敗しました');
         return;
       }
+
+      this.isLoading.set(false);
+      // tarファイルをアップロードした場合は問題詳細ページに遷移してビルドログを表示
+      this.router.navigate(['/admin/challenges', challengeId], {
+        queryParams: { jobId: uploadResult.jobId },
+      });
+      return;
     }
 
     this.isLoading.set(false);

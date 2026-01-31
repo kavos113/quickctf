@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BuildLogSummary } from '../../../../gen/api/server/v1/admin_pb';
 import { Challenge } from '../../../../gen/api/server/v1/model_pb';
@@ -11,7 +11,7 @@ import { ThemeService } from '../../../services/theme.service';
   templateUrl: './challenge-detail.html',
   styleUrl: './challenge-detail.css',
 })
-export class ChallengeDetailComponent implements OnInit {
+export class ChallengeDetailComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly adminService = inject(AdminService);
@@ -25,15 +25,25 @@ export class ChallengeDetailComponent implements OnInit {
   isLoadingLogContent = signal(false);
   error = signal<string | null>(null);
   buildLogsExpanded = signal(false);
+  isPolling = signal(false);
+
+  private pollingInterval: ReturnType<typeof setInterval> | null = null;
+  private targetJobId: string | null = null;
 
   ngOnInit(): void {
     const challengeId = this.route.snapshot.paramMap.get('challengeId');
+    this.targetJobId = this.route.snapshot.queryParamMap.get('jobId');
+
     if (challengeId) {
       this.loadChallenge(challengeId);
     } else {
       this.error.set('Challenge ID が指定されていません');
       this.isLoading.set(false);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling();
   }
 
   private async loadChallenge(challengeId: string): Promise<void> {
@@ -44,7 +54,14 @@ export class ChallengeDetailComponent implements OnInit {
       const result = await this.adminService.getChallenge(challengeId);
       if (result.success && result.challenge) {
         this.challenge.set(result.challenge);
-        this.loadBuildLogs(challengeId);
+        await this.loadBuildLogs(challengeId);
+
+        // jobIdクエリパラメータがある場合は該当のログを開いてポーリング開始
+        if (this.targetJobId) {
+          this.buildLogsExpanded.set(true);
+          await this.viewBuildLog(this.targetJobId);
+          this.startPolling(this.targetJobId);
+        }
       } else {
         this.error.set(result.error || '問題が見つかりません');
       }
@@ -77,6 +94,7 @@ export class ChallengeDetailComponent implements OnInit {
   async viewBuildLog(jobId: string): Promise<void> {
     if (this.selectedLog()?.jobId === jobId) {
       this.selectedLog.set(null);
+      this.stopPolling();
       return;
     }
 
@@ -89,12 +107,58 @@ export class ChallengeDetailComponent implements OnInit {
           content: result.logContent || '',
           status: result.status || '',
         });
+
+        // ステータスがpendingまたはbuildingの場合はポーリング開始
+        if (result.status === 'pending' || result.status === 'building') {
+          this.startPolling(jobId);
+        } else {
+          this.stopPolling();
+        }
       }
     } catch (error) {
       console.error('Failed to load build log:', error);
     } finally {
       this.isLoadingLogContent.set(false);
     }
+  }
+
+  private startPolling(jobId: string): void {
+    this.stopPolling();
+    this.isPolling.set(true);
+
+    this.pollingInterval = setInterval(async () => {
+      try {
+        const result = await this.adminService.getBuildLog(jobId);
+        if (result.success) {
+          this.selectedLog.set({
+            jobId,
+            content: result.logContent || '',
+            status: result.status || '',
+          });
+
+          // ビルドログ一覧も更新
+          const challenge = this.challenge();
+          if (challenge) {
+            await this.loadBuildLogs(challenge.challengeId);
+          }
+
+          // ステータスがsuccessまたはfailedになったらポーリング停止
+          if (result.status === 'success' || result.status === 'failed') {
+            this.stopPolling();
+          }
+        }
+      } catch (error) {
+        console.error('Polling error:', error);
+      }
+    }, 2000);
+  }
+
+  private stopPolling(): void {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
+    this.isPolling.set(false);
   }
 
   editChallenge(): void {

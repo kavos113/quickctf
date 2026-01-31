@@ -56,6 +56,9 @@
         <button class="build-logs-toggle" (click)="toggleBuildLogs()">
           <span class="toggle-icon">{{ buildLogsExpanded() ? '▼' : '▶' }}</span>
           <span>ビルドログ ({{ buildLogs().length }})</span>
+          @if (isPolling()) {
+          <span class="polling-indicator">🔄 更新中...</span>
+          }
         </button>
 
         @if (buildLogsExpanded()) {

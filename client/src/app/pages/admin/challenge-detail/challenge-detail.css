@@ -77,9 +77,8 @@
 
 .detail-wrapper {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 2rem;
-    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -228,7 +227,25 @@
 
 .toggle-icon {
     font-size: 0.75rem;
-    color: var(--text-secondary);
+}
+
+.polling-indicator {
+    margin-left: auto;
+    font-size: 0.875rem;
+    color: var(--accent-secondary);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
 .build-logs-content {
@@ -335,9 +352,8 @@
     font-size: 0.75rem;
     line-height: 1.5;
     overflow-x: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
-    max-height: 300px;
+    white-space: pre;
+    max-height: 400px;
     overflow-y: auto;
     border-radius: 6px;
 }

@@ -259,7 +259,8 @@ func (x *UploadChallengeImageRequest) GetImageData() []byte {
 
 type UploadChallengeImageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ErrorMessage  string                 `protobuf:"bytes,1,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	JobId         string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	ErrorMessage  string                 `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -292,6 +293,13 @@ func (x *UploadChallengeImageResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UploadChallengeImageResponse.ProtoReflect.Descriptor instead.
 func (*UploadChallengeImageResponse) Descriptor() ([]byte, []int) {
 	return file_api_server_v1_admin_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *UploadChallengeImageResponse) GetJobId() string {
+	if x != nil {
+		return x.JobId
+	}
+	return ""
 }
 
 func (x *UploadChallengeImageResponse) GetErrorMessage() string {
@@ -1026,9 +1034,10 @@ const file_api_server_v1_admin_proto_rawDesc = "" +
 	"\x1bUploadChallengeImageRequest\x12!\n" +
 	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x12\x1d\n" +
 	"\n" +
-	"image_data\x18\x02 \x01(\fR\timageData\"C\n" +
-	"\x1cUploadChallengeImageResponse\x12#\n" +
-	"\rerror_message\x18\x01 \x01(\tR\ferrorMessage\";\n" +
+	"image_data\x18\x02 \x01(\fR\timageData\"Z\n" +
+	"\x1cUploadChallengeImageResponse\x12\x15\n" +
+	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12#\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\";\n" +
 	"\x16DeleteChallengeRequest\x12!\n" +
 	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\">\n" +
 	"\x17DeleteChallengeResponse\x12#\n" +

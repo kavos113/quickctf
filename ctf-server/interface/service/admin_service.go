@@ -84,14 +84,14 @@ func (s *AdminService) UploadChallengeImage(ctx context.Context, req *connect.Re
 		}), nil
 	}
 
-	err = s.adminUsecase.UploadChallengeImage(ctx, req.Msg.ChallengeId, req.Msg.ImageData)
+	jobId, err := s.adminUsecase.UploadChallengeImage(ctx, req.Msg.ChallengeId, req.Msg.ImageData)
 	if err != nil {
 		return connect.NewResponse(&pb.UploadChallengeImageResponse{
 			ErrorMessage: err.Error(),
 		}), nil
 	}
 
-	return connect.NewResponse(&pb.UploadChallengeImageResponse{}), nil
+	return connect.NewResponse(&pb.UploadChallengeImageResponse{JobId: jobId}), nil
 }
 
 func (s *AdminService) DeleteChallenge(ctx context.Context, req *connect.Request[pb.DeleteChallengeRequest]) (*connect.Response[pb.DeleteChallengeResponse], error) {
