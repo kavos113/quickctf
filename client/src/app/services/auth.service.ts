@@ -68,8 +68,10 @@ export class AuthService {
 
   async login(username: string, password: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const request = new LoginRequest({ username, password });
-      const response = await userAuthClient.login(request);
+      const response = await userAuthClient.login({
+        username,
+        password,
+      });
 
       if (response.errorMessage) {
         return { success: false, error: response.errorMessage };
@@ -88,8 +90,10 @@ export class AuthService {
     password: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
-      const request = new RegisterRequest({ username, password });
-      const response = await userAuthClient.register(request);
+      const response = await userAuthClient.register({
+        username,
+        password,
+      });
 
       if (response.errorMessage) {
         return { success: false, error: response.errorMessage };
@@ -106,8 +110,9 @@ export class AuthService {
     try {
       const token = this.authState().token;
       if (token) {
-        const request = new LogoutRequest({ token });
-        await userAuthClient.logout(request);
+        await userAuthClient.logout({
+          token,
+        });
       }
     } catch (error) {
       console.error('Logout error:', error);

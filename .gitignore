@@ -4,3 +4,6 @@
 copilot-instructions.md
 .github/docs
 bin/
+node_modules/
+dist/
+build/
