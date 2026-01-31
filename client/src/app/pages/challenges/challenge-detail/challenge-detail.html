@@ -29,6 +29,7 @@
     </div>
     }
 
+    @if (challenge.requiresInstance) {
     <div class="instance-section">
       <h3>インスタンス</h3>
       @if (isRunning()) {
@@ -39,8 +40,8 @@
         <div>
           web:
           <a class="code-block" href="http://{{ instanceConnectionInfo()?.host }}:{{
-                instanceConnectionInfo()?.port
-              }}" target="_blank" rel="noopener noreferrer">
+                  instanceConnectionInfo()?.port
+                }}" target="_blank" rel="noopener noreferrer">
             http://{{ instanceConnectionInfo()?.host }}:{{ instanceConnectionInfo()?.port }}
           </a>
         </div>
@@ -68,6 +69,7 @@
       </button>
       }
     </div>
+    }
 
     <div class="flag-section">
       <h3>フラグを提出</h3>

@@ -22,8 +22,8 @@ func NewMySQLChallengeRepository(db *sql.DB) *MySQLChallengeRepository {
 
 func (r *MySQLChallengeRepository) Create(ctx context.Context, challenge *domain.Challenge) error {
 	query := `
-		INSERT INTO challenges (id, name, description, flag, points, genre, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO challenges (id, name, description, flag, points, genre, requires_instance, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 	now := time.Now()
 	_, err := r.db.ExecContext(ctx, query,
@@ -33,6 +33,7 @@ func (r *MySQLChallengeRepository) Create(ctx context.Context, challenge *domain
 		challenge.Flag,
 		challenge.Points,
 		challenge.Genre,
+		challenge.RequiresInstance,
 		now,
 		now,
 	)
@@ -46,7 +47,7 @@ func (r *MySQLChallengeRepository) Create(ctx context.Context, challenge *domain
 
 func (r *MySQLChallengeRepository) FindByID(ctx context.Context, challengeID string) (*domain.Challenge, error) {
 	query := `
-		SELECT id, name, description, flag, points, genre, created_at, updated_at
+		SELECT id, name, description, flag, points, genre, requires_instance, created_at, updated_at
 		FROM challenges
 		WHERE id = ?
 	`
@@ -58,6 +59,7 @@ func (r *MySQLChallengeRepository) FindByID(ctx context.Context, challengeID str
 		&challenge.Flag,
 		&challenge.Points,
 		&challenge.Genre,
+		&challenge.RequiresInstance,
 		&challenge.CreatedAt,
 		&challenge.UpdatedAt,
 	)
@@ -79,7 +81,7 @@ func (r *MySQLChallengeRepository) FindByID(ctx context.Context, challengeID str
 
 func (r *MySQLChallengeRepository) FindAll(ctx context.Context) ([]*domain.Challenge, error) {
 	query := `
-		SELECT id, name, description, flag, points, genre, created_at, updated_at
+		SELECT id, name, description, flag, points, genre, requires_instance, created_at, updated_at
 		FROM challenges
 		ORDER BY created_at DESC
 	`
@@ -99,6 +101,7 @@ func (r *MySQLChallengeRepository) FindAll(ctx context.Context) ([]*domain.Chall
 			&challenge.Flag,
 			&challenge.Points,
 			&challenge.Genre,
+			&challenge.RequiresInstance,
 			&challenge.CreatedAt,
 			&challenge.UpdatedAt,
 		); err != nil {
@@ -125,7 +128,7 @@ func (r *MySQLChallengeRepository) FindAll(ctx context.Context) ([]*domain.Chall
 func (r *MySQLChallengeRepository) Update(ctx context.Context, challenge *domain.Challenge) error {
 	query := `
 		UPDATE challenges
-		SET name = ?, description = ?, flag = ?, points = ?, genre = ?, updated_at = ?
+		SET name = ?, description = ?, flag = ?, points = ?, genre = ?, requires_instance = ?, updated_at = ?
 		WHERE id = ?
 	`
 	now := time.Now()
@@ -135,6 +138,7 @@ func (r *MySQLChallengeRepository) Update(ctx context.Context, challenge *domain
 		challenge.Flag,
 		challenge.Points,
 		challenge.Genre,
+		challenge.RequiresInstance,
 		now,
 		challenge.ChallengeID,
 	)

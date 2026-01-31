@@ -22,16 +22,17 @@ const (
 )
 
 type Challenge struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ChallengeId   string                 `protobuf:"bytes,1,opt,name=challenge_id,json=challengeId,proto3" json:"challenge_id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Flag          string                 `protobuf:"bytes,4,opt,name=flag,proto3" json:"flag,omitempty"`
-	Points        int32                  `protobuf:"varint,5,opt,name=points,proto3" json:"points,omitempty"`
-	Genre         string                 `protobuf:"bytes,6,opt,name=genre,proto3" json:"genre,omitempty"`
-	Attachments   []*Attachment          `protobuf:"bytes,7,rep,name=attachments,proto3" json:"attachments,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	ChallengeId      string                 `protobuf:"bytes,1,opt,name=challenge_id,json=challengeId,proto3" json:"challenge_id,omitempty"`
+	Name             string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description      string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Flag             string                 `protobuf:"bytes,4,opt,name=flag,proto3" json:"flag,omitempty"`
+	Points           int32                  `protobuf:"varint,5,opt,name=points,proto3" json:"points,omitempty"`
+	Genre            string                 `protobuf:"bytes,6,opt,name=genre,proto3" json:"genre,omitempty"`
+	Attachments      []*Attachment          `protobuf:"bytes,7,rep,name=attachments,proto3" json:"attachments,omitempty"`
+	RequiresInstance bool                   `protobuf:"varint,8,opt,name=requires_instance,json=requiresInstance,proto3" json:"requires_instance,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *Challenge) Reset() {
@@ -113,6 +114,13 @@ func (x *Challenge) GetAttachments() []*Attachment {
 	return nil
 }
 
+func (x *Challenge) GetRequiresInstance() bool {
+	if x != nil {
+		return x.RequiresInstance
+	}
+	return false
+}
+
 type Attachment struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AttachmentId  string                 `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
@@ -182,14 +190,15 @@ func (x *Attachment) GetUrl() string {
 }
 
 type ChallengeRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Flag          string                 `protobuf:"bytes,3,opt,name=flag,proto3" json:"flag,omitempty"`
-	Points        int32                  `protobuf:"varint,4,opt,name=points,proto3" json:"points,omitempty"`
-	Genre         string                 `protobuf:"bytes,5,opt,name=genre,proto3" json:"genre,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Name             string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description      string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Flag             string                 `protobuf:"bytes,3,opt,name=flag,proto3" json:"flag,omitempty"`
+	Points           int32                  `protobuf:"varint,4,opt,name=points,proto3" json:"points,omitempty"`
+	Genre            string                 `protobuf:"bytes,5,opt,name=genre,proto3" json:"genre,omitempty"`
+	RequiresInstance bool                   `protobuf:"varint,6,opt,name=requires_instance,json=requiresInstance,proto3" json:"requires_instance,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ChallengeRequest) Reset() {
@@ -255,6 +264,13 @@ func (x *ChallengeRequest) GetGenre() string {
 		return x.Genre
 	}
 	return ""
+}
+
+func (x *ChallengeRequest) GetRequiresInstance() bool {
+	if x != nil {
+		return x.RequiresInstance
+	}
+	return false
 }
 
 type Submission struct {
@@ -329,7 +345,7 @@ var File_api_server_v1_model_proto protoreflect.FileDescriptor
 
 const file_api_server_v1_model_proto_rawDesc = "" +
 	"\n" +
-	"\x19api/server/v1/model.proto\x12\rapi.server.v1\"\xe3\x01\n" +
+	"\x19api/server/v1/model.proto\x12\rapi.server.v1\"\x90\x02\n" +
 	"\tChallenge\x12!\n" +
 	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -337,19 +353,21 @@ const file_api_server_v1_model_proto_rawDesc = "" +
 	"\x04flag\x18\x04 \x01(\tR\x04flag\x12\x16\n" +
 	"\x06points\x18\x05 \x01(\x05R\x06points\x12\x14\n" +
 	"\x05genre\x18\x06 \x01(\tR\x05genre\x12;\n" +
-	"\vattachments\x18\a \x03(\v2\x19.api.server.v1.AttachmentR\vattachments\"s\n" +
+	"\vattachments\x18\a \x03(\v2\x19.api.server.v1.AttachmentR\vattachments\x12+\n" +
+	"\x11requires_instance\x18\b \x01(\bR\x10requiresInstance\"s\n" +
 	"\n" +
 	"Attachment\x12#\n" +
 	"\rattachment_id\x18\x01 \x01(\tR\fattachmentId\x12\x1a\n" +
 	"\bfilename\x18\x02 \x01(\tR\bfilename\x12\x12\n" +
 	"\x04size\x18\x03 \x01(\x03R\x04size\x12\x10\n" +
-	"\x03url\x18\x04 \x01(\tR\x03url\"\x8a\x01\n" +
+	"\x03url\x18\x04 \x01(\tR\x03url\"\xb7\x01\n" +
 	"\x10ChallengeRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x12\n" +
 	"\x04flag\x18\x03 \x01(\tR\x04flag\x12\x16\n" +
 	"\x06points\x18\x04 \x01(\x05R\x06points\x12\x14\n" +
-	"\x05genre\x18\x05 \x01(\tR\x05genre\"\x8d\x01\n" +
+	"\x05genre\x18\x05 \x01(\tR\x05genre\x12+\n" +
+	"\x11requires_instance\x18\x06 \x01(\bR\x10requiresInstance\"\x8d\x01\n" +
 	"\n" +
 	"Submission\x12!\n" +
 	"\fchallenge_id\x18\x01 \x01(\tR\vchallengeId\x12\x17\n" +

@@ -30,6 +30,7 @@ export class ChallengeFormComponent implements OnInit {
   flag = '';
   points = 100;
   genre = '';
+  requiresInstance = false;
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -52,6 +53,7 @@ export class ChallengeFormComponent implements OnInit {
       this.flag = challenge.flag;
       this.points = challenge.points;
       this.genre = challenge.genre;
+      this.requiresInstance = challenge.requiresInstance;
       this.attachments.set([...challenge.attachments]);
     } else {
       this.adminService.loadChallenges().then(() => {
@@ -63,6 +65,7 @@ export class ChallengeFormComponent implements OnInit {
           this.flag = foundChallenge.flag;
           this.points = foundChallenge.points;
           this.genre = foundChallenge.genre;
+          this.requiresInstance = foundChallenge.requiresInstance;
           this.attachments.set([...foundChallenge.attachments]);
         } else {
           this.error.set('問題が見つかりません');
@@ -85,6 +88,7 @@ export class ChallengeFormComponent implements OnInit {
       flag: this.flag,
       points: this.points,
       genre: this.genre,
+      requiresInstance: this.requiresInstance,
     };
 
     let challengeId: string | undefined;

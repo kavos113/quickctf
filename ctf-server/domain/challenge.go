@@ -7,15 +7,16 @@ import (
 )
 
 type Challenge struct {
-	ChallengeID string
-	Name        string
-	Description string
-	Flag        string
-	Points      int
-	Genre       string
-	Attachments []*Attachment
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ChallengeID      string
+	Name             string
+	Description      string
+	Flag             string
+	Points           int
+	Genre            string
+	RequiresInstance bool
+	Attachments      []*Attachment
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
 }
 
 type Attachment struct {

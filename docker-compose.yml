@@ -153,6 +153,7 @@ services:
       MANAGER_ADDRESS: "ctf-manager:50052"
       ADMIN_ACTIVATION_CODE: "admin_secret_code"
       S3_ENDPOINT: "http://minio:9000"
+      S3_PUBLIC_ENDPOINT: "http://localhost:9000"
       S3_ACCESS_KEY: "minioadmin"
       S3_SECRET_KEY: "minioadmin"
       S3_BUCKET_NAME: "build-logs"

@@ -50,13 +50,14 @@ func (s *ClientChallengeService) GetChallenges(ctx context.Context, req *connect
 		}
 
 		pbChallenges = append(pbChallenges, &pb.Challenge{
-			ChallengeId: c.ChallengeID,
-			Name:        c.Name,
-			Description: c.Description,
-			Flag:        c.Flag, // フラグは空文字列になっている
-			Points:      int32(c.Points),
-			Genre:       c.Genre,
-			Attachments: pbAttachments,
+			ChallengeId:      c.ChallengeID,
+			Name:             c.Name,
+			Description:      c.Description,
+			Flag:             c.Flag, // フラグは空文字列になっている
+			Points:           int32(c.Points),
+			Genre:            c.Genre,
+			Attachments:      pbAttachments,
+			RequiresInstance: c.RequiresInstance,
 		})
 	}
 

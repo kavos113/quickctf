@@ -48,6 +48,31 @@
     color: var(--accent-danger-hover);
 }
 
+.checkbox-group {
+    margin-bottom: 1.25rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.checkbox-label input[type='checkbox'] {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+    accent-color: var(--accent-primary);
+}
+
+.help-text {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
 .form-group input,
 .form-group textarea {
     width: 100%;

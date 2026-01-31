@@ -31,11 +31,12 @@ func (s *AdminService) CreateChallenge(ctx context.Context, req *connect.Request
 	}
 
 	challenge := &domain.Challenge{
-		Name:        req.Msg.Challenge.Name,
-		Description: req.Msg.Challenge.Description,
-		Flag:        req.Msg.Challenge.Flag,
-		Points:      int(req.Msg.Challenge.Points),
-		Genre:       req.Msg.Challenge.Genre,
+		Name:             req.Msg.Challenge.Name,
+		Description:      req.Msg.Challenge.Description,
+		Flag:             req.Msg.Challenge.Flag,
+		Points:           int(req.Msg.Challenge.Points),
+		Genre:            req.Msg.Challenge.Genre,
+		RequiresInstance: req.Msg.Challenge.RequiresInstance,
 	}
 
 	challengeID, err := s.adminUsecase.CreateChallenge(ctx, challenge)
@@ -59,11 +60,12 @@ func (s *AdminService) UpdateChallenge(ctx context.Context, req *connect.Request
 	}
 
 	challenge := &domain.Challenge{
-		Name:        req.Msg.Challenge.Name,
-		Description: req.Msg.Challenge.Description,
-		Flag:        req.Msg.Challenge.Flag,
-		Points:      int(req.Msg.Challenge.Points),
-		Genre:       req.Msg.Challenge.Genre,
+		Name:             req.Msg.Challenge.Name,
+		Description:      req.Msg.Challenge.Description,
+		Flag:             req.Msg.Challenge.Flag,
+		Points:           int(req.Msg.Challenge.Points),
+		Genre:            req.Msg.Challenge.Genre,
+		RequiresInstance: req.Msg.Challenge.RequiresInstance,
 	}
 
 	err = s.adminUsecase.UpdateChallenge(ctx, req.Msg.Challenge.ChallengeId, challenge)
@@ -140,13 +142,14 @@ func (s *AdminService) ListChallenges(ctx context.Context, req *connect.Request[
 			})
 		}
 		pbChallenges = append(pbChallenges, &pb.Challenge{
-			ChallengeId: c.ChallengeID,
-			Name:        c.Name,
-			Description: c.Description,
-			Flag:        c.Flag,
-			Points:      int32(c.Points),
-			Genre:       c.Genre,
-			Attachments: pbAttachments,
+			ChallengeId:      c.ChallengeID,
+			Name:             c.Name,
+			Description:      c.Description,
+			Flag:             c.Flag,
+			Points:           int32(c.Points),
+			Genre:            c.Genre,
+			Attachments:      pbAttachments,
+			RequiresInstance: c.RequiresInstance,
 		})
 	}
 
@@ -183,13 +186,14 @@ func (s *AdminService) GetChallenge(ctx context.Context, req *connect.Request[pb
 
 	return connect.NewResponse(&pb.GetChallengeResponse{
 		Challenge: &pb.Challenge{
-			ChallengeId: challenge.ChallengeID,
-			Name:        challenge.Name,
-			Description: challenge.Description,
-			Flag:        challenge.Flag,
-			Points:      int32(challenge.Points),
-			Genre:       challenge.Genre,
-			Attachments: pbAttachments,
+			ChallengeId:      challenge.ChallengeID,
+			Name:             challenge.Name,
+			Description:      challenge.Description,
+			Flag:             challenge.Flag,
+			Points:           int32(challenge.Points),
+			Genre:            challenge.Genre,
+			Attachments:      pbAttachments,
+			RequiresInstance: challenge.RequiresInstance,
 		},
 	}), nil
 }

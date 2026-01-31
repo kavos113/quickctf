@@ -37,6 +37,18 @@
             placeholder="問題の説明を入力（Markdownのような記法が使えます）" rows="8" [disabled]="isLoading()"></textarea>
         </div>
 
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="requiresInstance" name="requiresInstance" [(ngModel)]="requiresInstance"
+              [disabled]="isLoading()" />
+            <span>問題サーバーが必要</span>
+          </label>
+          <p class="help-text">
+            チェックを入れると、この問題にはDockerコンテナによるサーバー環境が必要になります
+          </p>
+        </div>
+
+        @if (requiresInstance) {
         <div class="form-group">
           <label for="imageFile">問題イメージ (tar)</label>
           <div class="file-upload-wrapper">
@@ -56,6 +68,7 @@
         </div>
         }
     </div>
+    }
 
     @if (isEditMode()) {
     <div class="form-group">

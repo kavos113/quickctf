@@ -34,7 +34,9 @@ export class ChallengeDetailComponent implements OnInit {
   instanceConnectionInfo = signal<InstanceConnectionInfo | null>(null);
 
   async ngOnInit(): Promise<void> {
-    await this.checkInstanceStatus();
+    if (this.challenge.requiresInstance) {
+      await this.checkInstanceStatus();
+    }
   }
 
   async submitFlag(): Promise<void> {

@@ -12,7 +12,7 @@ import type { Message } from '@bufbuild/protobuf';
 export const file_api_server_v1_model: GenFile =
   /*@__PURE__*/
   fileDesc(
-    'ChlhcGkvc2VydmVyL3YxL21vZGVsLnByb3RvEg1hcGkuc2VydmVyLnYxIqEBCglDaGFsbGVuZ2USFAoMY2hhbGxlbmdlX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkSDAoEZmxhZxgEIAEoCRIOCgZwb2ludHMYBSABKAUSDQoFZ2VucmUYBiABKAkSLgoLYXR0YWNobWVudHMYByADKAsyGS5hcGkuc2VydmVyLnYxLkF0dGFjaG1lbnQiUAoKQXR0YWNobWVudBIVCg1hdHRhY2htZW50X2lkGAEgASgJEhAKCGZpbGVuYW1lGAIgASgJEgwKBHNpemUYAyABKAMSCwoDdXJsGAQgASgJImIKEENoYWxsZW5nZVJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRIMCgRmbGFnGAMgASgJEg4KBnBvaW50cxgEIAEoBRINCgVnZW5yZRgFIAEoCSJeCgpTdWJtaXNzaW9uEhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEhYKDnN1Ym1pdHRlZF9mbGFnGAMgASgJEhEKCXRpbWVzdGFtcBgEIAEoA0KxAQoRY29tLmFwaS5zZXJ2ZXIudjFCCk1vZGVsUHJvdG9QAVo6Z2l0aHViLmNvbS9rYXZvczExMy9xdWlja2N0Zi9nZW4vZ28vYXBpL3NlcnZlci92MTtzZXJ2ZXJ2MaICA0FTWKoCDUFwaS5TZXJ2ZXIuVjHKAg1BcGlcU2VydmVyXFYx4gIZQXBpXFNlcnZlclxWMVxHUEJNZXRhZGF0YeoCD0FwaTo6U2VydmVyOjpWMWIGcHJvdG8z',
+    'ChlhcGkvc2VydmVyL3YxL21vZGVsLnByb3RvEg1hcGkuc2VydmVyLnYxIrwBCglDaGFsbGVuZ2USFAoMY2hhbGxlbmdlX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkSDAoEZmxhZxgEIAEoCRIOCgZwb2ludHMYBSABKAUSDQoFZ2VucmUYBiABKAkSLgoLYXR0YWNobWVudHMYByADKAsyGS5hcGkuc2VydmVyLnYxLkF0dGFjaG1lbnQSGQoRcmVxdWlyZXNfaW5zdGFuY2UYCCABKAgiUAoKQXR0YWNobWVudBIVCg1hdHRhY2htZW50X2lkGAEgASgJEhAKCGZpbGVuYW1lGAIgASgJEgwKBHNpemUYAyABKAMSCwoDdXJsGAQgASgJIn0KEENoYWxsZW5nZVJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRIMCgRmbGFnGAMgASgJEg4KBnBvaW50cxgEIAEoBRINCgVnZW5yZRgFIAEoCRIZChFyZXF1aXJlc19pbnN0YW5jZRgGIAEoCCJeCgpTdWJtaXNzaW9uEhQKDGNoYWxsZW5nZV9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEhYKDnN1Ym1pdHRlZF9mbGFnGAMgASgJEhEKCXRpbWVzdGFtcBgEIAEoA0KxAQoRY29tLmFwaS5zZXJ2ZXIudjFCCk1vZGVsUHJvdG9QAVo6Z2l0aHViLmNvbS9rYXZvczExMy9xdWlja2N0Zi9nZW4vZ28vYXBpL3NlcnZlci92MTtzZXJ2ZXJ2MaICA0FTWKoCDUFwaS5TZXJ2ZXIuVjHKAg1BcGlcU2VydmVyXFYx4gIZQXBpXFNlcnZlclxWMVxHUEJNZXRhZGF0YeoCD0FwaTo6U2VydmVyOjpWMWIGcHJvdG8z',
   );
 
 /**
@@ -53,6 +53,11 @@ export type Challenge = Message<'api.server.v1.Challenge'> & {
    * @generated from field: repeated api.server.v1.Attachment attachments = 7;
    */
   attachments: Attachment[];
+
+  /**
+   * @generated from field: bool requires_instance = 8;
+   */
+  requiresInstance: boolean;
 };
 
 /**
@@ -124,6 +129,11 @@ export type ChallengeRequest = Message<'api.server.v1.ChallengeRequest'> & {
    * @generated from field: string genre = 5;
    */
   genre: string;
+
+  /**
+   * @generated from field: bool requires_instance = 6;
+   */
+  requiresInstance: boolean;
 };
 
 /**

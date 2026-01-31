@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS challenges (
     flag VARCHAR(255) NOT NULL,
     points INT NOT NULL,
     genre VARCHAR(100) NOT NULL,
+    requires_instance BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

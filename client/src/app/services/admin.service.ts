@@ -100,6 +100,7 @@ export class AdminService {
     flag: string;
     points: number;
     genre: string;
+    requiresInstance: boolean;
   }): Promise<{ success: boolean; challengeId?: string; error?: string }> {
     try {
       const challengeMsg = create(ChallengeRequestSchema, {
@@ -108,6 +109,7 @@ export class AdminService {
         flag: challenge.flag,
         points: challenge.points,
         genre: challenge.genre,
+        requiresInstance: challenge.requiresInstance,
       });
 
       const request = create(CreateChallengeRequestSchema, { challenge: challengeMsg });
@@ -132,6 +134,7 @@ export class AdminService {
       flag: string;
       points: number;
       genre: string;
+      requiresInstance: boolean;
     },
   ): Promise<{ success: boolean; error?: string }> {
     try {
@@ -142,6 +145,7 @@ export class AdminService {
         flag: challenge.flag,
         points: challenge.points,
         genre: challenge.genre,
+        requiresInstance: challenge.requiresInstance,
       });
 
       const request = create(UpdateChallengeRequestSchema, {
