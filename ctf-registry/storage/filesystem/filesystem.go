@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	rootPath  = "./data"
+	rootPath  = os.Getenv("STORAGE_PATH")
 	uploadDir = filepath.Join(rootPath, "uploads")
 	blobDir   = filepath.Join(rootPath, "blobs")
 )

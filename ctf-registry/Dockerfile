@@ -20,6 +20,6 @@ RUN mkdir -p /data/blobs /data/uploads
 
 VOLUME ["/data"]
 
-EXPOSE 5000
+EXPOSE 8080
 
 CMD ["./ctf-registry"]

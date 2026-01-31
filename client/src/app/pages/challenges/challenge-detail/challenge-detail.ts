@@ -30,7 +30,7 @@ export class ChallengeDetailComponent {
     this.isSubmitting.set(true);
     this.submitResult.set(null);
 
-    const result = await this.challengeService.submitFlag(this.challenge.name, this.flag());
+    const result = await this.challengeService.submitFlag(this.challenge.challengeId, this.flag());
 
     this.isSubmitting.set(false);
 
@@ -51,7 +51,7 @@ export class ChallengeDetailComponent {
 
   async startInstance(): Promise<void> {
     this.isInstanceLoading.set(true);
-    const result = await this.challengeService.startInstance(this.challenge.name);
+    const result = await this.challengeService.startInstance(this.challenge.challengeId);
     this.isInstanceLoading.set(false);
 
     if (result.success) {
@@ -61,7 +61,7 @@ export class ChallengeDetailComponent {
 
   async stopInstance(): Promise<void> {
     this.isInstanceLoading.set(true);
-    const result = await this.challengeService.stopInstance(this.challenge.name);
+    const result = await this.challengeService.stopInstance(this.challenge.challengeId);
     this.isInstanceLoading.set(false);
 
     if (result.success) {
@@ -70,7 +70,7 @@ export class ChallengeDetailComponent {
   }
 
   async checkInstanceStatus(): Promise<void> {
-    const result = await this.challengeService.getInstanceStatus(this.challenge.name);
+    const result = await this.challengeService.getInstanceStatus(this.challenge.challengeId);
     if (result.success) {
       this.instanceStatus.set(result.status || null);
     }

@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 	"slices"
 
 	"github.com/kavos113/quickctf/ctf-registry/manifest"
@@ -26,7 +28,7 @@ var (
 )
 
 func NewStore() *Storage {
-	_db, err := bolt.Open("minicr.db", 0600, nil)
+	_db, err := bolt.Open(filepath.Join(os.Getenv("STORAGE_PATH"), "minicr.db"), 0600, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -216,7 +218,7 @@ func (s Storage) DeleteBlob(repoName string, d digest.Digest) error {
 		if v == nil {
 			return storage.ErrNotFound
 		}
-		
+
 		err := b.Delete(key)
 		if err != nil {
 			return fmt.Errorf("failed to delete blob: %w", storage.ErrStorageFail)

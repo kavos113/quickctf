@@ -34,6 +34,7 @@ func (s *ClientChallengeService) GetChallenges(ctx context.Context, req *connect
 	pbChallenges := make([]*pb.Challenge, 0, len(challenges))
 	for _, c := range challenges {
 		pbChallenges = append(pbChallenges, &pb.Challenge{
+			ChallengeId: c.ChallengeID,
 			Name:        c.Name,
 			Description: c.Description,
 			Flag:        c.Flag, // フラグは空文字列になっている
