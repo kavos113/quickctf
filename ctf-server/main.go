@@ -68,6 +68,7 @@ func main() {
 	clientChallengeService := service.NewClientChallengeService(clientChallengeUsecase)
 
 	authInterceptor := middleware.NewAuthInterceptor(sessionRepo)
+	loggingInterceptor := middleware.NewLoggingInterceptor()
 
 	log.Printf("CTF server starting on port %s", port)
 
@@ -77,7 +78,13 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(authInterceptor.Unary()),
+		grpc.ChainUnaryInterceptor(
+			loggingInterceptor.Unary(),
+			authInterceptor.Unary(),
+		),
+		grpc.ChainStreamInterceptor(
+			loggingInterceptor.Stream(),
+		),
 	)
 
 	pb.RegisterUserAuthServiceServer(grpcServer, userAuthService)
