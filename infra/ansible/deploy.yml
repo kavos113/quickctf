@@ -14,9 +14,9 @@
         version: "main"
         force: yes
 
-    - name: generate .env filr
+    - name: generate .env file
       template:
-        src: templates/env.j2
+        src: templates/.env.j2
         dest: "{{ app_dir }}/.env"
         mode: "0600"
 
