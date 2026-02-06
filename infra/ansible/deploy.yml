@@ -20,10 +20,22 @@
         dest: "{{ app_dir }}/.env"
         mode: "0600"
 
+    - name: create nginx directory
+      file:
+        path: "{{ app_dir }}/nginx"
+        state: directory
+        mode: "0755"
+
+    - name: generate nginx config file
+      template:
+        src: templates/nginx.conf.j2
+        dest: "{{ app_dir }}/nginx/nginx.conf"
+        mode: "0644"
+
     - name: run docker compose
       shell: |
         docker compose down
-        docker compose up -d --build
+        docker compose up -d --build > build.log 2>&1
         docker image prune -f
       args:
         chdir: "{{ app_dir }}"

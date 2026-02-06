@@ -29,7 +29,7 @@ http {
     # frontend
     server {
         listen 80;
-        server_name localhost;
+        server_name {{ domain_root }};
 
         location / {
             proxy_pass http://frontend:80;
@@ -40,10 +40,10 @@ http {
     server {
         listen 80;
         http2 on;
-        server_name localhost;
+        server_name api.{{ domain_root }};
 
         location / {
-            proxy_pass http://server:${SERVER_PORT};
+            proxy_pass http://server:{{ SERVER_PORT }};
 
             grpc_read_timeout 300s;
             grpc_send_timeout 300s;
