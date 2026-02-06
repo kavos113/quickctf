@@ -43,7 +43,7 @@ http {
         server_name api.{{ domain_root }};
 
         location / {
-            proxy_pass http://server:{{ SERVER_PORT }};
+            proxy_pass http://server:{{ secret_server_port }};
 
             grpc_read_timeout 300s;
             grpc_send_timeout 300s;
