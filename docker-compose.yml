@@ -191,8 +191,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-      args: 
-        API_URL: "http://api.${DOMAIN_ROOT}"
     container_name: ctf-frontend
     restart: always
     networks:
