@@ -32,6 +32,12 @@
         dest: "{{ app_dir }}/nginx/nginx.conf"
         mode: "0644"
 
+    - name: generate frontend environment file
+      template:
+        src: templates/environments.ts.j2
+        dest: "{{ app_dir }}/client/src/environments/environment.ts"
+        mode: "0644"
+
     - name: run docker compose
       shell: |
         docker compose down

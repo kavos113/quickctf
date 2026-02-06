@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -133,8 +134,23 @@ func main() {
 }
 
 func corsMiddleware(next http.Handler) http.Handler {
+	origins := os.Getenv("CORS_ALLOWED_ORIGINS")
+	originsMap := make(map[string]bool)
+	if origins != "" {
+		for _, origin := range strings.Split(origins, ",") {
+			originsMap[strings.TrimSpace(origin)] = true
+		}
+	}
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		origin := r.Header.Get("Origin")
+		if origins != "" {
+			if _, ok := originsMap[origin]; ok {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+				w.Header().Set("Access-Control-Allow-Credentials", "true")
+			}
+		}
+
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, Connect-Protocol-Version")
 		w.Header().Set("Access-Control-Expose-Headers", "Connect-Protocol-Version")
