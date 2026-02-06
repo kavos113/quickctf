@@ -56,6 +56,21 @@ services:
     networks:
       - ctf-network
 
+  nginx:
+    image: nginx:latest
+    container_name: ctf-gateway
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - ctf-server
+      - frontend
+    networks:
+      - ctf-network
+
   ctf-registry:
     build:
       context: ./ctf-registry
@@ -170,6 +185,15 @@ services:
         condition: service_started
       ctf-manager:
         condition: service_started
+    networks:
+      - ctf-network
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: ctf-frontend
+    restart: always
     networks:
       - ctf-network
 
