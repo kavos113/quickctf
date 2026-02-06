@@ -7,3 +7,7 @@ bin/
 node_modules/
 dist/
 build/
+
+.env
+.vault_pass
+vagrant.ini

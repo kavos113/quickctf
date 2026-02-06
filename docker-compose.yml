@@ -5,7 +5,7 @@ services:
     image: mysql:8.0
     container_name: ctf-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -36,11 +36,13 @@ services:
 
   minio:
     image: minio/minio:latest
+    profiles:
+      - dev
     container_name: ctf-minio
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -60,8 +62,8 @@ services:
       dockerfile: Dockerfile
     container_name: ctf-registry
     environment:
-      REGISTRY_PORT: "5000"
-      STORAGE_PATH: "/data"
+      REGISTRY_PORT: ${REGISTRY_PORT:-8080}
+      STORAGE_PATH: ${STORAGE_PATH:-/data}
     ports:
       - "5000:8080"
     volumes:
@@ -76,12 +78,12 @@ services:
     container_name: ctf-builder
     privileged: true
     environment:
-      CTF_REGISTRY_URL: "localhost:5000"
-      REDIS_ADDRESS: "redis:6379"
-      S3_ENDPOINT: "http://minio:9000"
-      S3_ACCESS_KEY: "minioadmin"
-      S3_SECRET_KEY: "minioadmin"
-      S3_BUCKET_NAME: "build-logs"
+      CTF_REGISTRY_URL: ${REGISTRY_URL}
+      REDIS_ADDRESS: ${REDIS_ADDRESS}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BUCKET_NAME: ${S3_BUILD_LOGS_BUCKET}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
@@ -101,10 +103,10 @@ services:
     container_name: ctf-runner
     privileged: true
     environment:
-      RUNNER_PORT: "50053"
-      REGISTRY_URL: "localhost:5000"
+      RUNNER_PORT: ${RUNNER_PORT}
+      REGISTRY_URL: ${REGISTRY_URL}
     ports:
-      - "50053:50053"
+      - "${RUNNER_PORT}:${RUNNER_PORT}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
@@ -118,16 +120,16 @@ services:
       dockerfile: ctf-manager/Dockerfile
     container_name: ctf-manager
     environment:
-      DB_HOST: "mysql"
-      DB_PORT: "3306"
-      DB_USER: "root"
-      DB_PASSWORD: "rootpassword"
-      DB_NAME: "ctf_manager_db"
-      SCHEMA_PATH: "/root/migration/ctf_manager_schema.sql"
-      MANAGER_PORT: "50052"
-      RUNNER_URLS: "ctf-runner:50053"
+      DB_HOST: ${MYSQL_HOST}
+      DB_PORT: ${MYSQL_PORT}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_NAME: ${MYSQL_MANAGER_DB}
+      SCHEMA_PATH: ${MYSQL_MANAGER_SCHEMA_PATH}
+      MANAGER_PORT: ${MANAGER_PORT}
+      RUNNER_URLS: "ctf-runner:${RUNNER_PORT}"
     ports:
-      - "50052:50052"
+      - "${MANAGER_PORT}:${MANAGER_PORT}"
     depends_on:
       ctf-runner:
         condition: service_started
@@ -142,23 +144,23 @@ services:
       dockerfile: ctf-server/Dockerfile
     container_name: ctf-server
     environment:
-      SERVER_PORT: "50060"
-      DB_HOST: "mysql"
-      DB_PORT: "3306"
-      DB_USER: "root"
-      DB_PASSWORD: "rootpassword"
-      DB_NAME: "ctf_server_db"
-      SCHEMA_PATH: "/root/migration/ctf_server_schema.sql"
-      REDIS_ADDRESS: "redis:6379"
-      MANAGER_ADDRESS: "ctf-manager:50052"
-      ADMIN_ACTIVATION_CODE: "admin_secret_code"
-      S3_ENDPOINT: "http://minio:9000"
-      S3_PUBLIC_ENDPOINT: "http://localhost:9000"
-      S3_ACCESS_KEY: "minioadmin"
-      S3_SECRET_KEY: "minioadmin"
-      S3_BUCKET_NAME: "build-logs"
+      SERVER_PORT: ${SERVER_PORT}
+      DB_HOST: ${MYSQL_HOST}
+      DB_PORT: ${MYSQL_PORT}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_NAME: ${MYSQL_SERVER_DB}
+      SCHEMA_PATH: ${MYSQL_SERVER_SCHEMA_PATH}
+      REDIS_ADDRESS: ${REDIS_ADDRESS}
+      MANAGER_ADDRESS: "ctf-manager:${MANAGER_PORT}"
+      ADMIN_ACTIVATION_CODE: ${ADMIN_ACTIVATION_CODE}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BUCKET_NAME: ${S3_BUILD_LOGS_BUCKET}
     ports:
-      - "50060:50060"
+      - "${SERVER_PORT}:${SERVER_PORT}"
     depends_on:
       mysql:
         condition: service_healthy

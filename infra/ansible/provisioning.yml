@@ -1,0 +1,29 @@
+---
+- name: Setup Environment
+  hosts: webservers
+  become: true
+
+  tasks: 
+    - name: update apt cache
+      apt:
+        update_cache: yes
+
+    - name: install dependencies
+      apt: 
+        name:
+          - git
+          - curl
+          - ca-certificates
+          - gnupg
+        state: present
+
+    - name: install docker
+      shell: "curl -fsSL https://get.docker.com | sh"
+      args:
+        creates: /usr/bin/docker
+
+    - name: add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes

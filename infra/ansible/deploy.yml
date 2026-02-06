@@ -1,0 +1,29 @@
+---
+- name: Deploy Application
+  hosts: webservers
+  become: true
+
+  vars:
+    app_dir: "/home/{{ ansible_user }}/app"
+
+  tasks:
+    - name: pull code from repository
+      git:
+        repo: "https://github.com/kavos113/quickctf.git"
+        dest: "{{ app_dir }}"
+        version: "main"
+        force: yes
+
+    - name: generate .env filr
+      template:
+        src: templates/env.j2
+        dest: "{{ app_dir }}/.env"
+        mode: "0600"
+
+    - name: run docker compose
+      shell: |
+        docker compose down
+        docker compose up -d --build
+        docker image prune -f
+      args:
+        chdir: "{{ app_dir }}"
