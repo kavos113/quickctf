@@ -1,3 +1,9 @@
+{%- if public_port == 80 or public_port == 443 -%}
 export const environment = {
-  apiUrl: 'http://api.{{ domain_root }}{{ ':' + public_port if public_port not in [80, 443] else '' }}',
+  apiUrl: 'http://api.{{ domain_root }}',
 }
+{%- else -%}
+export const environment = {
+  apiUrl: 'http://api.{{ domain_root }}:{{ public_port }}',
+}
+{%- endif -%}
