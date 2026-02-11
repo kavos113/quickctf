@@ -81,7 +81,8 @@ func (u *AdminServiceUsecase) UploadChallengeImage(ctx context.Context, challeng
 		return "", fmt.Errorf("challenge does not require instance")
 	}
 
-	imageTag := fmt.Sprintf("ctf-%s:%s", challenge.Name, challengeID[:8])
+	// TODO: challenge image version
+	imageTag := fmt.Sprintf("ctf-%s:latest", challengeID)
 
 	jobID, err := u.builderClient.BuildImage(ctx, imageTag, imageTar, challengeID)
 	if err != nil {
