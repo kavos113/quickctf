@@ -24,6 +24,7 @@ type RunnerService struct {
 	minPort      int
 	maxPort      int
 	usedPorts    []bool
+	internalPort int
 }
 
 func NewRunnerService(registryURL string) *RunnerService {
@@ -42,12 +43,18 @@ func NewRunnerService(registryURL string) *RunnerService {
 		maxPort = 0
 	}
 
+	internalPort, err := strconv.Atoi(os.Getenv("INTERNAL_CONTAINER_PORT"))
+	if err != nil {
+		internalPort = 80
+	}
+
 	return &RunnerService{
 		dockerClient: cli,
 		registryURL:  registryURL,
 		minPort:      minPort,
 		maxPort:      maxPort,
 		usedPorts:    make([]bool, maxPort-minPort+1, 0),
+		internalPort: internalPort,
 	}
 }
 
@@ -79,7 +86,7 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 		}, nil
 	}
 
-	containerPort, _ := network.ParsePort("80/tcp")
+	containerPort, _ := network.ParsePort(fmt.Sprintf("%d/tcp", s.internalPort))
 	port, err := s.selectPort()
 	if err != nil {
 		return &pb.StartInstanceResponse{
