@@ -333,7 +333,6 @@ func (s *ManagerService) StreamInstanceLogs(req *managerPb.StreamInstanceLogsReq
 		return fmt.Errorf("failed to stream logs from runner: %v", err)
 	}
 
-	// runnerからのログをクライアントに転送
 	for {
 		resp, err := logStream.Recv()
 		if err != nil {
@@ -354,7 +353,6 @@ func (s *ManagerService) Cleanup() {
 
 	ctx := context.Background()
 
-	// 全てのインスタンスを削除
 	instances, err := s.repo.FindAll(ctx)
 	if err != nil {
 		log.Printf("Failed to get instances: %v", err)
@@ -374,7 +372,6 @@ func (s *ManagerService) Cleanup() {
 		s.repo.Delete(ctx, instance.InstanceID)
 	}
 
-	// runner接続を閉じる
 	for _, runner := range s.runners {
 		if runner.Connection != nil {
 			runner.Connection.Close()

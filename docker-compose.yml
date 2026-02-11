@@ -118,6 +118,8 @@ services:
     environment:
       RUNNER_PORT: ${RUNNER_PORT}
       REGISTRY_URL: ${REGISTRY_URL}
+      MIN_OPEN_PORT: ${MIN_OPEN_PORT}
+      MAX_OPEN_PORT: ${MAX_OPEN_PORT}
     ports:
       - "${RUNNER_PORT}:${RUNNER_PORT}"
     volumes:

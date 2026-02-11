@@ -3,10 +3,13 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/netip"
+	"os"
+	"strconv"
 
 	pb "github.com/kavos113/quickctf/gen/go/api/runner/v1"
 	"github.com/moby/moby/api/types/container"
@@ -18,6 +21,9 @@ type RunnerService struct {
 	pb.UnimplementedRunnerServiceServer
 	dockerClient *client.Client
 	registryURL  string
+	minPort      int
+	maxPort      int
+	usedPorts    []bool
 }
 
 func NewRunnerService(registryURL string) *RunnerService {
@@ -26,10 +32,42 @@ func NewRunnerService(registryURL string) *RunnerService {
 		log.Fatalf("failed to create docker client: %v", err)
 	}
 
+	minPort, err := strconv.Atoi(os.Getenv("MIN_OPEN_PORT"))
+	if err != nil {
+		minPort = 0
+	}
+
+	maxPort, err := strconv.Atoi(os.Getenv("MAX_OPEN_PORT"))
+	if err != nil {
+		maxPort = 0
+	}
+
 	return &RunnerService{
 		dockerClient: cli,
 		registryURL:  registryURL,
+		minPort:      minPort,
+		maxPort:      maxPort,
+		usedPorts:    make([]bool, maxPort-minPort+1, 0),
 	}
+}
+
+func (s *RunnerService) selectPort() (int, error) {
+	for i, inuse := range s.usedPorts {
+		if !inuse {
+			s.usedPorts[i] = true
+			return i + s.minPort, nil
+		}
+	}
+
+	return 0, errors.New("no available port")
+}
+
+func (s *RunnerService) freePort(p int) {
+	if p < s.minPort || p > s.maxPort {
+		return
+	}
+
+	s.usedPorts[p-s.minPort] = false
 }
 
 func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstanceRequest) (*pb.StartInstanceResponse, error) {
@@ -42,12 +80,19 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 	}
 
 	containerPort, _ := network.ParsePort("80/tcp")
+	port, err := s.selectPort()
+	if err != nil {
+		return &pb.StartInstanceResponse{
+			Status:       "failed",
+			ErrorMessage: fmt.Sprintf("failed to allocate port: %v", err),
+		}, nil
+	}
 	hostConfig := &container.HostConfig{
 		PortBindings: network.PortMap{
 			containerPort: []network.PortBinding{
 				{
 					HostIP:   netip.MustParseAddr("0.0.0.0"),
-					HostPort: "0", // 自動割り当て
+					HostPort: strconv.Itoa(port),
 				},
 			},
 		},
