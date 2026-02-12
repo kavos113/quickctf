@@ -2,39 +2,35 @@
 // @generated from file api/server/v1/client.proto (package api.server.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenEnum, GenFile, GenMessage, GenService } from '@bufbuild/protobuf/codegenv2';
-import { enumDesc, fileDesc, messageDesc, serviceDesc } from '@bufbuild/protobuf/codegenv2';
-import type { Challenge, Submission } from './model_pb';
-import { file_api_server_v1_model } from './model_pb';
-import type { Message } from '@bufbuild/protobuf';
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { Challenge, Submission } from "./model_pb";
+import { file_api_server_v1_model } from "./model_pb";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file api/server/v1/client.proto.
  */
-export const file_api_server_v1_client: GenFile =
-  /*@__PURE__*/
-  fileDesc(
-    'ChphcGkvc2VydmVyL3YxL2NsaWVudC5wcm90bxINYXBpLnNlcnZlci52MSIWChRHZXRDaGFsbGVuZ2VzUmVxdWVzdCJcChVHZXRDaGFsbGVuZ2VzUmVzcG9uc2USLAoKY2hhbGxlbmdlcxgBIAMoCzIYLmFwaS5zZXJ2ZXIudjEuQ2hhbGxlbmdlEhUKDWVycm9yX21lc3NhZ2UYAiABKAkiQgoRU3VibWl0RmxhZ1JlcXVlc3QSLQoKc3VibWlzc2lvbhgBIAEoCzIZLmFwaS5zZXJ2ZXIudjEuU3VibWlzc2lvbiJUChJTdWJtaXRGbGFnUmVzcG9uc2USDwoHY29ycmVjdBgBIAEoCBIWCg5wb2ludHNfYXdhcmRlZBgCIAEoBRIVCg1lcnJvcl9tZXNzYWdlGAMgASgJIiwKFFN0YXJ0SW5zdGFuY2VSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCSJKChVTdGFydEluc3RhbmNlUmVzcG9uc2USDAoEaG9zdBgBIAEoCRIMCgRwb3J0GAIgASgFEhUKDWVycm9yX21lc3NhZ2UYAyABKAkiKwoTU3RvcEluc3RhbmNlUmVxdWVzdBIUCgxjaGFsbGVuZ2VfaWQYASABKAkiLQoUU3RvcEluc3RhbmNlUmVzcG9uc2USFQoNZXJyb3JfbWVzc2FnZRgBIAEoCSIwChhHZXRJbnN0YW5jZVN0YXR1c1JlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJIu8BChlHZXRJbnN0YW5jZVN0YXR1c1Jlc3BvbnNlEj8KBnN0YXR1cxgBIAEoDjIvLmFwaS5zZXJ2ZXIudjEuR2V0SW5zdGFuY2VTdGF0dXNSZXNwb25zZS5TdGF0dXMSDAoEaG9zdBgCIAEoCRIMCgRwb3J0GAMgASgFEhUKDWVycm9yX21lc3NhZ2UYBCABKAkiXgoGU3RhdHVzEhYKElNUQVRVU19VTlNQRUNJRklFRBAAEhIKDlNUQVRVU19SVU5OSU5HEAESEgoOU1RBVFVTX1NUT1BQRUQQAhIUChBTVEFUVVNfREVTVFJPWUVEEAMiMgoMTG9naW5SZXF1ZXN0EhAKCHVzZXJuYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJIjUKDUxvZ2luUmVzcG9uc2USDQoFdG9rZW4YASABKAkSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSI1Cg9SZWdpc3RlclJlcXVlc3QSEAoIdXNlcm5hbWUYASABKAkSEAoIcGFzc3dvcmQYAiABKAkiOgoQUmVnaXN0ZXJSZXNwb25zZRIPCgd1c2VyX2lkGAEgASgJEhUKDWVycm9yX21lc3NhZ2UYAiABKAkiHgoNTG9nb3V0UmVxdWVzdBINCgV0b2tlbhgBIAEoCSInCg5Mb2dvdXRSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJMuQDChZDbGllbnRDaGFsbGVuZ2VTZXJ2aWNlEloKDUdldENoYWxsZW5nZXMSIy5hcGkuc2VydmVyLnYxLkdldENoYWxsZW5nZXNSZXF1ZXN0GiQuYXBpLnNlcnZlci52MS5HZXRDaGFsbGVuZ2VzUmVzcG9uc2USUQoKU3VibWl0RmxhZxIgLmFwaS5zZXJ2ZXIudjEuU3VibWl0RmxhZ1JlcXVlc3QaIS5hcGkuc2VydmVyLnYxLlN1Ym1pdEZsYWdSZXNwb25zZRJaCg1TdGFydEluc3RhbmNlEiMuYXBpLnNlcnZlci52MS5TdGFydEluc3RhbmNlUmVxdWVzdBokLmFwaS5zZXJ2ZXIudjEuU3RhcnRJbnN0YW5jZVJlc3BvbnNlElcKDFN0b3BJbnN0YW5jZRIiLmFwaS5zZXJ2ZXIudjEuU3RvcEluc3RhbmNlUmVxdWVzdBojLmFwaS5zZXJ2ZXIudjEuU3RvcEluc3RhbmNlUmVzcG9uc2USZgoRR2V0SW5zdGFuY2VTdGF0dXMSJy5hcGkuc2VydmVyLnYxLkdldEluc3RhbmNlU3RhdHVzUmVxdWVzdBooLmFwaS5zZXJ2ZXIudjEuR2V0SW5zdGFuY2VTdGF0dXNSZXNwb25zZTLpAQoPVXNlckF1dGhTZXJ2aWNlEkIKBUxvZ2luEhsuYXBpLnNlcnZlci52MS5Mb2dpblJlcXVlc3QaHC5hcGkuc2VydmVyLnYxLkxvZ2luUmVzcG9uc2USSwoIUmVnaXN0ZXISHi5hcGkuc2VydmVyLnYxLlJlZ2lzdGVyUmVxdWVzdBofLmFwaS5zZXJ2ZXIudjEuUmVnaXN0ZXJSZXNwb25zZRJFCgZMb2dvdXQSHC5hcGkuc2VydmVyLnYxLkxvZ291dFJlcXVlc3QaHS5hcGkuc2VydmVyLnYxLkxvZ291dFJlc3BvbnNlQrIBChFjb20uYXBpLnNlcnZlci52MUILQ2xpZW50UHJvdG9QAVo6Z2l0aHViLmNvbS9rYXZvczExMy9xdWlja2N0Zi9nZW4vZ28vYXBpL3NlcnZlci92MTtzZXJ2ZXJ2MaICA0FTWKoCDUFwaS5TZXJ2ZXIuVjHKAg1BcGlcU2VydmVyXFYx4gIZQXBpXFNlcnZlclxWMVxHUEJNZXRhZGF0YeoCD0FwaTo6U2VydmVyOjpWMWIGcHJvdG8z',
-    [file_api_server_v1_model],
-  );
+export const file_api_server_v1_client: GenFile = /*@__PURE__*/
+  fileDesc("ChphcGkvc2VydmVyL3YxL2NsaWVudC5wcm90bxINYXBpLnNlcnZlci52MSIWChRHZXRDaGFsbGVuZ2VzUmVxdWVzdCJcChVHZXRDaGFsbGVuZ2VzUmVzcG9uc2USLAoKY2hhbGxlbmdlcxgBIAMoCzIYLmFwaS5zZXJ2ZXIudjEuQ2hhbGxlbmdlEhUKDWVycm9yX21lc3NhZ2UYAiABKAkiQgoRU3VibWl0RmxhZ1JlcXVlc3QSLQoKc3VibWlzc2lvbhgBIAEoCzIZLmFwaS5zZXJ2ZXIudjEuU3VibWlzc2lvbiJUChJTdWJtaXRGbGFnUmVzcG9uc2USDwoHY29ycmVjdBgBIAEoCBIWCg5wb2ludHNfYXdhcmRlZBgCIAEoBRIVCg1lcnJvcl9tZXNzYWdlGAMgASgJIiwKFFN0YXJ0SW5zdGFuY2VSZXF1ZXN0EhQKDGNoYWxsZW5nZV9pZBgBIAEoCSJKChVTdGFydEluc3RhbmNlUmVzcG9uc2USDAoEaG9zdBgBIAEoCRIMCgRwb3J0GAIgASgFEhUKDWVycm9yX21lc3NhZ2UYAyABKAkiKwoTU3RvcEluc3RhbmNlUmVxdWVzdBIUCgxjaGFsbGVuZ2VfaWQYASABKAkiLQoUU3RvcEluc3RhbmNlUmVzcG9uc2USFQoNZXJyb3JfbWVzc2FnZRgBIAEoCSIwChhHZXRJbnN0YW5jZVN0YXR1c1JlcXVlc3QSFAoMY2hhbGxlbmdlX2lkGAEgASgJIu8BChlHZXRJbnN0YW5jZVN0YXR1c1Jlc3BvbnNlEj8KBnN0YXR1cxgBIAEoDjIvLmFwaS5zZXJ2ZXIudjEuR2V0SW5zdGFuY2VTdGF0dXNSZXNwb25zZS5TdGF0dXMSDAoEaG9zdBgCIAEoCRIMCgRwb3J0GAMgASgFEhUKDWVycm9yX21lc3NhZ2UYBCABKAkiXgoGU3RhdHVzEhYKElNUQVRVU19VTlNQRUNJRklFRBAAEhIKDlNUQVRVU19SVU5OSU5HEAESEgoOU1RBVFVTX1NUT1BQRUQQAhIUChBTVEFUVVNfREVTVFJPWUVEEAMiMgoMTG9naW5SZXF1ZXN0EhAKCHVzZXJuYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJIjUKDUxvZ2luUmVzcG9uc2USDQoFdG9rZW4YASABKAkSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSI1Cg9SZWdpc3RlclJlcXVlc3QSEAoIdXNlcm5hbWUYASABKAkSEAoIcGFzc3dvcmQYAiABKAkiOgoQUmVnaXN0ZXJSZXNwb25zZRIPCgd1c2VyX2lkGAEgASgJEhUKDWVycm9yX21lc3NhZ2UYAiABKAkiHgoNTG9nb3V0UmVxdWVzdBINCgV0b2tlbhgBIAEoCSInCg5Mb2dvdXRSZXNwb25zZRIVCg1lcnJvcl9tZXNzYWdlGAEgASgJMuQDChZDbGllbnRDaGFsbGVuZ2VTZXJ2aWNlEloKDUdldENoYWxsZW5nZXMSIy5hcGkuc2VydmVyLnYxLkdldENoYWxsZW5nZXNSZXF1ZXN0GiQuYXBpLnNlcnZlci52MS5HZXRDaGFsbGVuZ2VzUmVzcG9uc2USUQoKU3VibWl0RmxhZxIgLmFwaS5zZXJ2ZXIudjEuU3VibWl0RmxhZ1JlcXVlc3QaIS5hcGkuc2VydmVyLnYxLlN1Ym1pdEZsYWdSZXNwb25zZRJaCg1TdGFydEluc3RhbmNlEiMuYXBpLnNlcnZlci52MS5TdGFydEluc3RhbmNlUmVxdWVzdBokLmFwaS5zZXJ2ZXIudjEuU3RhcnRJbnN0YW5jZVJlc3BvbnNlElcKDFN0b3BJbnN0YW5jZRIiLmFwaS5zZXJ2ZXIudjEuU3RvcEluc3RhbmNlUmVxdWVzdBojLmFwaS5zZXJ2ZXIudjEuU3RvcEluc3RhbmNlUmVzcG9uc2USZgoRR2V0SW5zdGFuY2VTdGF0dXMSJy5hcGkuc2VydmVyLnYxLkdldEluc3RhbmNlU3RhdHVzUmVxdWVzdBooLmFwaS5zZXJ2ZXIudjEuR2V0SW5zdGFuY2VTdGF0dXNSZXNwb25zZTLpAQoPVXNlckF1dGhTZXJ2aWNlEkIKBUxvZ2luEhsuYXBpLnNlcnZlci52MS5Mb2dpblJlcXVlc3QaHC5hcGkuc2VydmVyLnYxLkxvZ2luUmVzcG9uc2USSwoIUmVnaXN0ZXISHi5hcGkuc2VydmVyLnYxLlJlZ2lzdGVyUmVxdWVzdBofLmFwaS5zZXJ2ZXIudjEuUmVnaXN0ZXJSZXNwb25zZRJFCgZMb2dvdXQSHC5hcGkuc2VydmVyLnYxLkxvZ291dFJlcXVlc3QaHS5hcGkuc2VydmVyLnYxLkxvZ291dFJlc3BvbnNlQrIBChFjb20uYXBpLnNlcnZlci52MUILQ2xpZW50UHJvdG9QAVo6Z2l0aHViLmNvbS9rYXZvczExMy9xdWlja2N0Zi9nZW4vZ28vYXBpL3NlcnZlci92MTtzZXJ2ZXJ2MaICA0FTWKoCDUFwaS5TZXJ2ZXIuVjHKAg1BcGlcU2VydmVyXFYx4gIZQXBpXFNlcnZlclxWMVxHUEJNZXRhZGF0YeoCD0FwaTo6U2VydmVyOjpWMWIGcHJvdG8z", [file_api_server_v1_model]);
 
 /**
  * @generated from message api.server.v1.GetChallengesRequest
  */
-export type GetChallengesRequest = Message<'api.server.v1.GetChallengesRequest'> & {};
+export type GetChallengesRequest = Message<"api.server.v1.GetChallengesRequest"> & {
+};
 
 /**
  * Describes the message api.server.v1.GetChallengesRequest.
  * Use `create(GetChallengesRequestSchema)` to create a new message.
  */
-export const GetChallengesRequestSchema: GenMessage<GetChallengesRequest> =
-  /*@__PURE__*/
+export const GetChallengesRequestSchema: GenMessage<GetChallengesRequest> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 0);
 
 /**
  * @generated from message api.server.v1.GetChallengesResponse
  */
-export type GetChallengesResponse = Message<'api.server.v1.GetChallengesResponse'> & {
+export type GetChallengesResponse = Message<"api.server.v1.GetChallengesResponse"> & {
   /**
    * @generated from field: repeated api.server.v1.Challenge challenges = 1;
    */
@@ -50,14 +46,13 @@ export type GetChallengesResponse = Message<'api.server.v1.GetChallengesResponse
  * Describes the message api.server.v1.GetChallengesResponse.
  * Use `create(GetChallengesResponseSchema)` to create a new message.
  */
-export const GetChallengesResponseSchema: GenMessage<GetChallengesResponse> =
-  /*@__PURE__*/
+export const GetChallengesResponseSchema: GenMessage<GetChallengesResponse> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 1);
 
 /**
  * @generated from message api.server.v1.SubmitFlagRequest
  */
-export type SubmitFlagRequest = Message<'api.server.v1.SubmitFlagRequest'> & {
+export type SubmitFlagRequest = Message<"api.server.v1.SubmitFlagRequest"> & {
   /**
    * @generated from field: api.server.v1.Submission submission = 1;
    */
@@ -68,14 +63,13 @@ export type SubmitFlagRequest = Message<'api.server.v1.SubmitFlagRequest'> & {
  * Describes the message api.server.v1.SubmitFlagRequest.
  * Use `create(SubmitFlagRequestSchema)` to create a new message.
  */
-export const SubmitFlagRequestSchema: GenMessage<SubmitFlagRequest> =
-  /*@__PURE__*/
+export const SubmitFlagRequestSchema: GenMessage<SubmitFlagRequest> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 2);
 
 /**
  * @generated from message api.server.v1.SubmitFlagResponse
  */
-export type SubmitFlagResponse = Message<'api.server.v1.SubmitFlagResponse'> & {
+export type SubmitFlagResponse = Message<"api.server.v1.SubmitFlagResponse"> & {
   /**
    * @generated from field: bool correct = 1;
    */
@@ -96,14 +90,13 @@ export type SubmitFlagResponse = Message<'api.server.v1.SubmitFlagResponse'> & {
  * Describes the message api.server.v1.SubmitFlagResponse.
  * Use `create(SubmitFlagResponseSchema)` to create a new message.
  */
-export const SubmitFlagResponseSchema: GenMessage<SubmitFlagResponse> =
-  /*@__PURE__*/
+export const SubmitFlagResponseSchema: GenMessage<SubmitFlagResponse> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 3);
 
 /**
  * @generated from message api.server.v1.StartInstanceRequest
  */
-export type StartInstanceRequest = Message<'api.server.v1.StartInstanceRequest'> & {
+export type StartInstanceRequest = Message<"api.server.v1.StartInstanceRequest"> & {
   /**
    * @generated from field: string challenge_id = 1;
    */
@@ -114,14 +107,13 @@ export type StartInstanceRequest = Message<'api.server.v1.StartInstanceRequest'>
  * Describes the message api.server.v1.StartInstanceRequest.
  * Use `create(StartInstanceRequestSchema)` to create a new message.
  */
-export const StartInstanceRequestSchema: GenMessage<StartInstanceRequest> =
-  /*@__PURE__*/
+export const StartInstanceRequestSchema: GenMessage<StartInstanceRequest> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 4);
 
 /**
  * @generated from message api.server.v1.StartInstanceResponse
  */
-export type StartInstanceResponse = Message<'api.server.v1.StartInstanceResponse'> & {
+export type StartInstanceResponse = Message<"api.server.v1.StartInstanceResponse"> & {
   /**
    * @generated from field: string host = 1;
    */
@@ -142,14 +134,13 @@ export type StartInstanceResponse = Message<'api.server.v1.StartInstanceResponse
  * Describes the message api.server.v1.StartInstanceResponse.
  * Use `create(StartInstanceResponseSchema)` to create a new message.
  */
-export const StartInstanceResponseSchema: GenMessage<StartInstanceResponse> =
-  /*@__PURE__*/
+export const StartInstanceResponseSchema: GenMessage<StartInstanceResponse> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 5);
 
 /**
  * @generated from message api.server.v1.StopInstanceRequest
  */
-export type StopInstanceRequest = Message<'api.server.v1.StopInstanceRequest'> & {
+export type StopInstanceRequest = Message<"api.server.v1.StopInstanceRequest"> & {
   /**
    * @generated from field: string challenge_id = 1;
    */
@@ -160,14 +151,13 @@ export type StopInstanceRequest = Message<'api.server.v1.StopInstanceRequest'> &
  * Describes the message api.server.v1.StopInstanceRequest.
  * Use `create(StopInstanceRequestSchema)` to create a new message.
  */
-export const StopInstanceRequestSchema: GenMessage<StopInstanceRequest> =
-  /*@__PURE__*/
+export const StopInstanceRequestSchema: GenMessage<StopInstanceRequest> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 6);
 
 /**
  * @generated from message api.server.v1.StopInstanceResponse
  */
-export type StopInstanceResponse = Message<'api.server.v1.StopInstanceResponse'> & {
+export type StopInstanceResponse = Message<"api.server.v1.StopInstanceResponse"> & {
   /**
    * @generated from field: string error_message = 1;
    */
@@ -178,14 +168,13 @@ export type StopInstanceResponse = Message<'api.server.v1.StopInstanceResponse'>
  * Describes the message api.server.v1.StopInstanceResponse.
  * Use `create(StopInstanceResponseSchema)` to create a new message.
  */
-export const StopInstanceResponseSchema: GenMessage<StopInstanceResponse> =
-  /*@__PURE__*/
+export const StopInstanceResponseSchema: GenMessage<StopInstanceResponse> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 7);
 
 /**
  * @generated from message api.server.v1.GetInstanceStatusRequest
  */
-export type GetInstanceStatusRequest = Message<'api.server.v1.GetInstanceStatusRequest'> & {
+export type GetInstanceStatusRequest = Message<"api.server.v1.GetInstanceStatusRequest"> & {
   /**
    * @generated from field: string challenge_id = 1;
    */
@@ -196,14 +185,13 @@ export type GetInstanceStatusRequest = Message<'api.server.v1.GetInstanceStatusR
  * Describes the message api.server.v1.GetInstanceStatusRequest.
  * Use `create(GetInstanceStatusRequestSchema)` to create a new message.
  */
-export const GetInstanceStatusRequestSchema: GenMessage<GetInstanceStatusRequest> =
-  /*@__PURE__*/
+export const GetInstanceStatusRequestSchema: GenMessage<GetInstanceStatusRequest> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 8);
 
 /**
  * @generated from message api.server.v1.GetInstanceStatusResponse
  */
-export type GetInstanceStatusResponse = Message<'api.server.v1.GetInstanceStatusResponse'> & {
+export type GetInstanceStatusResponse = Message<"api.server.v1.GetInstanceStatusResponse"> & {
   /**
    * @generated from field: api.server.v1.GetInstanceStatusResponse.Status status = 1;
    */
@@ -229,8 +217,7 @@ export type GetInstanceStatusResponse = Message<'api.server.v1.GetInstanceStatus
  * Describes the message api.server.v1.GetInstanceStatusResponse.
  * Use `create(GetInstanceStatusResponseSchema)` to create a new message.
  */
-export const GetInstanceStatusResponseSchema: GenMessage<GetInstanceStatusResponse> =
-  /*@__PURE__*/
+export const GetInstanceStatusResponseSchema: GenMessage<GetInstanceStatusResponse> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 9);
 
 /**
@@ -261,14 +248,13 @@ export enum GetInstanceStatusResponse_Status {
 /**
  * Describes the enum api.server.v1.GetInstanceStatusResponse.Status.
  */
-export const GetInstanceStatusResponse_StatusSchema: GenEnum<GetInstanceStatusResponse_Status> =
-  /*@__PURE__*/
+export const GetInstanceStatusResponse_StatusSchema: GenEnum<GetInstanceStatusResponse_Status> = /*@__PURE__*/
   enumDesc(file_api_server_v1_client, 9, 0);
 
 /**
  * @generated from message api.server.v1.LoginRequest
  */
-export type LoginRequest = Message<'api.server.v1.LoginRequest'> & {
+export type LoginRequest = Message<"api.server.v1.LoginRequest"> & {
   /**
    * @generated from field: string username = 1;
    */
@@ -284,14 +270,13 @@ export type LoginRequest = Message<'api.server.v1.LoginRequest'> & {
  * Describes the message api.server.v1.LoginRequest.
  * Use `create(LoginRequestSchema)` to create a new message.
  */
-export const LoginRequestSchema: GenMessage<LoginRequest> =
-  /*@__PURE__*/
+export const LoginRequestSchema: GenMessage<LoginRequest> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 10);
 
 /**
  * @generated from message api.server.v1.LoginResponse
  */
-export type LoginResponse = Message<'api.server.v1.LoginResponse'> & {
+export type LoginResponse = Message<"api.server.v1.LoginResponse"> & {
   /**
    * @generated from field: string token = 1;
    */
@@ -307,14 +292,13 @@ export type LoginResponse = Message<'api.server.v1.LoginResponse'> & {
  * Describes the message api.server.v1.LoginResponse.
  * Use `create(LoginResponseSchema)` to create a new message.
  */
-export const LoginResponseSchema: GenMessage<LoginResponse> =
-  /*@__PURE__*/
+export const LoginResponseSchema: GenMessage<LoginResponse> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 11);
 
 /**
  * @generated from message api.server.v1.RegisterRequest
  */
-export type RegisterRequest = Message<'api.server.v1.RegisterRequest'> & {
+export type RegisterRequest = Message<"api.server.v1.RegisterRequest"> & {
   /**
    * @generated from field: string username = 1;
    */
@@ -330,14 +314,13 @@ export type RegisterRequest = Message<'api.server.v1.RegisterRequest'> & {
  * Describes the message api.server.v1.RegisterRequest.
  * Use `create(RegisterRequestSchema)` to create a new message.
  */
-export const RegisterRequestSchema: GenMessage<RegisterRequest> =
-  /*@__PURE__*/
+export const RegisterRequestSchema: GenMessage<RegisterRequest> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 12);
 
 /**
  * @generated from message api.server.v1.RegisterResponse
  */
-export type RegisterResponse = Message<'api.server.v1.RegisterResponse'> & {
+export type RegisterResponse = Message<"api.server.v1.RegisterResponse"> & {
   /**
    * @generated from field: string user_id = 1;
    */
@@ -353,14 +336,13 @@ export type RegisterResponse = Message<'api.server.v1.RegisterResponse'> & {
  * Describes the message api.server.v1.RegisterResponse.
  * Use `create(RegisterResponseSchema)` to create a new message.
  */
-export const RegisterResponseSchema: GenMessage<RegisterResponse> =
-  /*@__PURE__*/
+export const RegisterResponseSchema: GenMessage<RegisterResponse> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 13);
 
 /**
  * @generated from message api.server.v1.LogoutRequest
  */
-export type LogoutRequest = Message<'api.server.v1.LogoutRequest'> & {
+export type LogoutRequest = Message<"api.server.v1.LogoutRequest"> & {
   /**
    * @generated from field: string token = 1;
    */
@@ -371,14 +353,13 @@ export type LogoutRequest = Message<'api.server.v1.LogoutRequest'> & {
  * Describes the message api.server.v1.LogoutRequest.
  * Use `create(LogoutRequestSchema)` to create a new message.
  */
-export const LogoutRequestSchema: GenMessage<LogoutRequest> =
-  /*@__PURE__*/
+export const LogoutRequestSchema: GenMessage<LogoutRequest> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 14);
 
 /**
  * @generated from message api.server.v1.LogoutResponse
  */
-export type LogoutResponse = Message<'api.server.v1.LogoutResponse'> & {
+export type LogoutResponse = Message<"api.server.v1.LogoutResponse"> & {
   /**
    * @generated from field: string error_message = 1;
    */
@@ -389,8 +370,7 @@ export type LogoutResponse = Message<'api.server.v1.LogoutResponse'> & {
  * Describes the message api.server.v1.LogoutResponse.
  * Use `create(LogoutResponseSchema)` to create a new message.
  */
-export const LogoutResponseSchema: GenMessage<LogoutResponse> =
-  /*@__PURE__*/
+export const LogoutResponseSchema: GenMessage<LogoutResponse> = /*@__PURE__*/
   messageDesc(file_api_server_v1_client, 15);
 
 /**
@@ -401,43 +381,44 @@ export const ClientChallengeService: GenService<{
    * @generated from rpc api.server.v1.ClientChallengeService.GetChallenges
    */
   getChallenges: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof GetChallengesRequestSchema;
     output: typeof GetChallengesResponseSchema;
-  };
+  },
   /**
    * @generated from rpc api.server.v1.ClientChallengeService.SubmitFlag
    */
   submitFlag: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof SubmitFlagRequestSchema;
     output: typeof SubmitFlagResponseSchema;
-  };
+  },
   /**
    * @generated from rpc api.server.v1.ClientChallengeService.StartInstance
    */
   startInstance: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof StartInstanceRequestSchema;
     output: typeof StartInstanceResponseSchema;
-  };
+  },
   /**
    * @generated from rpc api.server.v1.ClientChallengeService.StopInstance
    */
   stopInstance: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof StopInstanceRequestSchema;
     output: typeof StopInstanceResponseSchema;
-  };
+  },
   /**
    * @generated from rpc api.server.v1.ClientChallengeService.GetInstanceStatus
    */
   getInstanceStatus: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof GetInstanceStatusRequestSchema;
     output: typeof GetInstanceStatusResponseSchema;
-  };
-}> = /*@__PURE__*/ serviceDesc(file_api_server_v1_client, 0);
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_api_server_v1_client, 0);
 
 /**
  * @generated from service api.server.v1.UserAuthService
@@ -447,24 +428,26 @@ export const UserAuthService: GenService<{
    * @generated from rpc api.server.v1.UserAuthService.Login
    */
   login: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof LoginRequestSchema;
     output: typeof LoginResponseSchema;
-  };
+  },
   /**
    * @generated from rpc api.server.v1.UserAuthService.Register
    */
   register: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof RegisterRequestSchema;
     output: typeof RegisterResponseSchema;
-  };
+  },
   /**
    * @generated from rpc api.server.v1.UserAuthService.Logout
    */
   logout: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof LogoutRequestSchema;
     output: typeof LogoutResponseSchema;
-  };
-}> = /*@__PURE__*/ serviceDesc(file_api_server_v1_client, 1);
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_api_server_v1_client, 1);
+

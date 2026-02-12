@@ -76,7 +76,7 @@ func (GetInstanceStatusResponse_State) EnumDescriptor() ([]byte, []int) {
 type StartInstanceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ImageTag      string                 `protobuf:"bytes,1,opt,name=image_tag,json=imageTag,proto3" json:"image_tag,omitempty"`
-	InstanceId    string                 `protobuf:"bytes,2,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	ContainerName string                 `protobuf:"bytes,2,opt,name=container_name,json=containerName,proto3" json:"container_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -118,9 +118,9 @@ func (x *StartInstanceRequest) GetImageTag() string {
 	return ""
 }
 
-func (x *StartInstanceRequest) GetInstanceId() string {
+func (x *StartInstanceRequest) GetContainerName() string {
 	if x != nil {
-		return x.InstanceId
+		return x.ContainerName
 	}
 	return ""
 }
@@ -129,7 +129,8 @@ type StartInstanceResponse struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Status         string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
 	ErrorMessage   string                 `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
-	ConnectionInfo *ConnectionInfo        `protobuf:"bytes,3,opt,name=connection_info,json=connectionInfo,proto3" json:"connection_info,omitempty"`
+	ContainerId    string                 `protobuf:"bytes,3,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
+	ConnectionInfo *ConnectionInfo        `protobuf:"bytes,4,opt,name=connection_info,json=connectionInfo,proto3" json:"connection_info,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -174,6 +175,13 @@ func (x *StartInstanceResponse) GetStatus() string {
 func (x *StartInstanceResponse) GetErrorMessage() string {
 	if x != nil {
 		return x.ErrorMessage
+	}
+	return ""
+}
+
+func (x *StartInstanceResponse) GetContainerId() string {
+	if x != nil {
+		return x.ContainerId
 	}
 	return ""
 }
@@ -239,7 +247,7 @@ func (x *ConnectionInfo) GetPort() int32 {
 
 type StopInstanceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	InstanceId    string                 `protobuf:"bytes,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	ContainerId   string                 `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -274,9 +282,9 @@ func (*StopInstanceRequest) Descriptor() ([]byte, []int) {
 	return file_api_runner_v1_runner_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *StopInstanceRequest) GetInstanceId() string {
+func (x *StopInstanceRequest) GetContainerId() string {
 	if x != nil {
-		return x.InstanceId
+		return x.ContainerId
 	}
 	return ""
 }
@@ -335,7 +343,7 @@ func (x *StopInstanceResponse) GetErrorMessage() string {
 
 type DestroyInstanceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	InstanceId    string                 `protobuf:"bytes,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	ContainerId   string                 `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -370,9 +378,9 @@ func (*DestroyInstanceRequest) Descriptor() ([]byte, []int) {
 	return file_api_runner_v1_runner_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DestroyInstanceRequest) GetInstanceId() string {
+func (x *DestroyInstanceRequest) GetContainerId() string {
 	if x != nil {
-		return x.InstanceId
+		return x.ContainerId
 	}
 	return ""
 }
@@ -431,7 +439,7 @@ func (x *DestroyInstanceResponse) GetErrorMessage() string {
 
 type GetInstanceStatusRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	InstanceId    string                 `protobuf:"bytes,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	ContainerId   string                 `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -466,9 +474,9 @@ func (*GetInstanceStatusRequest) Descriptor() ([]byte, []int) {
 	return file_api_runner_v1_runner_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *GetInstanceStatusRequest) GetInstanceId() string {
+func (x *GetInstanceStatusRequest) GetContainerId() string {
 	if x != nil {
-		return x.InstanceId
+		return x.ContainerId
 	}
 	return ""
 }
@@ -527,7 +535,7 @@ func (x *GetInstanceStatusResponse) GetErrorMessage() string {
 
 type StreamInstanceLogsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	InstanceId    string                 `protobuf:"bytes,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	ContainerId   string                 `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -562,9 +570,9 @@ func (*StreamInstanceLogsRequest) Descriptor() ([]byte, []int) {
 	return file_api_runner_v1_runner_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *StreamInstanceLogsRequest) GetInstanceId() string {
+func (x *StreamInstanceLogsRequest) GetContainerId() string {
 	if x != nil {
-		return x.InstanceId
+		return x.ContainerId
 	}
 	return ""
 }
@@ -617,33 +625,30 @@ var File_api_runner_v1_runner_proto protoreflect.FileDescriptor
 
 const file_api_runner_v1_runner_proto_rawDesc = "" +
 	"\n" +
-	"\x1aapi/runner/v1/runner.proto\x12\rapi.runner.v1\"T\n" +
+	"\x1aapi/runner/v1/runner.proto\x12\rapi.runner.v1\"Z\n" +
 	"\x14StartInstanceRequest\x12\x1b\n" +
-	"\timage_tag\x18\x01 \x01(\tR\bimageTag\x12\x1f\n" +
-	"\vinstance_id\x18\x02 \x01(\tR\n" +
-	"instanceId\"\x9c\x01\n" +
+	"\timage_tag\x18\x01 \x01(\tR\bimageTag\x12%\n" +
+	"\x0econtainer_name\x18\x02 \x01(\tR\rcontainerName\"\xbf\x01\n" +
 	"\x15StartInstanceResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\x12F\n" +
-	"\x0fconnection_info\x18\x03 \x01(\v2\x1d.api.runner.v1.ConnectionInfoR\x0econnectionInfo\"8\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\x12!\n" +
+	"\fcontainer_id\x18\x03 \x01(\tR\vcontainerId\x12F\n" +
+	"\x0fconnection_info\x18\x04 \x01(\v2\x1d.api.runner.v1.ConnectionInfoR\x0econnectionInfo\"8\n" +
 	"\x0eConnectionInfo\x12\x12\n" +
 	"\x04host\x18\x01 \x01(\tR\x04host\x12\x12\n" +
-	"\x04port\x18\x02 \x01(\x05R\x04port\"6\n" +
-	"\x13StopInstanceRequest\x12\x1f\n" +
-	"\vinstance_id\x18\x01 \x01(\tR\n" +
-	"instanceId\"S\n" +
+	"\x04port\x18\x02 \x01(\x05R\x04port\"8\n" +
+	"\x13StopInstanceRequest\x12!\n" +
+	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"S\n" +
 	"\x14StopInstanceResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"9\n" +
-	"\x16DestroyInstanceRequest\x12\x1f\n" +
-	"\vinstance_id\x18\x01 \x01(\tR\n" +
-	"instanceId\"V\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\";\n" +
+	"\x16DestroyInstanceRequest\x12!\n" +
+	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"V\n" +
 	"\x17DestroyInstanceResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\";\n" +
-	"\x18GetInstanceStatusRequest\x12\x1f\n" +
-	"\vinstance_id\x18\x01 \x01(\tR\n" +
-	"instanceId\"\xe1\x01\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"=\n" +
+	"\x18GetInstanceStatusRequest\x12!\n" +
+	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"\xe1\x01\n" +
 	"\x19GetInstanceStatusResponse\x12D\n" +
 	"\x05state\x18\x01 \x01(\x0e2..api.runner.v1.GetInstanceStatusResponse.StateR\x05state\x12#\n" +
 	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"Y\n" +
@@ -651,10 +656,9 @@ const file_api_runner_v1_runner_proto_rawDesc = "" +
 	"\x11STATE_UNSPECIFIED\x10\x00\x12\x11\n" +
 	"\rSTATE_RUNNING\x10\x01\x12\x11\n" +
 	"\rSTATE_STOPPED\x10\x02\x12\x13\n" +
-	"\x0fSTATE_DESTROYED\x10\x03\"<\n" +
-	"\x19StreamInstanceLogsRequest\x12\x1f\n" +
-	"\vinstance_id\x18\x01 \x01(\tR\n" +
-	"instanceId\"7\n" +
+	"\x0fSTATE_DESTROYED\x10\x03\">\n" +
+	"\x19StreamInstanceLogsRequest\x12!\n" +
+	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"7\n" +
 	"\x1aStreamInstanceLogsResponse\x12\x19\n" +
 	"\blog_line\x18\x01 \x01(\tR\alogLine2\xfb\x03\n" +
 	"\rRunnerService\x12Z\n" +

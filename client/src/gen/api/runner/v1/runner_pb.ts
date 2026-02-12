@@ -2,46 +2,42 @@
 // @generated from file api/runner/v1/runner.proto (package api.runner.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenEnum, GenFile, GenMessage, GenService } from '@bufbuild/protobuf/codegenv2';
-import { enumDesc, fileDesc, messageDesc, serviceDesc } from '@bufbuild/protobuf/codegenv2';
-import type { Message } from '@bufbuild/protobuf';
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file api/runner/v1/runner.proto.
  */
-export const file_api_runner_v1_runner: GenFile =
-  /*@__PURE__*/
-  fileDesc(
-    'ChphcGkvcnVubmVyL3YxL3J1bm5lci5wcm90bxINYXBpLnJ1bm5lci52MSI+ChRTdGFydEluc3RhbmNlUmVxdWVzdBIRCglpbWFnZV90YWcYASABKAkSEwoLaW5zdGFuY2VfaWQYAiABKAkidgoVU3RhcnRJbnN0YW5jZVJlc3BvbnNlEg4KBnN0YXR1cxgBIAEoCRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJEjYKD2Nvbm5lY3Rpb25faW5mbxgDIAEoCzIdLmFwaS5ydW5uZXIudjEuQ29ubmVjdGlvbkluZm8iLAoOQ29ubmVjdGlvbkluZm8SDAoEaG9zdBgBIAEoCRIMCgRwb3J0GAIgASgFIioKE1N0b3BJbnN0YW5jZVJlcXVlc3QSEwoLaW5zdGFuY2VfaWQYASABKAkiPQoUU3RvcEluc3RhbmNlUmVzcG9uc2USDgoGc3RhdHVzGAEgASgJEhUKDWVycm9yX21lc3NhZ2UYAiABKAkiLQoWRGVzdHJveUluc3RhbmNlUmVxdWVzdBITCgtpbnN0YW5jZV9pZBgBIAEoCSJAChdEZXN0cm95SW5zdGFuY2VSZXNwb25zZRIOCgZzdGF0dXMYASABKAkSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSIvChhHZXRJbnN0YW5jZVN0YXR1c1JlcXVlc3QSEwoLaW5zdGFuY2VfaWQYASABKAkizAEKGUdldEluc3RhbmNlU3RhdHVzUmVzcG9uc2USPQoFc3RhdGUYASABKA4yLi5hcGkucnVubmVyLnYxLkdldEluc3RhbmNlU3RhdHVzUmVzcG9uc2UuU3RhdGUSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCSJZCgVTdGF0ZRIVChFTVEFURV9VTlNQRUNJRklFRBAAEhEKDVNUQVRFX1JVTk5JTkcQARIRCg1TVEFURV9TVE9QUEVEEAISEwoPU1RBVEVfREVTVFJPWUVEEAMiMAoZU3RyZWFtSW5zdGFuY2VMb2dzUmVxdWVzdBITCgtpbnN0YW5jZV9pZBgBIAEoCSIuChpTdHJlYW1JbnN0YW5jZUxvZ3NSZXNwb25zZRIQCghsb2dfbGluZRgBIAEoCTL7AwoNUnVubmVyU2VydmljZRJaCg1TdGFydEluc3RhbmNlEiMuYXBpLnJ1bm5lci52MS5TdGFydEluc3RhbmNlUmVxdWVzdBokLmFwaS5ydW5uZXIudjEuU3RhcnRJbnN0YW5jZVJlc3BvbnNlElcKDFN0b3BJbnN0YW5jZRIiLmFwaS5ydW5uZXIudjEuU3RvcEluc3RhbmNlUmVxdWVzdBojLmFwaS5ydW5uZXIudjEuU3RvcEluc3RhbmNlUmVzcG9uc2USYAoPRGVzdHJveUluc3RhbmNlEiUuYXBpLnJ1bm5lci52MS5EZXN0cm95SW5zdGFuY2VSZXF1ZXN0GiYuYXBpLnJ1bm5lci52MS5EZXN0cm95SW5zdGFuY2VSZXNwb25zZRJmChFHZXRJbnN0YW5jZVN0YXR1cxInLmFwaS5ydW5uZXIudjEuR2V0SW5zdGFuY2VTdGF0dXNSZXF1ZXN0GiguYXBpLnJ1bm5lci52MS5HZXRJbnN0YW5jZVN0YXR1c1Jlc3BvbnNlEmsKElN0cmVhbUluc3RhbmNlTG9ncxIoLmFwaS5ydW5uZXIudjEuU3RyZWFtSW5zdGFuY2VMb2dzUmVxdWVzdBopLmFwaS5ydW5uZXIudjEuU3RyZWFtSW5zdGFuY2VMb2dzUmVzcG9uc2UwAUKyAQoRY29tLmFwaS5ydW5uZXIudjFCC1J1bm5lclByb3RvUAFaOmdpdGh1Yi5jb20va2F2b3MxMTMvcXVpY2tjdGYvZ2VuL2dvL2FwaS9ydW5uZXIvdjE7cnVubmVydjGiAgNBUliqAg1BcGkuUnVubmVyLlYxygINQXBpXFJ1bm5lclxWMeICGUFwaVxSdW5uZXJcVjFcR1BCTWV0YWRhdGHqAg9BcGk6OlJ1bm5lcjo6VjFiBnByb3RvMw',
-  );
+export const file_api_runner_v1_runner: GenFile = /*@__PURE__*/
+  fileDesc("ChphcGkvcnVubmVyL3YxL3J1bm5lci5wcm90bxINYXBpLnJ1bm5lci52MSJBChRTdGFydEluc3RhbmNlUmVxdWVzdBIRCglpbWFnZV90YWcYASABKAkSFgoOY29udGFpbmVyX25hbWUYAiABKAkijAEKFVN0YXJ0SW5zdGFuY2VSZXNwb25zZRIOCgZzdGF0dXMYASABKAkSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCRIUCgxjb250YWluZXJfaWQYAyABKAkSNgoPY29ubmVjdGlvbl9pbmZvGAQgASgLMh0uYXBpLnJ1bm5lci52MS5Db25uZWN0aW9uSW5mbyIsCg5Db25uZWN0aW9uSW5mbxIMCgRob3N0GAEgASgJEgwKBHBvcnQYAiABKAUiKwoTU3RvcEluc3RhbmNlUmVxdWVzdBIUCgxjb250YWluZXJfaWQYASABKAkiPQoUU3RvcEluc3RhbmNlUmVzcG9uc2USDgoGc3RhdHVzGAEgASgJEhUKDWVycm9yX21lc3NhZ2UYAiABKAkiLgoWRGVzdHJveUluc3RhbmNlUmVxdWVzdBIUCgxjb250YWluZXJfaWQYASABKAkiQAoXRGVzdHJveUluc3RhbmNlUmVzcG9uc2USDgoGc3RhdHVzGAEgASgJEhUKDWVycm9yX21lc3NhZ2UYAiABKAkiMAoYR2V0SW5zdGFuY2VTdGF0dXNSZXF1ZXN0EhQKDGNvbnRhaW5lcl9pZBgBIAEoCSLMAQoZR2V0SW5zdGFuY2VTdGF0dXNSZXNwb25zZRI9CgVzdGF0ZRgBIAEoDjIuLmFwaS5ydW5uZXIudjEuR2V0SW5zdGFuY2VTdGF0dXNSZXNwb25zZS5TdGF0ZRIVCg1lcnJvcl9tZXNzYWdlGAIgASgJIlkKBVN0YXRlEhUKEVNUQVRFX1VOU1BFQ0lGSUVEEAASEQoNU1RBVEVfUlVOTklORxABEhEKDVNUQVRFX1NUT1BQRUQQAhITCg9TVEFURV9ERVNUUk9ZRUQQAyIxChlTdHJlYW1JbnN0YW5jZUxvZ3NSZXF1ZXN0EhQKDGNvbnRhaW5lcl9pZBgBIAEoCSIuChpTdHJlYW1JbnN0YW5jZUxvZ3NSZXNwb25zZRIQCghsb2dfbGluZRgBIAEoCTL7AwoNUnVubmVyU2VydmljZRJaCg1TdGFydEluc3RhbmNlEiMuYXBpLnJ1bm5lci52MS5TdGFydEluc3RhbmNlUmVxdWVzdBokLmFwaS5ydW5uZXIudjEuU3RhcnRJbnN0YW5jZVJlc3BvbnNlElcKDFN0b3BJbnN0YW5jZRIiLmFwaS5ydW5uZXIudjEuU3RvcEluc3RhbmNlUmVxdWVzdBojLmFwaS5ydW5uZXIudjEuU3RvcEluc3RhbmNlUmVzcG9uc2USYAoPRGVzdHJveUluc3RhbmNlEiUuYXBpLnJ1bm5lci52MS5EZXN0cm95SW5zdGFuY2VSZXF1ZXN0GiYuYXBpLnJ1bm5lci52MS5EZXN0cm95SW5zdGFuY2VSZXNwb25zZRJmChFHZXRJbnN0YW5jZVN0YXR1cxInLmFwaS5ydW5uZXIudjEuR2V0SW5zdGFuY2VTdGF0dXNSZXF1ZXN0GiguYXBpLnJ1bm5lci52MS5HZXRJbnN0YW5jZVN0YXR1c1Jlc3BvbnNlEmsKElN0cmVhbUluc3RhbmNlTG9ncxIoLmFwaS5ydW5uZXIudjEuU3RyZWFtSW5zdGFuY2VMb2dzUmVxdWVzdBopLmFwaS5ydW5uZXIudjEuU3RyZWFtSW5zdGFuY2VMb2dzUmVzcG9uc2UwAUKyAQoRY29tLmFwaS5ydW5uZXIudjFCC1J1bm5lclByb3RvUAFaOmdpdGh1Yi5jb20va2F2b3MxMTMvcXVpY2tjdGYvZ2VuL2dvL2FwaS9ydW5uZXIvdjE7cnVubmVydjGiAgNBUliqAg1BcGkuUnVubmVyLlYxygINQXBpXFJ1bm5lclxWMeICGUFwaVxSdW5uZXJcVjFcR1BCTWV0YWRhdGHqAg9BcGk6OlJ1bm5lcjo6VjFiBnByb3RvMw");
 
 /**
  * @generated from message api.runner.v1.StartInstanceRequest
  */
-export type StartInstanceRequest = Message<'api.runner.v1.StartInstanceRequest'> & {
+export type StartInstanceRequest = Message<"api.runner.v1.StartInstanceRequest"> & {
   /**
    * @generated from field: string image_tag = 1;
    */
   imageTag: string;
 
   /**
-   * @generated from field: string instance_id = 2;
+   * @generated from field: string container_name = 2;
    */
-  instanceId: string;
+  containerName: string;
 };
 
 /**
  * Describes the message api.runner.v1.StartInstanceRequest.
  * Use `create(StartInstanceRequestSchema)` to create a new message.
  */
-export const StartInstanceRequestSchema: GenMessage<StartInstanceRequest> =
-  /*@__PURE__*/
+export const StartInstanceRequestSchema: GenMessage<StartInstanceRequest> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 0);
 
 /**
  * @generated from message api.runner.v1.StartInstanceResponse
  */
-export type StartInstanceResponse = Message<'api.runner.v1.StartInstanceResponse'> & {
+export type StartInstanceResponse = Message<"api.runner.v1.StartInstanceResponse"> & {
   /**
    * @generated from field: string status = 1;
    */
@@ -53,7 +49,12 @@ export type StartInstanceResponse = Message<'api.runner.v1.StartInstanceResponse
   errorMessage: string;
 
   /**
-   * @generated from field: api.runner.v1.ConnectionInfo connection_info = 3;
+   * @generated from field: string container_id = 3;
+   */
+  containerId: string;
+
+  /**
+   * @generated from field: api.runner.v1.ConnectionInfo connection_info = 4;
    */
   connectionInfo?: ConnectionInfo;
 };
@@ -62,14 +63,13 @@ export type StartInstanceResponse = Message<'api.runner.v1.StartInstanceResponse
  * Describes the message api.runner.v1.StartInstanceResponse.
  * Use `create(StartInstanceResponseSchema)` to create a new message.
  */
-export const StartInstanceResponseSchema: GenMessage<StartInstanceResponse> =
-  /*@__PURE__*/
+export const StartInstanceResponseSchema: GenMessage<StartInstanceResponse> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 1);
 
 /**
  * @generated from message api.runner.v1.ConnectionInfo
  */
-export type ConnectionInfo = Message<'api.runner.v1.ConnectionInfo'> & {
+export type ConnectionInfo = Message<"api.runner.v1.ConnectionInfo"> & {
   /**
    * @generated from field: string host = 1;
    */
@@ -85,32 +85,30 @@ export type ConnectionInfo = Message<'api.runner.v1.ConnectionInfo'> & {
  * Describes the message api.runner.v1.ConnectionInfo.
  * Use `create(ConnectionInfoSchema)` to create a new message.
  */
-export const ConnectionInfoSchema: GenMessage<ConnectionInfo> =
-  /*@__PURE__*/
+export const ConnectionInfoSchema: GenMessage<ConnectionInfo> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 2);
 
 /**
  * @generated from message api.runner.v1.StopInstanceRequest
  */
-export type StopInstanceRequest = Message<'api.runner.v1.StopInstanceRequest'> & {
+export type StopInstanceRequest = Message<"api.runner.v1.StopInstanceRequest"> & {
   /**
-   * @generated from field: string instance_id = 1;
+   * @generated from field: string container_id = 1;
    */
-  instanceId: string;
+  containerId: string;
 };
 
 /**
  * Describes the message api.runner.v1.StopInstanceRequest.
  * Use `create(StopInstanceRequestSchema)` to create a new message.
  */
-export const StopInstanceRequestSchema: GenMessage<StopInstanceRequest> =
-  /*@__PURE__*/
+export const StopInstanceRequestSchema: GenMessage<StopInstanceRequest> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 3);
 
 /**
  * @generated from message api.runner.v1.StopInstanceResponse
  */
-export type StopInstanceResponse = Message<'api.runner.v1.StopInstanceResponse'> & {
+export type StopInstanceResponse = Message<"api.runner.v1.StopInstanceResponse"> & {
   /**
    * @generated from field: string status = 1;
    */
@@ -126,32 +124,30 @@ export type StopInstanceResponse = Message<'api.runner.v1.StopInstanceResponse'>
  * Describes the message api.runner.v1.StopInstanceResponse.
  * Use `create(StopInstanceResponseSchema)` to create a new message.
  */
-export const StopInstanceResponseSchema: GenMessage<StopInstanceResponse> =
-  /*@__PURE__*/
+export const StopInstanceResponseSchema: GenMessage<StopInstanceResponse> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 4);
 
 /**
  * @generated from message api.runner.v1.DestroyInstanceRequest
  */
-export type DestroyInstanceRequest = Message<'api.runner.v1.DestroyInstanceRequest'> & {
+export type DestroyInstanceRequest = Message<"api.runner.v1.DestroyInstanceRequest"> & {
   /**
-   * @generated from field: string instance_id = 1;
+   * @generated from field: string container_id = 1;
    */
-  instanceId: string;
+  containerId: string;
 };
 
 /**
  * Describes the message api.runner.v1.DestroyInstanceRequest.
  * Use `create(DestroyInstanceRequestSchema)` to create a new message.
  */
-export const DestroyInstanceRequestSchema: GenMessage<DestroyInstanceRequest> =
-  /*@__PURE__*/
+export const DestroyInstanceRequestSchema: GenMessage<DestroyInstanceRequest> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 5);
 
 /**
  * @generated from message api.runner.v1.DestroyInstanceResponse
  */
-export type DestroyInstanceResponse = Message<'api.runner.v1.DestroyInstanceResponse'> & {
+export type DestroyInstanceResponse = Message<"api.runner.v1.DestroyInstanceResponse"> & {
   /**
    * @generated from field: string status = 1;
    */
@@ -167,32 +163,30 @@ export type DestroyInstanceResponse = Message<'api.runner.v1.DestroyInstanceResp
  * Describes the message api.runner.v1.DestroyInstanceResponse.
  * Use `create(DestroyInstanceResponseSchema)` to create a new message.
  */
-export const DestroyInstanceResponseSchema: GenMessage<DestroyInstanceResponse> =
-  /*@__PURE__*/
+export const DestroyInstanceResponseSchema: GenMessage<DestroyInstanceResponse> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 6);
 
 /**
  * @generated from message api.runner.v1.GetInstanceStatusRequest
  */
-export type GetInstanceStatusRequest = Message<'api.runner.v1.GetInstanceStatusRequest'> & {
+export type GetInstanceStatusRequest = Message<"api.runner.v1.GetInstanceStatusRequest"> & {
   /**
-   * @generated from field: string instance_id = 1;
+   * @generated from field: string container_id = 1;
    */
-  instanceId: string;
+  containerId: string;
 };
 
 /**
  * Describes the message api.runner.v1.GetInstanceStatusRequest.
  * Use `create(GetInstanceStatusRequestSchema)` to create a new message.
  */
-export const GetInstanceStatusRequestSchema: GenMessage<GetInstanceStatusRequest> =
-  /*@__PURE__*/
+export const GetInstanceStatusRequestSchema: GenMessage<GetInstanceStatusRequest> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 7);
 
 /**
  * @generated from message api.runner.v1.GetInstanceStatusResponse
  */
-export type GetInstanceStatusResponse = Message<'api.runner.v1.GetInstanceStatusResponse'> & {
+export type GetInstanceStatusResponse = Message<"api.runner.v1.GetInstanceStatusResponse"> & {
   /**
    * @generated from field: api.runner.v1.GetInstanceStatusResponse.State state = 1;
    */
@@ -208,8 +202,7 @@ export type GetInstanceStatusResponse = Message<'api.runner.v1.GetInstanceStatus
  * Describes the message api.runner.v1.GetInstanceStatusResponse.
  * Use `create(GetInstanceStatusResponseSchema)` to create a new message.
  */
-export const GetInstanceStatusResponseSchema: GenMessage<GetInstanceStatusResponse> =
-  /*@__PURE__*/
+export const GetInstanceStatusResponseSchema: GenMessage<GetInstanceStatusResponse> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 8);
 
 /**
@@ -240,32 +233,30 @@ export enum GetInstanceStatusResponse_State {
 /**
  * Describes the enum api.runner.v1.GetInstanceStatusResponse.State.
  */
-export const GetInstanceStatusResponse_StateSchema: GenEnum<GetInstanceStatusResponse_State> =
-  /*@__PURE__*/
+export const GetInstanceStatusResponse_StateSchema: GenEnum<GetInstanceStatusResponse_State> = /*@__PURE__*/
   enumDesc(file_api_runner_v1_runner, 8, 0);
 
 /**
  * @generated from message api.runner.v1.StreamInstanceLogsRequest
  */
-export type StreamInstanceLogsRequest = Message<'api.runner.v1.StreamInstanceLogsRequest'> & {
+export type StreamInstanceLogsRequest = Message<"api.runner.v1.StreamInstanceLogsRequest"> & {
   /**
-   * @generated from field: string instance_id = 1;
+   * @generated from field: string container_id = 1;
    */
-  instanceId: string;
+  containerId: string;
 };
 
 /**
  * Describes the message api.runner.v1.StreamInstanceLogsRequest.
  * Use `create(StreamInstanceLogsRequestSchema)` to create a new message.
  */
-export const StreamInstanceLogsRequestSchema: GenMessage<StreamInstanceLogsRequest> =
-  /*@__PURE__*/
+export const StreamInstanceLogsRequestSchema: GenMessage<StreamInstanceLogsRequest> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 9);
 
 /**
  * @generated from message api.runner.v1.StreamInstanceLogsResponse
  */
-export type StreamInstanceLogsResponse = Message<'api.runner.v1.StreamInstanceLogsResponse'> & {
+export type StreamInstanceLogsResponse = Message<"api.runner.v1.StreamInstanceLogsResponse"> & {
   /**
    * @generated from field: string log_line = 1;
    */
@@ -276,8 +267,7 @@ export type StreamInstanceLogsResponse = Message<'api.runner.v1.StreamInstanceLo
  * Describes the message api.runner.v1.StreamInstanceLogsResponse.
  * Use `create(StreamInstanceLogsResponseSchema)` to create a new message.
  */
-export const StreamInstanceLogsResponseSchema: GenMessage<StreamInstanceLogsResponse> =
-  /*@__PURE__*/
+export const StreamInstanceLogsResponseSchema: GenMessage<StreamInstanceLogsResponse> = /*@__PURE__*/
   messageDesc(file_api_runner_v1_runner, 10);
 
 /**
@@ -288,40 +278,42 @@ export const RunnerService: GenService<{
    * @generated from rpc api.runner.v1.RunnerService.StartInstance
    */
   startInstance: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof StartInstanceRequestSchema;
     output: typeof StartInstanceResponseSchema;
-  };
+  },
   /**
    * @generated from rpc api.runner.v1.RunnerService.StopInstance
    */
   stopInstance: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof StopInstanceRequestSchema;
     output: typeof StopInstanceResponseSchema;
-  };
+  },
   /**
    * @generated from rpc api.runner.v1.RunnerService.DestroyInstance
    */
   destroyInstance: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof DestroyInstanceRequestSchema;
     output: typeof DestroyInstanceResponseSchema;
-  };
+  },
   /**
    * @generated from rpc api.runner.v1.RunnerService.GetInstanceStatus
    */
   getInstanceStatus: {
-    methodKind: 'unary';
+    methodKind: "unary";
     input: typeof GetInstanceStatusRequestSchema;
     output: typeof GetInstanceStatusResponseSchema;
-  };
+  },
   /**
    * @generated from rpc api.runner.v1.RunnerService.StreamInstanceLogs
    */
   streamInstanceLogs: {
-    methodKind: 'server_streaming';
+    methodKind: "server_streaming";
     input: typeof StreamInstanceLogsRequestSchema;
     output: typeof StreamInstanceLogsResponseSchema;
-  };
-}> = /*@__PURE__*/ serviceDesc(file_api_runner_v1_runner, 0);
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_api_runner_v1_runner, 0);
+

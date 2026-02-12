@@ -119,7 +119,7 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 		Config:           containerConfig,
 		HostConfig:       hostConfig,
 		NetworkingConfig: networkConfig,
-		Name:             req.InstanceId,
+		Name:             req.ContainerName,
 	}
 
 	resp, err := s.dockerClient.ContainerCreate(ctx, createOptions)
@@ -154,10 +154,11 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 		}
 	}
 
-	log.Printf("Started container %s for instance %s on host port %d", resp.ID, req.InstanceId, hostPort)
+	log.Printf("Started container %s for instance %s on host port %d", resp.ID, req.ContainerName, hostPort)
 
 	return &pb.StartInstanceResponse{
 		Status: "success",
+		ContainerId: resp.ID,
 		ConnectionInfo: &pb.ConnectionInfo{
 			Host: "localhost",
 			Port: hostPort,
@@ -170,7 +171,7 @@ func (s *RunnerService) StopInstance(ctx context.Context, req *pb.StopInstanceRe
 	stopOptions := client.ContainerStopOptions{
 		Timeout: &timeout,
 	}
-	if _, err := s.dockerClient.ContainerStop(ctx, req.InstanceId, stopOptions); err != nil {
+	if _, err := s.dockerClient.ContainerStop(ctx, req.ContainerId, stopOptions); err != nil {
 		return &pb.StopInstanceResponse{
 			Status:       "failed",
 			ErrorMessage: fmt.Sprintf("failed to stop container: %v", err),
@@ -186,7 +187,7 @@ func (s *RunnerService) DestroyInstance(ctx context.Context, req *pb.DestroyInst
 	removeOptions := client.ContainerRemoveOptions{
 		Force: true,
 	}
-	if _, err := s.dockerClient.ContainerRemove(ctx, req.InstanceId, removeOptions); err != nil {
+	if _, err := s.dockerClient.ContainerRemove(ctx, req.ContainerId, removeOptions); err != nil {
 		return &pb.DestroyInstanceResponse{
 			Status:       "failed",
 			ErrorMessage: fmt.Sprintf("failed to remove container: %v", err),
@@ -200,7 +201,7 @@ func (s *RunnerService) DestroyInstance(ctx context.Context, req *pb.DestroyInst
 
 func (s *RunnerService) GetInstanceStatus(ctx context.Context, req *pb.GetInstanceStatusRequest) (*pb.GetInstanceStatusResponse, error) {
 	inspectOptions := client.ContainerInspectOptions{}
-	containerJSON, err := s.dockerClient.ContainerInspect(ctx, req.InstanceId, inspectOptions)
+	containerJSON, err := s.dockerClient.ContainerInspect(ctx, req.ContainerId, inspectOptions)
 	if err != nil {
 		return &pb.GetInstanceStatusResponse{
 			State: pb.GetInstanceStatusResponse_STATE_DESTROYED,
@@ -235,7 +236,7 @@ func (s *RunnerService) StreamInstanceLogs(req *pb.StreamInstanceLogsRequest, st
 		Timestamps: false,
 	}
 
-	logReader, err := s.dockerClient.ContainerLogs(ctx, req.InstanceId, logOptions)
+	logReader, err := s.dockerClient.ContainerLogs(ctx, req.ContainerId, logOptions)
 	if err != nil {
 		return fmt.Errorf("failed to get container logs: %v", err)
 	}

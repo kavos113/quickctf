@@ -2,23 +2,20 @@
 // @generated from file api/builder/v1/builder.proto (package api.builder.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from '@bufbuild/protobuf/codegenv2';
-import { fileDesc, messageDesc, serviceDesc } from '@bufbuild/protobuf/codegenv2';
-import type { Message } from '@bufbuild/protobuf';
+import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file api/builder/v1/builder.proto.
  */
-export const file_api_builder_v1_builder: GenFile =
-  /*@__PURE__*/
-  fileDesc(
-    'ChxhcGkvYnVpbGRlci92MS9idWlsZGVyLnByb3RvEg5hcGkuYnVpbGRlci52MSI6ChFCdWlsZEltYWdlUmVxdWVzdBIRCglpbWFnZV90YWcYASABKAkSEgoKc291cmNlX3RhchgCIAEoDCJjChJCdWlsZEltYWdlUmVzcG9uc2USEgoIbG9nX2xpbmUYASABKAlIABItCgZyZXN1bHQYAiABKAsyGy5hcGkuYnVpbGRlci52MS5CdWlsZFJlc3VsdEgAQgoKCHJlc3BvbnNlIkYKC0J1aWxkUmVzdWx0EhAKCGltYWdlX2lkGAEgASgJEg4KBnN0YXR1cxgCIAEoCRIVCg1lcnJvcl9tZXNzYWdlGAMgASgJMmcKDkJ1aWxkZXJTZXJ2aWNlElUKCkJ1aWxkSW1hZ2USIS5hcGkuYnVpbGRlci52MS5CdWlsZEltYWdlUmVxdWVzdBoiLmFwaS5idWlsZGVyLnYxLkJ1aWxkSW1hZ2VSZXNwb25zZTABQroBChJjb20uYXBpLmJ1aWxkZXIudjFCDEJ1aWxkZXJQcm90b1ABWjxnaXRodWIuY29tL2thdm9zMTEzL3F1aWNrY3RmL2dlbi9nby9hcGkvYnVpbGRlci92MTtidWlsZGVydjGiAgNBQliqAg5BcGkuQnVpbGRlci5WMcoCDkFwaVxCdWlsZGVyXFYx4gIaQXBpXEJ1aWxkZXJcVjFcR1BCTWV0YWRhdGHqAhBBcGk6OkJ1aWxkZXI6OlYxYgZwcm90bzM',
-  );
+export const file_api_builder_v1_builder: GenFile = /*@__PURE__*/
+  fileDesc("ChxhcGkvYnVpbGRlci92MS9idWlsZGVyLnByb3RvEg5hcGkuYnVpbGRlci52MSI6ChFCdWlsZEltYWdlUmVxdWVzdBIRCglpbWFnZV90YWcYASABKAkSEgoKc291cmNlX3RhchgCIAEoDCJjChJCdWlsZEltYWdlUmVzcG9uc2USEgoIbG9nX2xpbmUYASABKAlIABItCgZyZXN1bHQYAiABKAsyGy5hcGkuYnVpbGRlci52MS5CdWlsZFJlc3VsdEgAQgoKCHJlc3BvbnNlIkYKC0J1aWxkUmVzdWx0EhAKCGltYWdlX2lkGAEgASgJEg4KBnN0YXR1cxgCIAEoCRIVCg1lcnJvcl9tZXNzYWdlGAMgASgJMmcKDkJ1aWxkZXJTZXJ2aWNlElUKCkJ1aWxkSW1hZ2USIS5hcGkuYnVpbGRlci52MS5CdWlsZEltYWdlUmVxdWVzdBoiLmFwaS5idWlsZGVyLnYxLkJ1aWxkSW1hZ2VSZXNwb25zZTABQroBChJjb20uYXBpLmJ1aWxkZXIudjFCDEJ1aWxkZXJQcm90b1ABWjxnaXRodWIuY29tL2thdm9zMTEzL3F1aWNrY3RmL2dlbi9nby9hcGkvYnVpbGRlci92MTtidWlsZGVydjGiAgNBQliqAg5BcGkuQnVpbGRlci5WMcoCDkFwaVxCdWlsZGVyXFYx4gIaQXBpXEJ1aWxkZXJcVjFcR1BCTWV0YWRhdGHqAhBBcGk6OkJ1aWxkZXI6OlYxYgZwcm90bzM");
 
 /**
  * @generated from message api.builder.v1.BuildImageRequest
  */
-export type BuildImageRequest = Message<'api.builder.v1.BuildImageRequest'> & {
+export type BuildImageRequest = Message<"api.builder.v1.BuildImageRequest"> & {
   /**
    * @generated from field: string image_tag = 1;
    */
@@ -34,47 +31,42 @@ export type BuildImageRequest = Message<'api.builder.v1.BuildImageRequest'> & {
  * Describes the message api.builder.v1.BuildImageRequest.
  * Use `create(BuildImageRequestSchema)` to create a new message.
  */
-export const BuildImageRequestSchema: GenMessage<BuildImageRequest> =
-  /*@__PURE__*/
+export const BuildImageRequestSchema: GenMessage<BuildImageRequest> = /*@__PURE__*/
   messageDesc(file_api_builder_v1_builder, 0);
 
 /**
  * @generated from message api.builder.v1.BuildImageResponse
  */
-export type BuildImageResponse = Message<'api.builder.v1.BuildImageResponse'> & {
+export type BuildImageResponse = Message<"api.builder.v1.BuildImageResponse"> & {
   /**
    * @generated from oneof api.builder.v1.BuildImageResponse.response
    */
-  response:
-    | {
-        /**
-         * @generated from field: string log_line = 1;
-         */
-        value: string;
-        case: 'logLine';
-      }
-    | {
-        /**
-         * @generated from field: api.builder.v1.BuildResult result = 2;
-         */
-        value: BuildResult;
-        case: 'result';
-      }
-    | { case: undefined; value?: undefined };
+  response: {
+    /**
+     * @generated from field: string log_line = 1;
+     */
+    value: string;
+    case: "logLine";
+  } | {
+    /**
+     * @generated from field: api.builder.v1.BuildResult result = 2;
+     */
+    value: BuildResult;
+    case: "result";
+  } | { case: undefined; value?: undefined };
 };
 
 /**
  * Describes the message api.builder.v1.BuildImageResponse.
  * Use `create(BuildImageResponseSchema)` to create a new message.
  */
-export const BuildImageResponseSchema: GenMessage<BuildImageResponse> =
-  /*@__PURE__*/
+export const BuildImageResponseSchema: GenMessage<BuildImageResponse> = /*@__PURE__*/
   messageDesc(file_api_builder_v1_builder, 1);
 
 /**
  * @generated from message api.builder.v1.BuildResult
  */
-export type BuildResult = Message<'api.builder.v1.BuildResult'> & {
+export type BuildResult = Message<"api.builder.v1.BuildResult"> & {
   /**
    * @generated from field: string image_id = 1;
    */
@@ -95,8 +87,7 @@ export type BuildResult = Message<'api.builder.v1.BuildResult'> & {
  * Describes the message api.builder.v1.BuildResult.
  * Use `create(BuildResultSchema)` to create a new message.
  */
-export const BuildResultSchema: GenMessage<BuildResult> =
-  /*@__PURE__*/
+export const BuildResultSchema: GenMessage<BuildResult> = /*@__PURE__*/
   messageDesc(file_api_builder_v1_builder, 2);
 
 /**
@@ -107,8 +98,10 @@ export const BuilderService: GenService<{
    * @generated from rpc api.builder.v1.BuilderService.BuildImage
    */
   buildImage: {
-    methodKind: 'server_streaming';
+    methodKind: "server_streaming";
     input: typeof BuildImageRequestSchema;
     output: typeof BuildImageResponseSchema;
-  };
-}> = /*@__PURE__*/ serviceDesc(file_api_builder_v1_builder, 0);
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_api_builder_v1_builder, 0);
+

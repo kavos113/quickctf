@@ -46,7 +46,7 @@ func TestRunnerService_StartInstance(t *testing.T) {
 
 	req := &pb.StartInstanceRequest{
 		ImageTag:   "test:latest",
-		InstanceId: "test-instance-1",
+		ContainerName: "test-instance-1",
 	}
 
 	resp, err := client.StartInstance(ctx, req)
@@ -62,7 +62,7 @@ func TestRunnerService_StartInstance(t *testing.T) {
 	if resp.Status == "success" {
 		t.Log("Unexpected success - Docker daemon might be running")
 		destroyReq := &pb.DestroyInstanceRequest{
-			InstanceId: "test-instance-1",
+			ContainerId: resp.ContainerId,
 		}
 		client.DestroyInstance(ctx, destroyReq)
 	}
@@ -82,7 +82,7 @@ func TestRunnerService_GetInstanceStatus(t *testing.T) {
 	client := pb.NewRunnerServiceClient(conn)
 
 	req := &pb.GetInstanceStatusRequest{
-		InstanceId: "non-existent-instance",
+		ContainerId: "non-existent-instance",
 	}
 
 	resp, err := client.GetInstanceStatus(ctx, req)
@@ -109,7 +109,7 @@ func TestRunnerService_StopInstance(t *testing.T) {
 	client := pb.NewRunnerServiceClient(conn)
 
 	req := &pb.StopInstanceRequest{
-		InstanceId: "non-existent-instance",
+		ContainerId: "non-existent-instance",
 	}
 
 	resp, err := client.StopInstance(ctx, req)

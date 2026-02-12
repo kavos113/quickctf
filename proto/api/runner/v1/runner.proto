@@ -12,13 +12,14 @@ service RunnerService {
 
 message StartInstanceRequest {
   string image_tag = 1;
-  string instance_id = 2;
+  string container_name = 2;
 }
 
 message StartInstanceResponse {
   string status = 1;
   string error_message = 2;
-  ConnectionInfo connection_info = 3;
+  string container_id = 3;
+  ConnectionInfo connection_info = 4;
 }
 
 message ConnectionInfo {
@@ -27,7 +28,7 @@ message ConnectionInfo {
 }
 
 message StopInstanceRequest {
-  string instance_id = 1;
+  string container_id = 1;
 }
 
 message StopInstanceResponse {
@@ -36,7 +37,7 @@ message StopInstanceResponse {
 }
 
 message DestroyInstanceRequest {
-  string instance_id = 1;
+  string container_id = 1;
 }
 
 message DestroyInstanceResponse {
@@ -45,7 +46,7 @@ message DestroyInstanceResponse {
 }
 
 message GetInstanceStatusRequest {
-  string instance_id = 1;
+  string container_id = 1;
 }
 
 message GetInstanceStatusResponse {
@@ -60,7 +61,7 @@ message GetInstanceStatusResponse {
 }
 
 message StreamInstanceLogsRequest {
-  string instance_id = 1;
+  string container_id = 1;
 }
 
 message StreamInstanceLogsResponse {
