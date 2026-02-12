@@ -162,13 +162,21 @@ func (u *ClientChallengeUsecase) StopInstance(ctx context.Context, userID, chall
 		return fmt.Errorf("instance already stopped")
 	}
 
-	if err := u.managerClient.StopInstance(ctx, instance.InstanceID); err != nil {
-		return fmt.Errorf("failed to stop instance: %w", err)
+	// if err := u.managerClient.StopInstance(ctx, instance.InstanceID); err != nil {
+	// 	return fmt.Errorf("failed to stop instance: %w", err)
+	// }
+
+	// instance.Status = domain.InstanceStatusStopped
+	// if err := u.instanceRepo.Update(ctx, instance); err != nil {
+	// 	return fmt.Errorf("failed to update instance: %w", err)
+	// }
+	if err := u.managerClient.DestroyInstance(ctx, instance.InstanceID); err != nil {
+		return fmt.Errorf("failed to destroy instance: %w", err)
 	}
 
-	instance.Status = domain.InstanceStatusStopped
-	if err := u.instanceRepo.Update(ctx, instance); err != nil {
-		return fmt.Errorf("failed to update instance: %w", err)
+	// TODO: deleted_atなどを入れたい
+	if err := u.instanceRepo.Delete(ctx, instance.InstanceID); err != nil {
+		return fmt.Errorf("failed to delete instance record: %w", err)
 	}
 
 	return nil
