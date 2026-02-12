@@ -32,7 +32,7 @@ http {
         server_name {{ domain_root }};
 
         location / {
-            proxy_pass http://frontend:{{ secret_frontend_port }};
+            proxy_pass http://frontend:80;
         }
     }
 
