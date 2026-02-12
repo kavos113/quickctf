@@ -11,3 +11,4 @@ build/
 .env
 .vault_pass
 vagrant.ini
+nginx/nginx.conf

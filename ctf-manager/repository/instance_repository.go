@@ -20,14 +20,15 @@ func NewMySQLInstanceRepository(db *sql.DB) *MySQLInstanceRepository {
 
 func (r *MySQLInstanceRepository) Create(ctx context.Context, instance *domain.Instance) error {
 	query := `
-		INSERT INTO instances (instance_id, image_tag, runner_url, host, port, state, ttl_seconds, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO instances (instance_id, image_tag, runner_url, container_id, host, port, state, ttl_seconds, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
 	_, err := r.db.ExecContext(ctx, query,
 		instance.InstanceID,
 		instance.ImageTag,
 		instance.RunnerURL,
+		instance.ContainerID,
 		instance.Host,
 		instance.Port,
 		string(instance.State),
@@ -45,7 +46,7 @@ func (r *MySQLInstanceRepository) Create(ctx context.Context, instance *domain.I
 
 func (r *MySQLInstanceRepository) FindByID(ctx context.Context, instanceID string) (*domain.Instance, error) {
 	query := `
-		SELECT instance_id, image_tag, runner_url, host, port, state, ttl_seconds, created_at, updated_at
+		SELECT instance_id, image_tag, runner_url, container_id, host, port, state, ttl_seconds, created_at, updated_at
 		FROM instances
 		WHERE instance_id = ?
 	`
@@ -57,6 +58,7 @@ func (r *MySQLInstanceRepository) FindByID(ctx context.Context, instanceID strin
 		&instance.InstanceID,
 		&instance.ImageTag,
 		&instance.RunnerURL,
+		&instance.ContainerID,
 		&instance.Host,
 		&instance.Port,
 		&instance.State,
@@ -80,13 +82,14 @@ func (r *MySQLInstanceRepository) FindByID(ctx context.Context, instanceID strin
 func (r *MySQLInstanceRepository) Update(ctx context.Context, instance *domain.Instance) error {
 	query := `
 		UPDATE instances
-		SET image_tag = ?, runner_url = ?, host = ?, port = ?, state = ?, ttl_seconds = ?, updated_at = ?
+		SET image_tag = ?, runner_url = ?, container_id = ?, host = ?, port = ?, state = ?, ttl_seconds = ?, updated_at = ?
 		WHERE instance_id = ?
 	`
 
 	result, err := r.db.ExecContext(ctx, query,
 		instance.ImageTag,
 		instance.RunnerURL,
+		instance.ContainerID,
 		instance.Host,
 		instance.Port,
 		string(instance.State),
@@ -133,7 +136,7 @@ func (r *MySQLInstanceRepository) Delete(ctx context.Context, instanceID string)
 
 func (r *MySQLInstanceRepository) FindAll(ctx context.Context) ([]*domain.Instance, error) {
 	query := `
-		SELECT instance_id, image_tag, runner_url, host, port, state, ttl_seconds, created_at, updated_at
+		SELECT instance_id, image_tag, runner_url, container_id, host, port, state, ttl_seconds, created_at, updated_at
 		FROM instances
 		ORDER BY created_at DESC
 	`
@@ -153,6 +156,7 @@ func (r *MySQLInstanceRepository) FindAll(ctx context.Context) ([]*domain.Instan
 			&instance.InstanceID,
 			&instance.ImageTag,
 			&instance.RunnerURL,
+			&instance.ContainerID,
 			&instance.Host,
 			&instance.Port,
 			&instance.State,
@@ -177,7 +181,7 @@ func (r *MySQLInstanceRepository) FindAll(ctx context.Context) ([]*domain.Instan
 
 func (r *MySQLInstanceRepository) FindByRunnerURL(ctx context.Context, runnerURL string) ([]*domain.Instance, error) {
 	query := `
-		SELECT instance_id, image_tag, runner_url, host, port, state, ttl_seconds, created_at, updated_at
+		SELECT instance_id, image_tag, runner_url, container_id, host, port, state, ttl_seconds, created_at, updated_at
 		FROM instances
 		WHERE runner_url = ?
 		ORDER BY created_at DESC
@@ -198,6 +202,7 @@ func (r *MySQLInstanceRepository) FindByRunnerURL(ctx context.Context, runnerURL
 			&instance.InstanceID,
 			&instance.ImageTag,
 			&instance.RunnerURL,
+			&instance.ContainerID,
 			&instance.Host,
 			&instance.Port,
 			&instance.State,
@@ -222,7 +227,7 @@ func (r *MySQLInstanceRepository) FindByRunnerURL(ctx context.Context, runnerURL
 
 func (r *MySQLInstanceRepository) FindExpired(ctx context.Context) ([]*domain.Instance, error) {
 	query := `
-		SELECT instance_id, image_tag, runner_url, host, port, state, ttl_seconds, created_at, updated_at
+		SELECT instance_id, image_tag, runner_url, container_id, host, port, state, ttl_seconds, created_at, updated_at
 		FROM instances
 		WHERE ttl_seconds > 0 AND TIMESTAMPDIFF(SECOND, created_at, NOW()) > ttl_seconds
 		ORDER BY created_at ASC
@@ -243,6 +248,7 @@ func (r *MySQLInstanceRepository) FindExpired(ctx context.Context) ([]*domain.In
 			&instance.InstanceID,
 			&instance.ImageTag,
 			&instance.RunnerURL,
+			&instance.ContainerID,
 			&instance.Host,
 			&instance.Port,
 			&instance.State,

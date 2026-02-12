@@ -57,7 +57,7 @@ func NewRunnerService(registryURL string) *RunnerService {
 		registryURL:  registryURL,
 		minPort:      minPort,
 		maxPort:      maxPort,
-		usedPorts:    make([]bool, maxPort-minPort+1, 0),
+		usedPorts:    make([]bool, maxPort-minPort+1),
 		internalPort: internalPort,
 	}
 }
