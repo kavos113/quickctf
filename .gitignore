@@ -12,4 +12,4 @@ build/
 .vault_pass
 *.ini
 nginx/nginx.conf
-secrets.yml
+infra/ansible/group_vars/all/*.yml
