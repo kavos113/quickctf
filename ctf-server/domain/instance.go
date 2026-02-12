@@ -7,7 +7,7 @@ import (
 )
 
 type Instance struct {
-	InstanceID  string
+	InstanceID  string // same as manager InstanceID
 	UserID      string
 	ChallengeID string
 	ImageTag    string

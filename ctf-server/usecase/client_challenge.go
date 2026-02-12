@@ -92,11 +92,7 @@ func (u *ClientChallengeUsecase) SubmitFlag(ctx context.Context, userID, challen
 }
 
 func (u *ClientChallengeUsecase) StartInstance(ctx context.Context, userID, challengeID string) (string, int32, error) {
-	challenge, err := u.challengeRepo.FindByID(ctx, challengeID)
-	if err != nil {
-		return "", 0, err
-	}
-
+	// TODO: 現在の実装では使わずにすぐにDestroyしている
 	existingInstance, err := u.instanceRepo.FindByUserAndChallenge(ctx, userID, challengeID)
 	if err == nil {
 		if existingInstance.Status == domain.InstanceStatusRunning {
@@ -106,7 +102,7 @@ func (u *ClientChallengeUsecase) StartInstance(ctx context.Context, userID, chal
 		// 停止中のインスタンスがある場合は再起動
 		if existingInstance.Status == domain.InstanceStatusStopped {
 			ttlSeconds := int64(3600)
-			connInfo, err := u.managerClient.StartInstance(ctx, existingInstance.ImageTag, existingInstance.InstanceID, ttlSeconds)
+			_, connInfo, err := u.managerClient.StartInstance(ctx, existingInstance.ImageTag, ttlSeconds)
 			if err != nil {
 				return "", 0, fmt.Errorf("failed to restart instance: %w", err)
 			}
@@ -124,17 +120,16 @@ func (u *ClientChallengeUsecase) StartInstance(ctx context.Context, userID, chal
 		}
 	}
 
-	instanceID := fmt.Sprintf("%s-%s", userID[:8], uuid.New().String()[:8])
-	imageTag := fmt.Sprintf("ctf-%s:%s", challenge.Name, challenge.ChallengeID[:8])
+	imageTag := fmt.Sprintf("ctf-%s:latest", challengeID)
 	ttlSeconds := int64(3600)
 
-	connInfo, err := u.managerClient.StartInstance(ctx, imageTag, instanceID, ttlSeconds)
+	id, connInfo, err := u.managerClient.StartInstance(ctx, imageTag, ttlSeconds)
 	if err != nil {
 		return "", 0, fmt.Errorf("failed to start instance: %w", err)
 	}
 
 	instance := &domain.Instance{
-		InstanceID:  instanceID,
+		InstanceID:  id,
 		UserID:      userID,
 		ChallengeID: challengeID,
 		ImageTag:    imageTag,

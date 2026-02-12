@@ -12,14 +12,14 @@ service RunnerService {
 
 message StartInstanceRequest {
   string image_tag = 1;
-  string instance_id = 2;
   int64 ttl_seconds = 3;
 }
 
 message StartInstanceResponse {
   string status = 1;
   string error_message = 2;
-  ConnectionInfo connection_info = 3;
+  string instance_id = 3;
+  ConnectionInfo connection_info = 4;
 }
 
 message ConnectionInfo {

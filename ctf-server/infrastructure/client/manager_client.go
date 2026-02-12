@@ -43,21 +43,20 @@ func (c *ManagerClient) Close() error {
 	return nil
 }
 
-func (c *ManagerClient) StartInstance(ctx context.Context, imageTag, instanceID string, ttlSeconds int64) (*pb.ConnectionInfo, error) {
+func (c *ManagerClient) StartInstance(ctx context.Context, imageTag string, ttlSeconds int64) (string, *pb.ConnectionInfo, error) {
 	resp, err := c.client.StartInstance(ctx, &pb.StartInstanceRequest{
 		ImageTag:   imageTag,
-		InstanceId: instanceID,
 		TtlSeconds: ttlSeconds,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to start instance: %w", err)
+		return "", nil, fmt.Errorf("failed to start instance: %w", err)
 	}
 
 	if resp.Status != "success" && resp.Status != "running" {
-		return nil, fmt.Errorf("start instance failed: %s", resp.ErrorMessage)
+		return "", nil, fmt.Errorf("start instance failed: %s", resp.ErrorMessage)
 	}
 
-	return resp.ConnectionInfo, nil
+	return resp.InstanceId, resp.ConnectionInfo, nil
 }
 
 func (c *ManagerClient) StopInstance(ctx context.Context, instanceID string) error {

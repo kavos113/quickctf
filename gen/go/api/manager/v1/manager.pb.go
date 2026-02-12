@@ -76,7 +76,6 @@ func (GetInstanceStatusResponse_State) EnumDescriptor() ([]byte, []int) {
 type StartInstanceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ImageTag      string                 `protobuf:"bytes,1,opt,name=image_tag,json=imageTag,proto3" json:"image_tag,omitempty"`
-	InstanceId    string                 `protobuf:"bytes,2,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
 	TtlSeconds    int64                  `protobuf:"varint,3,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -119,13 +118,6 @@ func (x *StartInstanceRequest) GetImageTag() string {
 	return ""
 }
 
-func (x *StartInstanceRequest) GetInstanceId() string {
-	if x != nil {
-		return x.InstanceId
-	}
-	return ""
-}
-
 func (x *StartInstanceRequest) GetTtlSeconds() int64 {
 	if x != nil {
 		return x.TtlSeconds
@@ -137,7 +129,8 @@ type StartInstanceResponse struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Status         string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
 	ErrorMessage   string                 `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
-	ConnectionInfo *ConnectionInfo        `protobuf:"bytes,3,opt,name=connection_info,json=connectionInfo,proto3" json:"connection_info,omitempty"`
+	InstanceId     string                 `protobuf:"bytes,3,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	ConnectionInfo *ConnectionInfo        `protobuf:"bytes,4,opt,name=connection_info,json=connectionInfo,proto3" json:"connection_info,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -182,6 +175,13 @@ func (x *StartInstanceResponse) GetStatus() string {
 func (x *StartInstanceResponse) GetErrorMessage() string {
 	if x != nil {
 		return x.ErrorMessage
+	}
+	return ""
+}
+
+func (x *StartInstanceResponse) GetInstanceId() string {
+	if x != nil {
+		return x.InstanceId
 	}
 	return ""
 }
@@ -625,17 +625,17 @@ var File_api_manager_v1_manager_proto protoreflect.FileDescriptor
 
 const file_api_manager_v1_manager_proto_rawDesc = "" +
 	"\n" +
-	"\x1capi/manager/v1/manager.proto\x12\x0eapi.manager.v1\"u\n" +
+	"\x1capi/manager/v1/manager.proto\x12\x0eapi.manager.v1\"T\n" +
 	"\x14StartInstanceRequest\x12\x1b\n" +
 	"\timage_tag\x18\x01 \x01(\tR\bimageTag\x12\x1f\n" +
-	"\vinstance_id\x18\x02 \x01(\tR\n" +
-	"instanceId\x12\x1f\n" +
 	"\vttl_seconds\x18\x03 \x01(\x03R\n" +
-	"ttlSeconds\"\x9d\x01\n" +
+	"ttlSeconds\"\xbe\x01\n" +
 	"\x15StartInstanceResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\x12G\n" +
-	"\x0fconnection_info\x18\x03 \x01(\v2\x1e.api.manager.v1.ConnectionInfoR\x0econnectionInfo\"8\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\x12\x1f\n" +
+	"\vinstance_id\x18\x03 \x01(\tR\n" +
+	"instanceId\x12G\n" +
+	"\x0fconnection_info\x18\x04 \x01(\v2\x1e.api.manager.v1.ConnectionInfoR\x0econnectionInfo\"8\n" +
 	"\x0eConnectionInfo\x12\x12\n" +
 	"\x04host\x18\x01 \x01(\tR\x04host\x12\x12\n" +
 	"\x04port\x18\x02 \x01(\x05R\x04port\"6\n" +

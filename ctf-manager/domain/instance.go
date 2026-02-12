@@ -9,15 +9,16 @@ import (
 )
 
 type Instance struct {
-	InstanceID string
-	ImageTag   string
-	RunnerURL  string
-	Host       string
-	Port       int32
-	State      State
-	TTL        time.Duration
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	InstanceID  string
+	ImageTag    string
+	RunnerURL   string
+	ContainerID string
+	Host        string
+	Port        int32
+	State       State
+	TTL         time.Duration
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type State string

@@ -3,6 +3,7 @@ USE ctf_manager_db;
 CREATE TABLE IF NOT EXISTS instances (
     instance_id VARCHAR(255) PRIMARY KEY,
     image_tag VARCHAR(255) NOT NULL,
+    container_id VARCHAR(255) NOT NULL,
     runner_url VARCHAR(255) NOT NULL,
     host VARCHAR(255) NOT NULL,
     port INT NOT NULL,

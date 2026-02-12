@@ -20,7 +20,6 @@ var (
 	runnerLis  *bufconn.Listener
 )
 
-// モックRunnerServiceの実装
 type mockRunnerService struct {
 	runnerPb.UnimplementedRunnerServiceServer
 }
@@ -54,7 +53,6 @@ func (m *mockRunnerService) GetInstanceStatus(ctx context.Context, req *runnerPb
 }
 
 func init() {
-	// モックRunnerサービスを起動
 	runnerLis = bufconn.Listen(bufSize)
 	runnerServer := grpc.NewServer()
 	runnerPb.RegisterRunnerServiceServer(runnerServer, &mockRunnerService{})
@@ -64,20 +62,16 @@ func init() {
 		}
 	}()
 
-	// Managerサービスを起動
 	managerLis = bufconn.Listen(bufSize)
 	managerServer := grpc.NewServer()
 
-	// モックリポジトリを使用
 	mockRepo := newMockInstanceRepository()
 
-	// テスト用のrunner URLを設定（bufconn経由）
 	managerService, err := NewManagerService([]string{"bufnet"}, mockRepo)
 	if err != nil {
 		log.Fatalf("Failed to create manager service: %v", err)
 	}
 
-	// モックRunnerへの接続を上書き
 	conn, _ := grpc.Dial("bufnet",
 		grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
 			return runnerLis.Dial()
@@ -114,7 +108,6 @@ func TestManagerService_StartInstance(t *testing.T) {
 
 	req := &managerPb.StartInstanceRequest{
 		ImageTag:   "test:latest",
-		InstanceId: "test-instance-1",
 		TtlSeconds: 300,
 	}
 
@@ -133,9 +126,8 @@ func TestManagerService_StartInstance(t *testing.T) {
 		t.Logf("Connection: %s:%d", resp.ConnectionInfo.Host, resp.ConnectionInfo.Port)
 	}
 
-	// クリーンアップ
 	destroyReq := &managerPb.DestroyInstanceRequest{
-		InstanceId: "test-instance-1",
+		InstanceId: resp.InstanceId,
 	}
 	client.DestroyInstance(ctx, destroyReq)
 }
@@ -153,17 +145,14 @@ func TestManagerService_GetInstanceStatus(t *testing.T) {
 
 	client := managerPb.NewRunnerServiceClient(conn)
 
-	// まずインスタンスを起動
 	startReq := &managerPb.StartInstanceRequest{
 		ImageTag:   "test:latest",
-		InstanceId: "test-instance-2",
 		TtlSeconds: 300,
 	}
-	client.StartInstance(ctx, startReq)
+	re, _ := client.StartInstance(ctx, startReq)
 
-	// ステータスを確認
 	statusReq := &managerPb.GetInstanceStatusRequest{
-		InstanceId: "test-instance-2",
+		InstanceId: re.InstanceId,
 	}
 
 	resp, err := client.GetInstanceStatus(ctx, statusReq)
@@ -175,9 +164,8 @@ func TestManagerService_GetInstanceStatus(t *testing.T) {
 		t.Errorf("Expected STATE_RUNNING, got %v", resp.State)
 	}
 
-	// クリーンアップ
 	destroyReq := &managerPb.DestroyInstanceRequest{
-		InstanceId: "test-instance-2",
+		InstanceId: re.InstanceId,
 	}
 	client.DestroyInstance(ctx, destroyReq)
 }
@@ -195,17 +183,14 @@ func TestManagerService_DestroyInstance(t *testing.T) {
 
 	client := managerPb.NewRunnerServiceClient(conn)
 
-	// インスタンスを起動
 	startReq := &managerPb.StartInstanceRequest{
 		ImageTag:   "test:latest",
-		InstanceId: "test-instance-3",
 		TtlSeconds: 300,
 	}
-	client.StartInstance(ctx, startReq)
+	re, _ := client.StartInstance(ctx, startReq)
 
-	// 削除
 	destroyReq := &managerPb.DestroyInstanceRequest{
-		InstanceId: "test-instance-3",
+		InstanceId: re.InstanceId,
 	}
 
 	resp, err := client.DestroyInstance(ctx, destroyReq)
@@ -217,9 +202,8 @@ func TestManagerService_DestroyInstance(t *testing.T) {
 		t.Errorf("Expected success status, got %s: %s", resp.Status, resp.ErrorMessage)
 	}
 
-	// 削除後のステータス確認
 	statusReq := &managerPb.GetInstanceStatusRequest{
-		InstanceId: "test-instance-3",
+		InstanceId: re.InstanceId,
 	}
 	statusResp, _ := client.GetInstanceStatus(ctx, statusReq)
 
