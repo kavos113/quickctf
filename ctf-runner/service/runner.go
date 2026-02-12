@@ -24,7 +24,7 @@ type RunnerService struct {
 	minPort      int
 	maxPort      int
 	usedPorts    []bool
-	internalPort int
+	internalPort network.Port
 }
 
 func NewRunnerService(registryURL string) *RunnerService {
@@ -43,9 +43,13 @@ func NewRunnerService(registryURL string) *RunnerService {
 		maxPort = 0
 	}
 
-	internalPort, err := strconv.Atoi(os.Getenv("INTERNAL_CONTAINER_PORT"))
+	internalPortStr := os.Getenv("INTERNAL_CONTAINER_PORT")
+	internalPort, err := network.ParsePort(fmt.Sprintf("%s/tcp", internalPortStr))
 	if err != nil {
-		internalPort = 80
+		internalPort, err = network.ParsePort("80/tcp")
+		if err != nil {
+			log.Fatalf("failed to parse internal container port: %v", err)
+		}
 	}
 
 	return &RunnerService{
@@ -86,7 +90,6 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 		}, nil
 	}
 
-	containerPort, _ := network.ParsePort(fmt.Sprintf("%d/tcp", s.internalPort))
 	port, err := s.selectPort()
 	if err != nil {
 		return &pb.StartInstanceResponse{
@@ -96,7 +99,7 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 	}
 	hostConfig := &container.HostConfig{
 		PortBindings: network.PortMap{
-			containerPort: []network.PortBinding{
+			s.internalPort: []network.PortBinding{
 				{
 					HostIP:   netip.MustParseAddr("0.0.0.0"),
 					HostPort: strconv.Itoa(port),
@@ -109,7 +112,7 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 	containerConfig := &container.Config{
 		Image: fullImageName,
 		ExposedPorts: network.PortSet{
-			containerPort: struct{}{},
+			s.internalPort: struct{}{},
 		},
 	}
 
@@ -149,7 +152,7 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 
 	var hostPort int32
 	if containerJSON.Container.NetworkSettings != nil {
-		if bindings, ok := containerJSON.Container.NetworkSettings.Ports[containerPort]; ok && len(bindings) > 0 {
+		if bindings, ok := containerJSON.Container.NetworkSettings.Ports[s.internalPort]; ok && len(bindings) > 0 {
 			fmt.Sscanf(bindings[0].HostPort, "%d", &hostPort)
 		}
 	}
@@ -157,7 +160,7 @@ func (s *RunnerService) StartInstance(ctx context.Context, req *pb.StartInstance
 	log.Printf("Started container %s for instance %s on host port %d", resp.ID, req.ContainerName, hostPort)
 
 	return &pb.StartInstanceResponse{
-		Status: "success",
+		Status:      "success",
 		ContainerId: resp.ID,
 		ConnectionInfo: &pb.ConnectionInfo{
 			Host: "localhost",
@@ -184,6 +187,22 @@ func (s *RunnerService) StopInstance(ctx context.Context, req *pb.StopInstanceRe
 }
 
 func (s *RunnerService) DestroyInstance(ctx context.Context, req *pb.DestroyInstanceRequest) (*pb.DestroyInstanceResponse, error) {
+	inspectOptions := client.ContainerInspectOptions{}
+	containerJSON, err := s.dockerClient.ContainerInspect(ctx, req.ContainerId, inspectOptions)
+	if err != nil {
+		return &pb.DestroyInstanceResponse{
+			Status:       "failed",
+			ErrorMessage: fmt.Sprintf("failed to inspect container: %v", err),
+		}, nil
+	}
+	if containerJSON.Container.NetworkSettings != nil {
+		if bindings, ok := containerJSON.Container.NetworkSettings.Ports[s.internalPort]; ok && len(bindings) > 0 {
+			var hostPort int
+			fmt.Sscanf(bindings[0].HostPort, "%d", &hostPort)
+			s.freePort(hostPort)
+		}
+	}
+
 	removeOptions := client.ContainerRemoveOptions{
 		Force: true,
 	}
