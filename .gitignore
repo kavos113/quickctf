@@ -10,5 +10,6 @@ build/
 
 .env
 .vault_pass
-vagrant.ini
+*.ini
 nginx/nginx.conf
+secrets.yml

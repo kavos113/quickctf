@@ -38,6 +38,12 @@
         dest: "{{ app_dir }}/client/src/environments/environment.ts"
         mode: "0644"
 
+    - name: allow CTF challenge ports
+      ufw:
+        rule: allow
+        port: "{{ secret_min_open_port }}:{{ secret_max_open_port }}"
+        proto: tcp
+
     - name: run docker compose
       shell: |
         docker compose down
